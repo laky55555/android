@@ -2,5 +2,9 @@
     <string name="app_name">Prva</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="third_activity">Welcome to third activity!</string>
+    <string name="hello_world_second">Hello new world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_display_message">DisplayMessageActivity</string>
+    <string name="title_activity_zad7">zad7</string>
 </resources>
