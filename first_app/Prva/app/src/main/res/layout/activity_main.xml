@@ -8,6 +8,7 @@
 
     <EditText android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:id="@+id/edit_message"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,8 +18,42 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="sendDatac"
-        android:text="Kliknite za 3. aktivnost" />
+        android:onClick="sendData"
+        android:text="@string/third_activity" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/web_browser"
+        android:onClick="onClickWebBrowser"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/make_calls"
+        android:onClick="onClickMakeCalls"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_map"
+        android:onClick="onClickShowMap"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startFragmentActivityStatic"
+        android:text="@string/new_fragment1"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startFragmentActivityDynamic"
+        android:text="@string/new_fragment2"/>
+
+
+
+
 
 
 </LinearLayout>

@@ -8,11 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     public final static String EXTRA_MESSAGE = "hr.pmf.math.Prva.MESSAGE";
+    //public static final String NEW_LIFEFORM_DETECTED = "hr.pmf.math.prva.NEW_LIFEFORM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,4 +70,32 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(i);
     }
+
+
+    public void onClickWebBrowser(View view) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+        startActivity(i);
+    }
+
+    public void onClickMakeCalls(View view){
+        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:+385922472406"));
+        startActivity(i);
+    }
+
+    public void onClickShowMap(View view){
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:37.827500,-122.481670"));
+        startActivity(i);
+    }
+
+    public  void startFragmentActivityStatic(View view){
+        Intent intent = new Intent(this, ActivityForFragmentStatic.class);
+        startActivity(intent);
+    }
+
+    public  void startFragmentActivityDynamic(View view){
+        Intent intent = new Intent(this, ActivityForFragmentDynamic.class);
+        startActivity(intent);
+    }
+
+
 }
