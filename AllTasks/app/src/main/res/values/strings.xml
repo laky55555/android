@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">All Tasks</string>
+    <string name="welcome">Welcome to Android classes app.</string>
+    <string name="finish">Finish current activity.</string>
+
+    <string name="second_class">Second Class</string>
+    <string name="window_like_dialog">Start activity like dialog</string>
+    <string name="send_text_hint">Text you want to send.</string>
+    <string name="send_input_text">Send input text</string>
+    <string name="send_multiple_texts">Send text on 3 different ways</string>
+
+
+    <string name="third_class">Third Class</string>
+    <string name="google_search">Start google search</string>
+    <string name="add_number">Add number</string>
+    <string name="make_call">Start call</string>
+    <string name="show_map">Start maps</string>
+    <string name="send_broadcast">Send broadcast</string>
+
+
+    <string name="fourth_class">Fourth Class</string>
+    <string name="fifth_class">Fifth Class</string>
+</resources>
