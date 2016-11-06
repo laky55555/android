@@ -49,6 +49,32 @@
         android:layout_below="@id/button_third_class3"
         android:onClick="sendBroadcast"/>
 
+    <Button
+        android:id="@+id/button_third_class5"
+        android:text="@string/both_fragments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_third_class4"
+        android:onClick="startBothFragments"/>
+
+    <Button
+        android:id="@+id/button_third_class6"
+        android:text="@string/alternating_fragments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_third_class5"
+        android:onClick="startAlternatingFragments"/>
+
+    <Button
+        android:id="@+id/button_third_class7"
+        android:text="@string/mix_fragments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_third_class6"
+        android:onClick="startMixFragments"/>
+
+
+
 
 
 </RelativeLayout>

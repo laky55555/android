@@ -48,7 +48,21 @@ public class ThirdClass extends AppCompatActivity {
         intent.putExtra("lifeformName", "Predator");
 
         sendBroadcast(intent);
+    }
 
+    public void startBothFragments(View view) {
+        Intent intent = new Intent(this, ThirdBothFragments.class);
+        startActivity(intent);
+    }
+
+    public void startAlternatingFragments(View view) {
+        Intent intent = new Intent(this, ThirdAlternatingFragments.class);
+        startActivity(intent);
+    }
+
+    public void startMixFragments(View view) {
+        Intent intent = new Intent(this, ThirdMixFragments.class);
+        startActivity(intent);
     }
 
 

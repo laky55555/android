@@ -29,7 +29,7 @@
         <activity android:name=".FourthClass" />
 
         <receiver
-            android:name=".MyBroadcastReceiver"
+            android:name=".ThirdMyBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -45,6 +45,10 @@
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".ThirdBothFragments" />
+        <activity android:name=".ThirdAlternatingFragments" />
+        <activity android:name=".ThirdMixFragments"></activity>
     </application>
 
 </manifest>

@@ -16,8 +16,15 @@
     <string name="make_call">Start call</string>
     <string name="show_map">Start maps</string>
     <string name="send_broadcast">Send broadcast</string>
+    <string name="both_fragments">Start both fragments</string>
+    <string name="alternating_fragments">Start fragments depending on orientation</string>
+    <string name="mix_fragments">Start fragments dynamically (bonus)</string>
+    <string name="fragment1">Hello from fragment 1</string>
+    <string name="fragment2">Hello from fragment 2</string>
+    <string name="start_fragment2">Start fragment 2</string>
 
 
     <string name="fourth_class">Fourth Class</string>
     <string name="fifth_class">Fifth Class</string>
+
 </resources>

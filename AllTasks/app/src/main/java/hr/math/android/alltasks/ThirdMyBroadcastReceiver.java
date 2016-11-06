@@ -5,13 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
-public class MyBroadcastReceiver extends BroadcastReceiver {
+public class ThirdMyBroadcastReceiver extends BroadcastReceiver {
 
-    private static final String TAG = MyBroadcastReceiver.class.getSimpleName();
+    private static final String TAG = ThirdMyBroadcastReceiver.class.getSimpleName();
 
-    public MyBroadcastReceiver() {
+    public ThirdMyBroadcastReceiver() {
     }
 
     @Override
