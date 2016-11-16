@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kolokvij</string>
+
+    <string name="action_settings">Postavke</string>
+    <string name="title_activity_galery">Galerija</string>
+
+
+    <string name="start_galery">Otvori galeriju</string>
+    <string name="find_author">Pronađi autora</string>
+    <string name="title_activity_receive_author">PrihvatiAutora</string>
+
+    <string name="google_serach_author">Guglaj autora ;)</string>
+
+    <string name="return_to_gallery">Povratak u galeriju</string>
+    <string name="change_background">Promjeni boju pozadine</string>
+
+    <string name="blue">Plava</string>
+    <string name="red">Crvena</string>
+    <string name="black">Crna</string>
+    <string name="white">Bijela</string>
+
+</resources>
