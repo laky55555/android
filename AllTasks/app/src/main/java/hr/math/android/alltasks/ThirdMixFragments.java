@@ -2,6 +2,7 @@ package hr.math.android.alltasks;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -57,6 +58,13 @@ public class ThirdMixFragments extends FragmentActivity {
 
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, ThirdClass.class);
+        startActivity(intent);
     }
 
 }

@@ -50,4 +50,15 @@
         android:layout_marginTop="5dp"
         android:onClick="startFourthClass"/>
 
+    <Button
+        android:id="@+id/button_fifth_class"
+        android:text="@string/fifth_class"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_fourth_class"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:onClick="startFifthClass"/>
+
 </RelativeLayout>

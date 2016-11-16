@@ -25,6 +25,15 @@
 
 
     <string name="fourth_class">Fourth Class</string>
+
     <string name="fifth_class">Fifth Class</string>
+    <string name="shared_preferences">Start shared preferences</string>
+    <string name="file_saving">Start saving file</string>
+    <string name="enter_text">Enter some text</string>
+    <string name="any_text">Add any text</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
+    <string name="read_file">Read file from res/raw</string>
+
 
 </resources>

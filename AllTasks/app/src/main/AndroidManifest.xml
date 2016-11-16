@@ -48,7 +48,11 @@
 
         <activity android:name=".ThirdBothFragments" />
         <activity android:name=".ThirdAlternatingFragments" />
-        <activity android:name=".ThirdMixFragments"></activity>
+        <activity android:name=".ThirdMixFragments" />
+        <activity android:name=".FifthClass" />
+        <activity android:name=".FifthSharedPreferences" />
+        <activity android:name=".FifthFileSaving" />
+        <activity android:name=".FifthReadFile"></activity>
     </application>
 
 </manifest>

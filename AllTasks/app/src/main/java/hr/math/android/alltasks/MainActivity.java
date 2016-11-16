@@ -46,4 +46,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    /**
+     * Function starts activity representing fifth class.
+     * @param view The View passed into the method is a reference to the widget that was clicked.
+     */
+    public void startFifthClass(View view) {
+        Intent intent = new Intent(this, FifthClass.class);
+        startActivity(intent);
+    }
+
 }
