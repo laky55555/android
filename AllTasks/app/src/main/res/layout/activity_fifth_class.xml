@@ -33,4 +33,26 @@
         android:onClick="startReadFile"
         android:layout_below="@+id/button_fifth_class2"/>
 
+<Button
+        android:id="@+id/button_fifth_class4"
+        android:text="@string/log_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startLogDebug"
+        android:layout_below="@+id/button_fifth_class3"/>
+<Button
+        android:id="@+id/button_fifth_class5"
+        android:text="@string/options_context_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startOptionsContextMenu"
+        android:layout_below="@+id/button_fifth_class4"/>
+<Button
+        android:id="@+id/button_fifth_class6"
+        android:text="@string/bonus_options_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startBonusOptionsMenu"
+        android:layout_below="@+id/button_fifth_class5"/>
+
 </RelativeLayout>

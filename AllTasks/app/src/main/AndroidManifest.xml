@@ -52,7 +52,12 @@
         <activity android:name=".FifthClass" />
         <activity android:name=".FifthSharedPreferences" />
         <activity android:name=".FifthFileSaving" />
-        <activity android:name=".FifthReadFile"></activity>
+        <activity android:name=".FifthReadFile" />
+        <activity android:name=".FifthLogDebug" />
+        <activity android:name=".FifthOptionsContextMenu" />
+        <activity
+            android:name=".FifthBonusOptionsMenu"
+            android:label="@string/title_activity_fifth_bonus_options_menu" />
     </application>
 
 </manifest>

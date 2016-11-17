@@ -29,11 +29,25 @@
     <string name="fifth_class">Fifth Class</string>
     <string name="shared_preferences">Start shared preferences</string>
     <string name="file_saving">Start saving file</string>
-    <string name="enter_text">Enter some text</string>
+    <string name="log_debug">Try log message for debug</string>
+    <string name="options_context_menu">Try options and context menu</string>
+    <string name="bonus_options_menu">Options menu for changing background color</string>
     <string name="any_text">Add any text</string>
     <string name="save">Save</string>
     <string name="load">Load</string>
     <string name="read_file">Read file from res/raw</string>
+    <string name="send_logI">Send log I</string>
+    <string name="send_logE">Send log E</string>
+    <string name="send_logWTF">Send log WTF</string>
+    <string name="click_and_hold">Click on button and hold</string>
+    <string name="title_activity_fifth_bonus_options_menu">Settings</string>
+    <string name="blue">Blue</string>
+    <string name="red">Red</string>
+    <string name="black">Black</string>
+    <string name="white">White</string>
+    <string name="change_background">Change background color</string>
+    <string name="start_google">Start google search</string>
+
 
 
 </resources>

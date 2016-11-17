@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="hr.math.android.alltasks.FifthBonusOptionsMenu">
+
+
+    <item android:id="@+id/start_google"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/start_google" />
+
+    <item android:id="@+id/change_background"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/change_background">
+
+        <menu>
+            <item android:id="@+id/blue"
+                android:title="@string/blue" />
+            <item android:id="@+id/red"
+                android:title="@string/red" />
+            <item android:id="@+id/black"
+                android:title="@string/black" />
+            <item android:id="@+id/white"
+                android:title="@string/white" />
+        </menu>
+
+    </item>
+
+
+
+
+
+</menu>

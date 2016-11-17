@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_fifth_log_debug"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="hr.math.android.alltasks.FifthLogDebug">
+
+    <Button
+        android:id="@+id/button_fifth_logDebug1"
+        android:text="@string/send_logI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="logI"/>
+
+    <Button
+        android:id="@+id/button_fifth_logDebug2"
+        android:text="@string/send_logE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="logE"
+        android:layout_below="@+id/button_fifth_logDebug1"/>
+
+    <Button
+        android:id="@+id/button_fifth_logDebug3"
+        android:text="@string/send_logWTF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="logWTF"
+        android:layout_below="@+id/button_fifth_logDebug2"/>
+
+
+</RelativeLayout>

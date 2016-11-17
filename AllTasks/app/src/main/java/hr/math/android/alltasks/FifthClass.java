@@ -13,6 +13,21 @@ public class FifthClass extends AppCompatActivity {
         setContentView(R.layout.activity_fifth_class);
     }
 
+    public void startLogDebug(View view) {
+        Intent intent = new Intent(this, FifthLogDebug.class);
+        startActivity(intent);
+    }
+
+    public void startOptionsContextMenu(View view) {
+        Intent intent = new Intent(this, FifthOptionsContextMenu.class);
+        startActivity(intent);
+    }
+
+    public void startBonusOptionsMenu(View view) {
+        Intent intent = new Intent(this, FifthBonusOptionsMenu.class);
+        startActivity(intent);
+    }
+
     public void startSharedPreferences(View view) {
         Intent intent = new Intent(this, FifthSharedPreferences.class);
         startActivity(intent);
@@ -27,6 +42,8 @@ public class FifthClass extends AppCompatActivity {
         Intent intent = new Intent(this, FifthReadFile.class);
         startActivity(intent);
     }
+
+
 
 
 }
