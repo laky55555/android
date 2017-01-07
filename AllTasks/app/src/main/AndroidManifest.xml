@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hr.math.android.alltasks">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -63,7 +65,15 @@
         <activity android:name=".fourth.FourthListView" />
         <activity android:name=".fourth.FourthProgressBar" />
         <activity android:name=".fourth.FourthGalery" />
-        <activity android:name=".sixth.SixthClass"></activity>
+        <activity android:name=".sixth.SixthClass" />
+        <activity android:name=".seventh.SeventhClass" />
+        <activity android:name=".seventh.SeventhEmbeddedCP" />
+
+        <provider
+            android:name=".seventh.BookProvider"
+            android:authorities="hr.math.android.alltasks.seventh.contprov"></provider>
+
+        <activity android:name=".seventh.SeventhTestingBookProvider"></activity>
     </application>
 
 </manifest>

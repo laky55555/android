@@ -8,6 +8,7 @@ import android.view.View;
 import hr.math.android.alltasks.fifth.FifthClass;
 import hr.math.android.alltasks.fourth.FourthClass;
 import hr.math.android.alltasks.second.SecondClass;
+import hr.math.android.alltasks.seventh.SeventhClass;
 import hr.math.android.alltasks.sixth.SixthClass;
 import hr.math.android.alltasks.third.ThirdClass;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Function starts activity representing second class.
+     *
      * @param view The View passed into the method is a reference to the widget that was clicked.
      */
     public void startSecondClass(View view) {
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Function starts activity representing third class.
+     *
      * @param view The View passed into the method is a reference to the widget that was clicked.
      */
     public void startThirdClass(View view) {
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Function starts activity representing fourth class.
+     *
      * @param view The View passed into the method is a reference to the widget that was clicked.
      */
     public void startFourthClass(View view) {
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Function starts activity representing fifth class.
+     *
      * @param view The View passed into the method is a reference to the widget that was clicked.
      */
     public void startFifthClass(View view) {
@@ -62,12 +67,22 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-/**
+    /**
      * Function starts activity representing sixth class.
+     *
      * @param view The View passed into the method is a reference to the widget that was clicked.
      */
     public void startSixthClass(View view) {
         Intent intent = new Intent(this, SixthClass.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Function starts activity representing sixth class.
+     * @param view The View passed into the method is a reference to the widget that was clicked.
+     */
+    public void startSeventhClass(View view) {
+        Intent intent = new Intent(this, SeventhClass.class);
         startActivity(intent);
     }
 
