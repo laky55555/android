@@ -1,13 +1,15 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.fourth;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class FourthClass extends AppCompatActivity {
+import hr.math.android.alltasks.R;
+
+public class FourthLinearLayout extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fourth_class);
+        setContentView(R.layout.activity_fourth_linear_layout);
     }
 }

@@ -15,21 +15,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SecondClass" />
+        <activity android:name=".second.SecondClass" />
         <!--
              Activity SecondWindowLikeDialog has different theme
             so it makes it look like dialog window.
         -->
         <activity
-            android:name=".SecondWindowLikeDialog"
+            android:name=".second.SecondWindowLikeDialog"
             android:theme="@style/Theme.AppCompat.Dialog" />
-        <activity android:name=".SecondReceiveText" />
-        <activity android:name=".SecondReceiveTexts" />
-        <activity android:name=".ThirdClass" />
-        <activity android:name=".FourthClass" />
+        <activity android:name=".second.SecondReceiveText" />
+        <activity android:name=".second.SecondReceiveTexts" />
+        <activity android:name=".third.ThirdClass" />
+        <activity android:name=".fourth.FourthClass" />
 
         <receiver
-            android:name=".ThirdMyBroadcastReceiver"
+            android:name=".third.ThirdMyBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -46,18 +46,24 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ThirdBothFragments" />
-        <activity android:name=".ThirdAlternatingFragments" />
-        <activity android:name=".ThirdMixFragments" />
-        <activity android:name=".FifthClass" />
-        <activity android:name=".FifthSharedPreferences" />
-        <activity android:name=".FifthFileSaving" />
-        <activity android:name=".FifthReadFile" />
-        <activity android:name=".FifthLogDebug" />
-        <activity android:name=".FifthOptionsContextMenu" />
+        <activity android:name=".third.ThirdBothFragments" />
+        <activity android:name=".third.ThirdAlternatingFragments" />
+        <activity android:name=".third.ThirdMixFragments" />
+        <activity android:name=".fifth.FifthClass" />
+        <activity android:name=".fifth.FifthSharedPreferences" />
+        <activity android:name=".fifth.FifthFileSaving" />
+        <activity android:name=".fifth.FifthReadFile" />
+        <activity android:name=".fifth.FifthLogDebug" />
+        <activity android:name=".fifth.FifthOptionsContextMenu" />
         <activity
-            android:name=".FifthBonusOptionsMenu"
+            android:name=".fifth.FifthBonusOptionsMenu"
             android:label="@string/title_activity_fifth_bonus_options_menu" />
+        <activity android:name=".fourth.FourthLinearLayout" />
+        <activity android:name=".fourth.FourthViewElements" />
+        <activity android:name=".fourth.FourthListView" />
+        <activity android:name=".fourth.FourthProgressBar" />
+        <activity android:name=".fourth.FourthGalery" />
+        <activity android:name=".sixth.SixthClass"></activity>
     </application>
 
 </manifest>

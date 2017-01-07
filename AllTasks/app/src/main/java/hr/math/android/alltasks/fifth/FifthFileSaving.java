@@ -1,4 +1,4 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.fifth;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+
+import hr.math.android.alltasks.R;
 
 public class FifthFileSaving extends AppCompatActivity {
 

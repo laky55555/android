@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    >
+    <TableRow>
+        <Button
+            android:id="@+id/button1"
+            android:text="@string/any_text" />
+        <Button
+            android:id="@+id/button2"
+            android:text="@string/any_text" />
+    </TableRow>
+    <TableRow>
+        <Button
+            android:id="@+id/button3"
+            android:text="@string/any_text" />
+        <Button
+            android:id="@+id/button4"
+            android:text="@string/any_text" />
+    </TableRow>
+    <TableRow>
+        <TextView />
+        <Button
+            android:id="@+id/button5"
+            android:text="@string/any_text" />
+    </TableRow>
+    <TableRow>
+        <Button
+            android:id="@+id/button6"
+            android:text="@string/any_text" />
+    </TableRow>
+</TableLayout>

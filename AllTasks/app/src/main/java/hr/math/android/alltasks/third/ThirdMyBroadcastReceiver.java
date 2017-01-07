@@ -1,4 +1,4 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.third;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

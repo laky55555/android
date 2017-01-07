@@ -8,17 +8,17 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="hr.math.android.alltasks.ThirdBothFragments">
+    tools:context="hr.math.android.alltasks.third.ThirdBothFragments">
 
     <fragment
-        android:name="hr.math.android.alltasks.ThirdFragment1"
+        android:name="hr.math.android.alltasks.third.ThirdFragment1"
         android:id="@+id/fragment1"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 
     <fragment
-        android:name="hr.math.android.alltasks.ThirdFragment2"
+        android:name="hr.math.android.alltasks.third.ThirdFragment2"
         android:id="@+id/fragment2"
         android:layout_weight="1"
         android:layout_width="wrap_content"

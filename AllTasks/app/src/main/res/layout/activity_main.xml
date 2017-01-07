@@ -61,4 +61,15 @@
         android:layout_marginTop="5dp"
         android:onClick="startFifthClass"/>
 
+    <Button
+        android:id="@+id/button_sixth_class"
+        android:text="@string/sixth_class"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_fifth_class"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:onClick="startSixthClass"/>
+
 </RelativeLayout>

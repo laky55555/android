@@ -5,6 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import hr.math.android.alltasks.fifth.FifthClass;
+import hr.math.android.alltasks.fourth.FourthClass;
+import hr.math.android.alltasks.second.SecondClass;
+import hr.math.android.alltasks.sixth.SixthClass;
+import hr.math.android.alltasks.third.ThirdClass;
+
 /**
  * Main activity that starts every time application starts.
  * Main activity represents menu with buttons that leads to
@@ -53,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
      */
     public void startFifthClass(View view) {
         Intent intent = new Intent(this, FifthClass.class);
+        startActivity(intent);
+    }
+
+/**
+     * Function starts activity representing sixth class.
+     * @param view The View passed into the method is a reference to the widget that was clicked.
+     */
+    public void startSixthClass(View view) {
+        Intent intent = new Intent(this, SixthClass.class);
         startActivity(intent);
     }
 

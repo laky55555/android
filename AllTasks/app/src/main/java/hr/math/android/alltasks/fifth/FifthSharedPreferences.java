@@ -1,9 +1,11 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.fifth;
 
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import hr.math.android.alltasks.R;
 
 public class FifthSharedPreferences extends AppCompatActivity {
 

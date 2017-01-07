@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="hr.math.android.alltasks.FifthBonusOptionsMenu">
+    tools:context="hr.math.android.alltasks.fifth.FifthBonusOptionsMenu">
 
 
     <item android:id="@+id/start_google"

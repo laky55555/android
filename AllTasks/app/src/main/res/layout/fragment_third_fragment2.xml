@@ -3,7 +3,7 @@
     android:id="@+id/third_fragment2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hr.math.android.alltasks.ThirdFragment2">
+    tools:context="hr.math.android.alltasks.third.ThirdFragment2">
 
     <TextView
         android:layout_width="wrap_content"

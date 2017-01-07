@@ -1,4 +1,4 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.second;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import hr.math.android.alltasks.R;
 
 public class SecondReceiveTexts extends AppCompatActivity {
 

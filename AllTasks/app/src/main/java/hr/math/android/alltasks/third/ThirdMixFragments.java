@@ -1,4 +1,4 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.third;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -9,6 +9,8 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
+
+import hr.math.android.alltasks.R;
 
 public class ThirdMixFragments extends FragmentActivity {
 

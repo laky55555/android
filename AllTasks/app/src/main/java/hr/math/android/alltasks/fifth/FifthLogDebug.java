@@ -1,10 +1,12 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.fifth;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import hr.math.android.alltasks.R;
 
 public class FifthLogDebug extends AppCompatActivity {
 

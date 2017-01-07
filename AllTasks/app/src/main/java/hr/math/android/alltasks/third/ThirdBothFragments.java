@@ -1,7 +1,9 @@
-package hr.math.android.alltasks;
+package hr.math.android.alltasks.third;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import hr.math.android.alltasks.R;
 
 public class ThirdBothFragments extends AppCompatActivity {
 

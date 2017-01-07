@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_fifth_log_debug"
+    android:id="@+id/activity_fourth_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="hr.math.android.alltasks.fifth.FifthLogDebug">
+    android:orientation="vertical"
+    tools:context="hr.math.android.alltasks.fourth.FourthLinearLayout">
 
     <Button
-        android:id="@+id/button_fifth_logDebug1"
-        android:text="@string/send_logI"
+        android:id="@+id/button_linear1"
+        android:text="@string/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="logI"/>
-
+        android:layout_gravity="start"
+        android:layout_weight="1"/>
     <Button
-        android:id="@+id/button_fifth_logDebug2"
-        android:text="@string/send_logE"
+        android:id="@+id/button_linear2"
+        android:text="@string/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="logE"
-        android:layout_below="@+id/button_fifth_logDebug1"/>
-
+        android:layout_gravity="center"
+        android:layout_weight="2"/>
     <Button
-        android:id="@+id/button_fifth_logDebug3"
-        android:text="@string/send_logWTF"
+        android:id="@+id/button_linear3"
+        android:text="@string/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="logWTF"
-        android:layout_below="@+id/button_fifth_logDebug2"/>
+        android:layout_gravity="end"
+        android:layout_weight="3"/>
 
-
-</RelativeLayout>
+</LinearLayout>
