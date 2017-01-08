@@ -95,5 +95,8 @@
     <string name="send_email">Send e-mail</string>
 
 
+    <string name="test_no_back">Start no back</string>
+    <string name="exit">Exit</string>
+    <string name="enter_password">Enter Password</string>
 
 </resources>

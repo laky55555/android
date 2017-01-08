@@ -11,6 +11,7 @@ import hr.math.android.alltasks.fourth.FourthClass;
 import hr.math.android.alltasks.second.SecondClass;
 import hr.math.android.alltasks.seventh.SeventhClass;
 import hr.math.android.alltasks.sixth.SixthClass;
+import hr.math.android.alltasks.test.NoBack;
 import hr.math.android.alltasks.third.ThirdClass;
 
 /**
@@ -93,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public void startEighthClass(View view) {
         Intent intent = new Intent(this, EighthClass.class);
+        startActivity(intent);
+    }
+
+    public void startTestNoBack(View view) {
+        Intent intent = new Intent(this, NoBack.class);
         startActivity(intent);
     }
 
