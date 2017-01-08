@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_eight_send_sms_mail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="hr.math.android.alltasks.eight.EighthSendSmsMail">
+
+    <EditText
+        android:id="@+id/input_txt"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:hint="@string/send_text_hint" />
+
+    <EditText
+        android:id="@+id/input_number"
+        android:inputType="phone"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:hint="@string/add_number" />
+
+    <EditText
+        android:id="@+id/input_email"
+        android:inputType="textEmailAddress"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:hint="@string/add_email" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSendSMS"
+        android:text="@string/send_sms_application"
+        android:onClick="sendSmsApp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSMS2"
+        android:text="@string/send_sms_sneaky"
+        android:onClick="sendSmsSneaky"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnEmail"
+        android:text="@string/send_email"
+        android:onClick="sendEmail"/>
+
+</LinearLayout>

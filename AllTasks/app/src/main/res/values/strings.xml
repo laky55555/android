@@ -75,6 +75,7 @@
     <string name="start_google">Start google search</string>
 
     <string name="sixth_class">Sixth Class</string>
+
     <string name="seventh_class">Seventh Class</string>
     <string name="custom_content_provider">Start custom CP</string>
     <string name="embedded_content_provider">Start embedded CP</string>
@@ -84,6 +85,15 @@
     <string name="ISBN">ISBN</string>
     <string name="book_title">Book title</string>
     <string name="add_book">Add book</string>
+
+    <string name="eighth_class">Eighth Class</string>
+    <string name="download_pic_txt">Downloading</string>
+    <string name="send_sms_mail">Send SMS and email</string>
+    <string name="add_email">Enter e-mail address</string>
+    <string name="send_sms_application">Send SMS over built-in app</string>
+    <string name="send_sms_sneaky">Send SMS untraceable</string>
+    <string name="send_email">Send e-mail</string>
+
 
 
 </resources>

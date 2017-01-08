@@ -3,6 +3,8 @@
     package="hr.math.android.alltasks">
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -71,9 +73,12 @@
 
         <provider
             android:name=".seventh.BookProvider"
-            android:authorities="hr.math.android.alltasks.seventh.contprov"></provider>
+            android:authorities="hr.math.android.alltasks.seventh.contprov" />
 
-        <activity android:name=".seventh.SeventhTestingBookProvider"></activity>
+        <activity android:name=".seventh.SeventhTestingBookProvider" />
+        <activity android:name=".eight.EighthClass" />
+        <activity android:name=".eight.EighthSendSmsMail" />
+        <activity android:name=".eight.EighthDownloadPicTxt"></activity>
     </application>
 
 </manifest>

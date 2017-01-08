@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import hr.math.android.alltasks.eight.EighthClass;
 import hr.math.android.alltasks.fifth.FifthClass;
 import hr.math.android.alltasks.fourth.FourthClass;
 import hr.math.android.alltasks.second.SecondClass;
@@ -78,11 +79,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Function starts activity representing sixth class.
+     * Function starts activity representing seventh class.
      * @param view The View passed into the method is a reference to the widget that was clicked.
      */
     public void startSeventhClass(View view) {
         Intent intent = new Intent(this, SeventhClass.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Function starts activity representing eighth class.
+     * @param view The View passed into the method is a reference to the widget that was clicked.
+     */
+    public void startEighthClass(View view) {
+        Intent intent = new Intent(this, EighthClass.class);
         startActivity(intent);
     }
 
