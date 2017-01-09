@@ -23,6 +23,7 @@ public class EnterPassword extends AppCompatActivity {
         String pass = ((EditText) findViewById(R.id.password)).getText().toString();
         if(pass.equals(password)){
             Intent intent = new Intent(this, MainActivity.class);
+            getPackageManager().clearPackagePreferredActivities(getPackageName());
             startActivity(intent);
         }
         else

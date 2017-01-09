@@ -1,9 +1,18 @@
 package hr.math.android.alltasks;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import hr.math.android.alltasks.eight.EighthClass;
 import hr.math.android.alltasks.fifth.FifthClass;
@@ -11,6 +20,7 @@ import hr.math.android.alltasks.fourth.FourthClass;
 import hr.math.android.alltasks.second.SecondClass;
 import hr.math.android.alltasks.seventh.SeventhClass;
 import hr.math.android.alltasks.sixth.SixthClass;
+import hr.math.android.alltasks.test.FakeLauncherActivity;
 import hr.math.android.alltasks.test.NoBack;
 import hr.math.android.alltasks.third.ThirdClass;
 
@@ -99,7 +109,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void startTestNoBack(View view) {
         Intent intent = new Intent(this, NoBack.class);
+        //intent.addCategory(Intent.CATEGORY_HOME);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    public void exit(View view) {
+        Toast.makeText(this, "Kliknut Exit", Toast.LENGTH_SHORT).show();
     }
 
 }
