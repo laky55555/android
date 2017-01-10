@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_check_attendance"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/check_attendance" />
+        <item
+            android:id="@+id/nav_lectures_list"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/lectures_list" />
+        <item
+            android:id="@+id/nav_add_lecture"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/add_lecture" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/action_settings" />
+    </group>
+
+    <item android:title="@string/statistic">
+        <menu>
+            <item
+                android:id="@+id/nav_share_one"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/share_one_statistic" />
+            <item
+                android:id="@+id/nav_send_all"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/send_all_statistic" />
+            <item
+                android:id="@+id/nav_send_one"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/send_one_statistic" />
+        </menu>
+    </item>
+
+</menu>
