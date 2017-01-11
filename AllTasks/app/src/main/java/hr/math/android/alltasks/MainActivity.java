@@ -21,6 +21,7 @@ import hr.math.android.alltasks.second.SecondClass;
 import hr.math.android.alltasks.seventh.SeventhClass;
 import hr.math.android.alltasks.sixth.SixthClass;
 import hr.math.android.alltasks.test.FakeLauncherActivity;
+import hr.math.android.alltasks.test.FingerSigning;
 import hr.math.android.alltasks.test.NoBack;
 import hr.math.android.alltasks.third.ThirdClass;
 
@@ -114,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void exit(View view) {
-        Toast.makeText(this, "Kliknut Exit", Toast.LENGTH_SHORT).show();
+    public void startTestFingerSigning(View view) {
+        Intent intent = new Intent(this, FingerSigning.class);
+        startActivity(intent);
     }
 
 }
