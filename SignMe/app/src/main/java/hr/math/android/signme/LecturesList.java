@@ -107,9 +107,10 @@ public class LecturesList extends AppCompatActivity {
         });
     }
 
-    private void addNewLecture(String name, String id) {
+    private void addNewLecture(String name, String id, String num_of_lessons) {
 
         Long id_number;
+        int number_of_lessons;
         try{
             id_number = Long.parseLong(id);
         }
@@ -117,12 +118,21 @@ public class LecturesList extends AppCompatActivity {
             Log.d("Lecture ID", "Given lecture ID = " + id + ", assigning -1.");
             id_number = -1L;
         }
+        try{
+            number_of_lessons= Integer.parseInt(num_of_lessons);
+        }
+        catch(NumberFormatException e){
+            Log.d("NUMBER OF LECTURES", "Given number = " + num_of_lessons);
+            Toast.makeText(this, "Number of lectures is mandatory", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         db.open();
         if (!db.doesExist(name)) {
-            db.newLecture(name, id_number);
-            Log.d("ADD", "Added " + name + " with id " + id_number.toString() + " to database.");
+            db.newLecture(name, id_number, number_of_lessons);
+            //Log.d("ADD", "Added " + name + " with id " + id_number.toString() + " to database.");
             Toast.makeText(this, "Added new lecture", Toast.LENGTH_SHORT).show();
+            db.createNewTable(name, number_of_lessons);
             lectures.add(name);
             lectures_ids.add(id_number.toString());
             adapter.notifyDataSetChanged();
@@ -162,15 +172,21 @@ public class LecturesList extends AppCompatActivity {
 
         final EditText input_id = new EditText(this);
         input_id.setHint(R.string.add_lecture_id);
-        input_id.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
+        input_id.setInputType(InputType.TYPE_CLASS_NUMBER);
         layout.addView(input_id);
+
+        final EditText input_lessons_number = new EditText(this);
+        input_lessons_number.setHint(R.string.add_lessons_number);
+        input_lessons_number.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(input_lessons_number);
 
         builder.setView(layout);
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                addNewLecture(input_name.getText().toString(), input_id.getText().toString());
+                addNewLecture(input_name.getText().toString(), input_id.getText().toString(),
+                        input_lessons_number.getText().toString());
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

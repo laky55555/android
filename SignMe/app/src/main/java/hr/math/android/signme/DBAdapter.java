@@ -7,6 +7,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DBAdapter {
 
@@ -14,10 +19,11 @@ public class DBAdapter {
     static final String LECTURES_ROWID = "_id";
     static final String LECTURES_NAME = "lecture";
     static final String LECTURES_ID = "lecture_id";
+    static final String LESSONS_NUMBER = "number_of_lessons";
 
     private static final String CREATE_LECTURES =
             "create table " + TABLE_LECTURES + " (" + LECTURES_ROWID + " integer primary key autoincrement, "
-                    + LECTURES_NAME + " text not null, " + LECTURES_ID + " integer);";
+                    + LECTURES_NAME + " text not null, " + LECTURES_ID + " integer, " + LESSONS_NUMBER + " integer);";
 
 
 //    static final String KEY_EMAIL = "email";
@@ -86,22 +92,33 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    public long newLecture(String name, Long ID)
+    public long newLecture(String name, Long ID, int number_of_lessons)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(LECTURES_NAME, name);
         initialValues.put(LECTURES_ID, ID);
+        initialValues.put(LESSONS_NUMBER, number_of_lessons);
+        Log.d("SQLITE", "Added " + name + " with id " + ID.toString() + " and "
+                + number_of_lessons + " lessons to database.");
         return db.insert(TABLE_LECTURES, null, initialValues);
     }
 
     public boolean deleteAllLectures()
     {
+        Cursor c = getAllLectures();
+        while (c.moveToNext()) {
+            String dropQuery = "DROP TABLE IF EXISTS " + c.getString(0);
+            Log.d("SQLITE", "Dropping table " + c.getString(0));
+            db.execSQL(dropQuery);
+        }
+
         return db.delete(TABLE_LECTURES, null, null) > 0;
     }
 
     public boolean deleteLecture(String name)
     {
-        return db.delete(TABLE_LECTURES, LECTURES_NAME + "=" + "'" + name + "'", null) > 0;
+        db.delete(TABLE_LECTURES, LECTURES_NAME + "=" + "'" + name + "'", null);
+        return db.delete(name, null, null) > 0;
     }
 
     public Cursor getAllLectures()
@@ -141,6 +158,55 @@ public class DBAdapter {
         return db.update(TABLE_LECTURES, args, LECTURES_ID + "=" + ID, null) > 0;
     }
 
+    // Bez modifikator pristupa jer je za samo za paket
+    boolean createNewTable(String name, int number_of_lessons) {
+        //TU fali zarez na kraju autoincrement
+        ContentValues initialValues = new ContentValues();
+        String CREATE_TABLE = "create table " + name + " (" + LECTURES_ROWID + " integer primary key autoincrement";
+        for(int i=0; i<number_of_lessons; i++) {
+            CREATE_TABLE += ", lesson" + Integer.toString(i) + " text";
+            initialValues.put("lesson" + Integer.toString(i), "None");
+        }
+        CREATE_TABLE += ");";
+
+        try {
+            db.execSQL(CREATE_TABLE);
+            db.insert(name, null, initialValues);
+        } catch (SQLException e) {
+            Log.d("SQLITE", e.toString());
+            return false;
+        }
+        return true;
+    }
+
+    int newLesson(String table_name) {
+        int today_lesson = -1;
+        Cursor mCursor =
+                db.query(true, table_name, new String[] {}, LECTURES_ROWID + "=" + 1, null,
+                        null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+            today_lesson = mCursor.getColumnCount();
+            Log.d("SQLITE", "number of columns = " + Integer.toString(mCursor.getColumnCount()));
+            //for(int i = 0; i < mCursor.getColumnCount(); i++)
+                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
+            for(int i = 1; i < mCursor.getColumnCount(); i++) {
+                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
+                if(mCursor.getString(i).equals("None")) {
+                    today_lesson = i-1;
+                    break;
+                }
+            }
+        }
+        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        String now = df.format(new Date());
+        Log.d("SQLITE", "date = " + now);
+        Log.d("SQLITE", "Prvi stupac za promjenu je lesson" + today_lesson);
+        ContentValues args = new ContentValues();
+        args.put("lesson"+Integer.toString(today_lesson), now);
+        db.update(table_name, args, LECTURES_ROWID + "= '" + 1 + "'", null);
+        return today_lesson;
+    }
 
 
 }
