@@ -9,11 +9,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class DBAdapter {
+
+    static final String TAG_SQL = "SQLITE";
 
     static final String TABLE_LECTURES = "lectures";
     static final String LECTURE_ID = "_id";
@@ -33,7 +37,7 @@ public class DBAdapter {
     private static final String CREATE_STUDENTS =
             "create table " + TABLE_STUDENTS + " (" + STUDENT_ID + " integer primary key autoincrement, "
                     + STUDENT_NAME + " text not null, " + STUDENT_SURNAME + " text not null, "
-                    + STUDENT_JMBAG + " integer not null, " + STUDENT_LECTURE_ID + " integer, "
+                    + STUDENT_JMBAG + " integer not null unique, " + STUDENT_LECTURE_ID + " integer, "
                     + "FOREIGN KEY(" + STUDENT_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "));";
 
 
@@ -62,6 +66,7 @@ public class DBAdapter {
     static final String SIGNATURE_LECTURE_ID = "lecture_id";
     static final String SIGNATURE_AXIS = "axis";
     static final String SIGNATURE_COORD = "coord";
+    static final String SIGNATURE_NUMBER = "signature_number";
 
     private static String CREATE_SIGNATURES;
 //            "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
@@ -73,7 +78,8 @@ public class DBAdapter {
     static private String create_signatures_table() {
          String table =
                  "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
-                + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_LECTURE_ID + " integer, " + SIGNATURE_AXIS + " text not null";
+                + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_LECTURE_ID + " integer, " + SIGNATURE_AXIS
+                + " text not null, " + SIGNATURE_NUMBER + " integer not null";
         for(int i = 0; i < number_of_coords; i++)
             table += ", " + SIGNATURE_COORD + Integer.toString(i) + " real";
         table += ", FOREIGN KEY(" + SIGNATURE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + ")";
@@ -84,7 +90,7 @@ public class DBAdapter {
 
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "MyDB";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     final Context context;
@@ -149,13 +155,13 @@ public class DBAdapter {
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(LECTURE_NAME, name);
-        Log.d("SQLITE", "Added lecture " + name + " to database.");
+        Log.d(TAG_SQL, "Added lecture " + name + " to database.");
         return db.insert(TABLE_LECTURES, null, initialValues);
     }
 
     public boolean deleteAllLectures()
     {
-        Log.d("SQLITE", "Dropping all tables.");
+        Log.d(TAG_SQL, "Dropping all tables.");
         db.execSQL("DELETE FROM " + TABLE_ATTENDANCES);
         db.execSQL("DELETE FROM " + TABLE_SIGNATURES);
         db.execSQL("DELETE FROM " + TABLE_STUDENTS);
@@ -177,7 +183,7 @@ public class DBAdapter {
             lecture_id = mCursor.getInt(0);
         }
 
-        Log.d("SQLITE", "Getting lecture id, lecutre = " + name + " ID = " + lecture_id);
+        Log.d(TAG_SQL, "Getting lecture id, lecutre = " + name + " ID = " + lecture_id);
         return lecture_id;
     }
 
@@ -185,7 +191,7 @@ public class DBAdapter {
     {
         int ID = getLectureID(name);
         if(ID == -1) {
-            Log.d("SQLITE", "No lecture with name " + name);
+            Log.d(TAG_SQL, "No lecture with name " + name);
             return false;
         }
         return deleteLectureByID(ID);
@@ -201,20 +207,36 @@ public class DBAdapter {
             } while (student_cursor.moveToNext());
         }
 
-        Log.d("SQLITE", "Deleting lecture_id = " + lecture_id + " from table " + TABLE_LECTURES);
+        Log.d(TAG_SQL, "Deleting lecture_id = " + lecture_id + " from table " + TABLE_LECTURES);
         return db.delete(TABLE_LECTURES, LECTURE_ID + "='" + lecture_id + "'", null) > 0;
+    }
+
+    public int getStudentID(int lecture_id, int jmbag)
+    {
+        int id = -1;
+        Cursor mCursor = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID},
+                STUDENT_LECTURE_ID + "='" + lecture_id + "' and " + STUDENT_JMBAG + "='" + jmbag + "'",
+                null, null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+            id = mCursor.getInt(0);
+        }
+
+        Log.d(TAG_SQL, "Getting student id = " + id + " of student jmbag = " + jmbag
+                + " and lecture id = " + lecture_id);
+        return id;
     }
 
     public Cursor getAllStudentsOfLecture(int id)
     {
-        Log.d("SQLITE", "Getting all students of lecture_id = " + id);
+        Log.d(TAG_SQL, "Getting all students of lecture_id = " + id);
         return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_JMBAG},
                         STUDENT_LECTURE_ID + "='" + id + "'", null, null, null, null, null);
     }
 
     public Cursor getAllStudentsOfLecture(int id, CharSequence name)
     {
-        Log.d("SQLITE", "Getting all students of lecture_id = " + id);
+        Log.d(TAG_SQL, "Getting all students of lecture_id = " + id);
         return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_JMBAG},
                         STUDENT_LECTURE_ID + "='" + id + "' and " + STUDENT_NAME + " LIKE '%" + name + "%'" ,
                         null, null, null, null, null);
@@ -234,14 +256,14 @@ public class DBAdapter {
 
     private boolean deleteStudentAttendance(int student_id, int lecture_id)
     {
-        Log.d("SQLITE", "Deleting student_id = " + student_id + ", lecture_id = "
+        Log.d(TAG_SQL, "Deleting student_id = " + student_id + ", lecture_id = "
                 + lecture_id + " from table " + TABLE_ATTENDANCES);
         return db.delete(TABLE_ATTENDANCES, ATTENDANCE_STUDENT_ID + "='" + student_id + "'" + " and "
                 + ATTENDANCE_LECTURE_ID + "='" + lecture_id + "'", null) > 0;
     }
     private boolean deleteSignature(int student_id, int lecture_id)
     {
-        Log.d("SQLITE", "Deleting student_id = " + student_id + ", lecture_id = "
+        Log.d(TAG_SQL, "Deleting student_id = " + student_id + ", lecture_id = "
                 + lecture_id + " from table " + TABLE_SIGNATURES);
         return db.delete(TABLE_SIGNATURES, SIGNATURE_STUDENT_ID + "='" + student_id + "'" + " and "
                 + SIGNATURE_LECTURE_ID + "='" + lecture_id + "'", null) > 0;
@@ -271,6 +293,72 @@ public class DBAdapter {
         return false;
     }
 
+    public boolean doesStudentExist(int jmbag, int lecture_id)
+    {
+        Cursor c = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_SURNAME},
+                STUDENT_LECTURE_ID + "='" + lecture_id + "' and " + STUDENT_JMBAG + "='" + jmbag + "'" ,
+                null, null, null, null, null);;
+        if (c.moveToFirst()) {
+            Log.d(TAG_SQL, "Student with jmbag " + jmbag + " already exit, student is: " + c.getString(1)
+                    + " " + c.getString(2));
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean newStudent(String name, String surname, int JMBAG, int lecture_id)
+    {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(STUDENT_NAME, name);
+        initialValues.put(STUDENT_SURNAME, surname);
+        initialValues.put(STUDENT_JMBAG, JMBAG);
+        initialValues.put(STUDENT_LECTURE_ID, lecture_id);
+        Log.d(TAG_SQL, "Added student " + name + " to database + " + TABLE_STUDENTS);
+        return db.insert(TABLE_STUDENTS, null, initialValues) > 0;
+    }
+
+
+    public boolean saveSignature(int number, int student_id, int lecture_id, ArrayList<Float> x_coord,
+                                 ArrayList<Float> y_coord, ArrayList<Integer> pen_up)
+    {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(SIGNATURE_STUDENT_ID, student_id);
+        initialValues.put(SIGNATURE_LECTURE_ID, lecture_id);
+        initialValues.put(SIGNATURE_NUMBER, number);
+
+        initialValues.put(SIGNATURE_AXIS, "x");
+        for (int i = 0; i < x_coord.size(); i++)
+            initialValues.put(SIGNATURE_COORD+i, x_coord.get(i));
+        db.insert(TABLE_SIGNATURES, null, initialValues);
+
+        initialValues.put(SIGNATURE_AXIS, "y");
+        for (int i = 0; i < x_coord.size(); i++)
+            initialValues.put(SIGNATURE_COORD+i, y_coord.get(i));
+        db.insert(TABLE_SIGNATURES, null, initialValues);
+
+        initialValues.put(SIGNATURE_AXIS, "p");
+        for (int i = 0; i < x_coord.size(); i++)
+            initialValues.put(SIGNATURE_COORD+i, pen_up.get(i));
+        db.insert(TABLE_SIGNATURES, null, initialValues);
+        return true;
+    }
+
+
+    /*public boolean saveSignature(int number, int student_id, int lecture_id,
+                                 ArrayList array, String axis)
+    {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(SIGNATURE_STUDENT_ID, student_id);
+        initialValues.put(SIGNATURE_LECTURE_ID, lecture_id);
+        initialValues.put(SIGNATURE_NUMBER, number);
+
+        initialValues.put(SIGNATURE_AXIS, axis);
+        for (int i = 0; i < array.size(); i++)
+            initialValues.put(SIGNATURE_COORD+i, (Float) array.get(i));
+        return db.insert(TABLE_SIGNATURES, null, initialValues) > 0;
+    }*/
+
 //    int newLesson(String table_name) {
 //        int today_lesson = -1;
 //        Cursor mCursor =
@@ -279,11 +367,11 @@ public class DBAdapter {
 //        if (mCursor != null) {
 //            mCursor.moveToFirst();
 //            today_lesson = mCursor.getColumnCount();
-//            Log.d("SQLITE", "number of columns = " + Integer.toString(mCursor.getColumnCount()));
+//            Log.d(TAG_SQL, "number of columns = " + Integer.toString(mCursor.getColumnCount()));
 //            //for(int i = 0; i < mCursor.getColumnCount(); i++)
-//                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
+//                //Log.d(TAG_SQL, "columns = " + mCursor.getString(i));
 //            for(int i = 1; i < mCursor.getColumnCount(); i++) {
-//                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
+//                //Log.d(TAG_SQL, "columns = " + mCursor.getString(i));
 //                if(mCursor.getString(i).equals("None")) {
 //                    today_lesson = i-1;
 //                    break;
@@ -292,8 +380,8 @@ public class DBAdapter {
 //        }
 //        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 //        String now = df.format(new Date());
-//        Log.d("SQLITE", "date = " + now);
-//        Log.d("SQLITE", "Prvi stupac za promjenu je lesson" + today_lesson);
+//        Log.d(TAG_SQL, "date = " + now);
+//        Log.d(TAG_SQL, "Prvi stupac za promjenu je lesson" + today_lesson);
 //        ContentValues args = new ContentValues();
 //        args.put("lesson"+Integer.toString(today_lesson), now);
 //        db.update(table_name, args, LECTURES_ROWID + "= '" + 1 + "'", null);

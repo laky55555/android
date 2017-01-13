@@ -5,10 +5,23 @@
 
     <AutoCompleteTextView
         android:id="@+id/list_of_names"
+        android:hint="@string/enter_name_or_surname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="10"
         android:completionThreshold="1"/>
+
+    <Button
+        android:id="@+id/check_attendance"
+        android:text="@string/check_attendance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/add_new_student"
+        android:text="@string/new_student"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>

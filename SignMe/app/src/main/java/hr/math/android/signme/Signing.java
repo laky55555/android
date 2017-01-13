@@ -21,7 +21,8 @@ import java.util.List;
 
 public class Signing extends AppCompatActivity {
 
-    private String LECTURE;
+    private String lecture_name;
+    private int lecture_id;
     private int column_for_change;
     private DBAdapter db;
     private String TAG = "SIGNING";
@@ -30,10 +31,14 @@ public class Signing extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signing);
 
-        if(getIntent().hasExtra("EXTRA")) {
-            LECTURE = getIntent().getStringExtra("EXTRA");
-            Log.d(TAG, "onCreate intent IMA extra " + LECTURE);
-            Toast.makeText(this, "onCreate intent ima extra = " + LECTURE, Toast.LENGTH_SHORT).show();
+        if(getIntent().hasExtra("LECTURE_ID")) {
+            lecture_name = getIntent().getStringExtra("LECTURE_NAME");
+            lecture_id = getIntent().getIntExtra("LECTURE_ID", -1);
+            Log.d(TAG, "onCreate intent IMA extra lecture name = "
+                    + lecture_name + " lecture id = " + lecture_id);
+            Toast.makeText(this, "onCreate intent ima extra lecture name = " + lecture_name
+                    + " lecture id = " + lecture_id, Toast.LENGTH_SHORT).show();
+
             db = new DBAdapter(this);
             //TODO: tu se sad pokrece fragment s potpisivanjem
             startSelectNameFragment();
@@ -51,7 +56,7 @@ public class Signing extends AppCompatActivity {
         Log.d(TAG, "Starting fragment for finding student");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
-        ft.replace(R.id.fragment, new FindStudentFragment());
+        ft.replace(R.id.fragment, FindStudentFragment.newInstance(lecture_id));
         // or ft.add(R.id.your_placeholder, new FooFragment());
         // Complete the changes added above
         ft.commit();

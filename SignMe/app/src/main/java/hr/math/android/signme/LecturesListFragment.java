@@ -93,7 +93,8 @@ public class LecturesListFragment extends Fragment {
                 //else {
                     //getActivity().finishActivity(Signing.class);
                     Intent intent = new Intent(getActivity(), Signing.class);
-                    intent.putExtra("EXTRA", lecture.getString(1));
+                    intent.putExtra("LECTURE_NAME", lecture.getString(1));
+                    intent.putExtra("LECTURE_ID", lecture.getInt(0));
                     startActivity(intent);
                 //}
             }

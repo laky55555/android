@@ -33,4 +33,13 @@
     <string name="exit">Exit</string>
 
 
+    <string name="enter_name_or_surname">Enter name of surname</string>
+    <string name="add_name">Enter name</string>
+    <string name="add_surname">Enter surname</string>
+    <string name="add_jmbag">Enter JMBAG</string>
+
+    <string name="please_sign">Please sign</string>
+    <string name="more_time">more time/s :)</string>
+
+
 </resources>
