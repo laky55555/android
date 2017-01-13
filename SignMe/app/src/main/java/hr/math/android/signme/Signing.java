@@ -21,7 +21,7 @@ import java.util.List;
 
 public class Signing extends AppCompatActivity {
 
-    private String TABLE_NAME;
+    private String LECTURE;
     private int column_for_change;
     private DBAdapter db;
     private String TAG = "SIGNING";
@@ -31,17 +31,13 @@ public class Signing extends AppCompatActivity {
         setContentView(R.layout.activity_signing);
 
         if(getIntent().hasExtra("EXTRA")) {
-            TABLE_NAME = getIntent().getStringExtra("EXTRA");
-            Log.d(TAG, "onCreate intent IMA extra" + TABLE_NAME);
-            Toast.makeText(this, "onCreate intent ima extra = " + TABLE_NAME, Toast.LENGTH_SHORT).show();
+            LECTURE = getIntent().getStringExtra("EXTRA");
+            Log.d(TAG, "onCreate intent IMA extra " + LECTURE);
+            Toast.makeText(this, "onCreate intent ima extra = " + LECTURE, Toast.LENGTH_SHORT).show();
             db = new DBAdapter(this);
-            db.open();
-            column_for_change = db.newLesson(TABLE_NAME);
-            Toast.makeText(this, "Prvi stupac za promjenu je lesson" + Integer.toString(column_for_change),
-                    Toast.LENGTH_LONG).show();
-            db.close();
             //TODO: tu se sad pokrece fragment s potpisivanjem
-            startFragment();
+            startSelectNameFragment();
+            //startDrawingFragment();
         }
         else {
             Log.d(TAG, "onCreate intent NEMA extra");
@@ -50,8 +46,19 @@ public class Signing extends AppCompatActivity {
         }
     }
 
-    private void startFragment() {
-        Toast.makeText(this,"Starting fragmet for drawing", Toast.LENGTH_LONG).show();
+    private void startSelectNameFragment() {
+        Toast.makeText(this,"Starting fragment for finding student", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Starting fragment for finding student");
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.fragment, new FindStudentFragment());
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+    }
+
+    private void startDrawingFragment() {
+        Toast.makeText(this,"Starting fragment for drawing", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Starting fragment for drawing");
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

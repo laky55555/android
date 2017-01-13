@@ -16,30 +16,76 @@ import java.util.Date;
 public class DBAdapter {
 
     static final String TABLE_LECTURES = "lectures";
-    static final String LECTURES_ROWID = "_id";
-    static final String LECTURES_NAME = "lecture";
-    static final String LECTURES_ID = "lecture_id";
-    static final String LESSONS_NUMBER = "number_of_lessons";
+    static final String LECTURE_ID = "_id";
+    static final String LECTURE_NAME = "name";
 
     private static final String CREATE_LECTURES =
-            "create table " + TABLE_LECTURES + " (" + LECTURES_ROWID + " integer primary key autoincrement, "
-                    + LECTURES_NAME + " text not null, " + LECTURES_ID + " integer, " + LESSONS_NUMBER + " integer);";
+            "create table " + TABLE_LECTURES + " (" + LECTURE_ID + " integer primary key autoincrement, "
+                    + LECTURE_NAME + " text not null);";
+
+    static final String TABLE_STUDENTS = "students";
+    static final String STUDENT_ID = "_id";
+    static final String STUDENT_NAME = "name";
+    static final String STUDENT_SURNAME = "surname";
+    static final String STUDENT_JMBAG = "JMBAG";
+    static final String STUDENT_LECTURE_ID = "id_lecture";
+
+    private static final String CREATE_STUDENTS =
+            "create table " + TABLE_STUDENTS + " (" + STUDENT_ID + " integer primary key autoincrement, "
+                    + STUDENT_NAME + " text not null, " + STUDENT_SURNAME + " text not null, "
+                    + STUDENT_JMBAG + " integer not null, " + STUDENT_LECTURE_ID + " integer, "
+                    + "FOREIGN KEY(" + STUDENT_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "));";
 
 
-//    static final String KEY_EMAIL = "email";
-//
-//    static final String KEY_STREET = "street";
-//    static final String KEY_NUMBER = "number";
-//
+    static final String TABLE_ATTENDANCES = "attendance";
+    static final String ATTENDANCE_ID = "_id";
+    static final String ATTENDANCE_DATE = "date";
+    static final String ATTENDANCE_VALIDITY = "signature_validity";
+    static final String ATTENDANCE_LECTURE_ID = "lecture_id";
+    static final String ATTENDANCE_STUDENT_ID = "student_id";
+
+    private static final String CREATE_ATENDANCES =
+            "create table " + TABLE_ATTENDANCES + " (" + ATTENDANCE_ID + " integer primary key autoincrement, "
+                    + ATTENDANCE_DATE + " text not null, " + ATTENDANCE_VALIDITY + " text not null, "
+                    + ATTENDANCE_LECTURE_ID + " integer, " + ATTENDANCE_STUDENT_ID + " integer, "
+                    + "FOREIGN KEY(" + ATTENDANCE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "), "
+                    + "FOREIGN KEY(" + ATTENDANCE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
+
+    //TODO: odluciti da li ce se studenti moci potpisivati drugacije na drugim predmetima?? u pocetku DA!;
+    //      kad e to bude mijenalo treba paziti na nacin brisanja studenata jer treba vidjeti koliko predmeta student slusa
+    //      te ako ga brisemo iz zadnjeg kojeg slusa tada brisemo potpis, do sad brisemo potpis kad brisemo predmet
+    //TODO: treba se odlučiti koliko koordinata za potpise ce svaki student imati za sad 1000
+    static final int number_of_coords = 1000;
+    static final String TABLE_SIGNATURES = "signatures";
+    static final String SIGNATURE_ID = "_id";
+    static final String SIGNATURE_STUDENT_ID = "student_id";
+    static final String SIGNATURE_LECTURE_ID = "lecture_id";
+    static final String SIGNATURE_AXIS = "axis";
+    static final String SIGNATURE_COORD = "coord";
+
+    private static String CREATE_SIGNATURES;
+//            "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
+//                    + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_AXIS + " text not null";
+//    for(int i = 0; i < number_of_coords; i++)
+//        CREATE_SIGNATURES += ", " + SIGNATURE_COORD + Integer.toString(i) + " real";
+//    CREATE_SIGNATURES += ", FOREIGN KEY(" + SIGNATURE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
+
+    static private String create_signatures_table() {
+         String table =
+                 "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
+                + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_LECTURE_ID + " integer, " + SIGNATURE_AXIS + " text not null";
+        for(int i = 0; i < number_of_coords; i++)
+            table += ", " + SIGNATURE_COORD + Integer.toString(i) + " real";
+        table += ", FOREIGN KEY(" + SIGNATURE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + ")";
+        table += ", FOREIGN KEY(" + SIGNATURE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "));";
+        return table;
+    }
+
 
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "MyDB";
     private static final int DATABASE_VERSION = 1;
 
-
-//    static final String DATABASE_CREATE2 =
-//            "create table addresses (_id integer primary key autoincrement, "
-//                    + "name text not null, street text not null, number integer not null);";
 
     final Context context;
 
@@ -64,6 +110,10 @@ public class DBAdapter {
         {
             try {
                 db.execSQL(CREATE_LECTURES);
+                db.execSQL(CREATE_STUDENTS);
+                CREATE_SIGNATURES = create_signatures_table();
+                db.execSQL(CREATE_SIGNATURES);
+                db.execSQL(CREATE_ATENDANCES);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -74,7 +124,10 @@ public class DBAdapter {
         {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS contacts");
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SIGNATURES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_LECTURES);
             onCreate(db);
         }
     }
@@ -92,54 +145,121 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    public long newLecture(String name, Long ID, int number_of_lessons)
+    public long newLecture(String name)
     {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(LECTURES_NAME, name);
-        initialValues.put(LECTURES_ID, ID);
-        initialValues.put(LESSONS_NUMBER, number_of_lessons);
-        Log.d("SQLITE", "Added " + name + " with id " + ID.toString() + " and "
-                + number_of_lessons + " lessons to database.");
+        initialValues.put(LECTURE_NAME, name);
+        Log.d("SQLITE", "Added lecture " + name + " to database.");
         return db.insert(TABLE_LECTURES, null, initialValues);
     }
 
     public boolean deleteAllLectures()
     {
-        Cursor c = getAllLectures();
-        while (c.moveToNext()) {
-            String dropQuery = "DROP TABLE IF EXISTS " + c.getString(0);
-            Log.d("SQLITE", "Dropping table " + c.getString(0));
-            db.execSQL(dropQuery);
+        Log.d("SQLITE", "Dropping all tables.");
+        db.execSQL("DELETE FROM " + TABLE_ATTENDANCES);
+        db.execSQL("DELETE FROM " + TABLE_SIGNATURES);
+        db.execSQL("DELETE FROM " + TABLE_STUDENTS);
+        db.execSQL("DELETE FROM " + TABLE_LECTURES);
+        // TODO: PISE DA JE DOBRO NAPRAVITI VACUUM???
+        db.execSQL("VACUUM");
+        return true;
+    }
+
+    public int getLectureID(String name)
+    {
+        int lecture_id = -1;
+        Cursor mCursor =
+                db.query(true, TABLE_LECTURES, new String[] {LECTURE_ID},
+                        LECTURE_NAME + "='" + name + "'", null, null, null, null, null);
+
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+            lecture_id = mCursor.getInt(0);
         }
 
-        return db.delete(TABLE_LECTURES, null, null) > 0;
+        Log.d("SQLITE", "Getting lecture id, lecutre = " + name + " ID = " + lecture_id);
+        return lecture_id;
     }
 
     public boolean deleteLecture(String name)
     {
-        db.delete(TABLE_LECTURES, LECTURES_NAME + "=" + "'" + name + "'", null);
-        return db.delete(name, null, null) > 0;
+        int ID = getLectureID(name);
+        if(ID == -1) {
+            Log.d("SQLITE", "No lecture with name " + name);
+            return false;
+        }
+        return deleteLectureByID(ID);
     }
+
+    public boolean deleteLectureByID(int lecture_id)
+    {
+        // Get all students that listen given lecture so we can delete all their signatures and attendance.
+        Cursor student_cursor = getAllStudentsOfLecture(lecture_id);
+        if (student_cursor.moveToFirst()) {
+            do {
+                deleteStudentFromLecture(student_cursor.getInt(0), lecture_id);
+            } while (student_cursor.moveToNext());
+        }
+
+        Log.d("SQLITE", "Deleting lecture_id = " + lecture_id + " from table " + TABLE_LECTURES);
+        return db.delete(TABLE_LECTURES, LECTURE_ID + "='" + lecture_id + "'", null) > 0;
+    }
+
+    public Cursor getAllStudentsOfLecture(int id)
+    {
+        Log.d("SQLITE", "Getting all students of lecture_id = " + id);
+        return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_JMBAG},
+                        STUDENT_LECTURE_ID + "='" + id + "'", null, null, null, null, null);
+    }
+
+    public Cursor getAllStudentsOfLecture(int id, CharSequence name)
+    {
+        Log.d("SQLITE", "Getting all students of lecture_id = " + id);
+        return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_JMBAG},
+                        STUDENT_LECTURE_ID + "='" + id + "' and " + STUDENT_NAME + " LIKE '%" + name + "%'" ,
+                        null, null, null, null, null);
+    }
+
+    public int numberOfStudents(int lecture_id)
+    {
+        return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_JMBAG},
+                STUDENT_LECTURE_ID + "='" + lecture_id + "'" , null, null, null, null, null).getCount();
+    }
+
+    public boolean deleteStudentFromLecture(int student_id, int lecture_id) {
+        deleteStudentAttendance(student_id, lecture_id);
+        deleteSignature(student_id, lecture_id);
+        return true;
+    }
+
+    private boolean deleteStudentAttendance(int student_id, int lecture_id)
+    {
+        Log.d("SQLITE", "Deleting student_id = " + student_id + ", lecture_id = "
+                + lecture_id + " from table " + TABLE_ATTENDANCES);
+        return db.delete(TABLE_ATTENDANCES, ATTENDANCE_STUDENT_ID + "='" + student_id + "'" + " and "
+                + ATTENDANCE_LECTURE_ID + "='" + lecture_id + "'", null) > 0;
+    }
+    private boolean deleteSignature(int student_id, int lecture_id)
+    {
+        Log.d("SQLITE", "Deleting student_id = " + student_id + ", lecture_id = "
+                + lecture_id + " from table " + TABLE_SIGNATURES);
+        return db.delete(TABLE_SIGNATURES, SIGNATURE_STUDENT_ID + "='" + student_id + "'" + " and "
+                + SIGNATURE_LECTURE_ID + "='" + lecture_id + "'", null) > 0;
+    }
+
 
     public Cursor getAllLectures()
     {
-        return db.query(TABLE_LECTURES, new String[] {LECTURES_ROWID, LECTURES_NAME,
-                LECTURES_ID}, null, null, null, null, null);
+        return db.query(TABLE_LECTURES, new String[] {LECTURE_ID, LECTURE_NAME},
+                null, null, null, null, null);
     }
 
-    public Cursor getLectureByID(long ID) throws SQLException
-    {
-        Cursor mCursor =
-                db.query(true, TABLE_LECTURES, new String[] {LECTURES_ROWID,
-                                LECTURES_NAME, LECTURES_ID}, LECTURES_ID + "=" + ID, null,
-                        null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-        }
-        return mCursor;
-    }
-
-    public boolean doesExist(String name) {
+    /**
+     * Check if lecture with given name already exist.
+     * @param name Name of lecture we want to check if already exits.
+     * @return true if lecture already exist, else false.
+     */
+    public boolean doesLectureExist(String name) {
         Cursor c = getAllLectures();
         if (c.moveToFirst()) {
             do {
@@ -151,62 +271,34 @@ public class DBAdapter {
         return false;
     }
 
-    public boolean updateLectureByID(long ID, String name)
-    {
-        ContentValues args = new ContentValues();
-        args.put(LECTURES_NAME, name);
-        return db.update(TABLE_LECTURES, args, LECTURES_ID + "=" + ID, null) > 0;
-    }
-
-    // Bez modifikator pristupa jer je za samo za paket
-    boolean createNewTable(String name, int number_of_lessons) {
-        //TU fali zarez na kraju autoincrement
-        ContentValues initialValues = new ContentValues();
-        String CREATE_TABLE = "create table " + name + " (" + LECTURES_ROWID + " integer primary key autoincrement";
-        for(int i=0; i<number_of_lessons; i++) {
-            CREATE_TABLE += ", lesson" + Integer.toString(i) + " text";
-            initialValues.put("lesson" + Integer.toString(i), "None");
-        }
-        CREATE_TABLE += ");";
-
-        try {
-            db.execSQL(CREATE_TABLE);
-            db.insert(name, null, initialValues);
-        } catch (SQLException e) {
-            Log.d("SQLITE", e.toString());
-            return false;
-        }
-        return true;
-    }
-
-    int newLesson(String table_name) {
-        int today_lesson = -1;
-        Cursor mCursor =
-                db.query(true, table_name, new String[] {}, LECTURES_ROWID + "=" + 1, null,
-                        null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-            today_lesson = mCursor.getColumnCount();
-            Log.d("SQLITE", "number of columns = " + Integer.toString(mCursor.getColumnCount()));
-            //for(int i = 0; i < mCursor.getColumnCount(); i++)
-                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
-            for(int i = 1; i < mCursor.getColumnCount(); i++) {
-                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
-                if(mCursor.getString(i).equals("None")) {
-                    today_lesson = i-1;
-                    break;
-                }
-            }
-        }
-        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        String now = df.format(new Date());
-        Log.d("SQLITE", "date = " + now);
-        Log.d("SQLITE", "Prvi stupac za promjenu je lesson" + today_lesson);
-        ContentValues args = new ContentValues();
-        args.put("lesson"+Integer.toString(today_lesson), now);
-        db.update(table_name, args, LECTURES_ROWID + "= '" + 1 + "'", null);
-        return today_lesson;
-    }
+//    int newLesson(String table_name) {
+//        int today_lesson = -1;
+//        Cursor mCursor =
+//                db.query(true, table_name, new String[] {}, LECTURES_ROWID + "=" + 1, null,
+//                        null, null, null, null);
+//        if (mCursor != null) {
+//            mCursor.moveToFirst();
+//            today_lesson = mCursor.getColumnCount();
+//            Log.d("SQLITE", "number of columns = " + Integer.toString(mCursor.getColumnCount()));
+//            //for(int i = 0; i < mCursor.getColumnCount(); i++)
+//                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
+//            for(int i = 1; i < mCursor.getColumnCount(); i++) {
+//                //Log.d("SQLITE", "columns = " + mCursor.getString(i));
+//                if(mCursor.getString(i).equals("None")) {
+//                    today_lesson = i-1;
+//                    break;
+//                }
+//            }
+//        }
+//        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+//        String now = df.format(new Date());
+//        Log.d("SQLITE", "date = " + now);
+//        Log.d("SQLITE", "Prvi stupac za promjenu je lesson" + today_lesson);
+//        ContentValues args = new ContentValues();
+//        args.put("lesson"+Integer.toString(today_lesson), now);
+//        db.update(table_name, args, LECTURES_ROWID + "= '" + 1 + "'", null);
+//        return today_lesson;
+//    }
 
 
 }

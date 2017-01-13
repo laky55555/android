@@ -128,11 +128,10 @@ public class LecturesList extends AppCompatActivity {
         }
 
         db.open();
-        if (!db.doesExist(name)) {
-            db.newLecture(name, id_number, number_of_lessons);
+        if (!db.doesLectureExist(name)) {
+            db.newLecture(name);
             //Log.d("ADD", "Added " + name + " with id " + id_number.toString() + " to database.");
             Toast.makeText(this, "Added new lecture", Toast.LENGTH_SHORT).show();
-            db.createNewTable(name, number_of_lessons);
             lectures.add(name);
             lectures_ids.add(id_number.toString());
             adapter.notifyDataSetChanged();
@@ -152,7 +151,7 @@ public class LecturesList extends AppCompatActivity {
         if (c.moveToFirst()) {
             do {
                 lectures.add(c.getString(1));
-                lectures_ids.add(c.getString(2));
+                lectures_ids.add(c.getString(0));
             } while (c.moveToNext());
         }
         db.close();
