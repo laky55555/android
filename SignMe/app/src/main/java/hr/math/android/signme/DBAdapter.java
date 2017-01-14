@@ -44,14 +44,15 @@ public class DBAdapter {
     static final String TABLE_ATTENDANCES = "attendance";
     static final String ATTENDANCE_ID = "_id";
     static final String ATTENDANCE_DATE = "date";
-    static final String ATTENDANCE_VALIDITY = "signature_validity";
+    static final String ATTENDANCE_DISTANCE = "signature_distance";
     static final String ATTENDANCE_LECTURE_ID = "lecture_id";
     static final String ATTENDANCE_STUDENT_ID = "student_id";
+    static final String ATTENDANCE_REMARK = "remark";
 
     private static final String CREATE_ATENDANCES =
             "create table " + TABLE_ATTENDANCES + " (" + ATTENDANCE_ID + " integer primary key autoincrement, "
-                    + ATTENDANCE_DATE + " text not null, " + ATTENDANCE_VALIDITY + " text not null, "
-                    + ATTENDANCE_LECTURE_ID + " integer, " + ATTENDANCE_STUDENT_ID + " integer, "
+                    + ATTENDANCE_DATE + " text not null, " + ATTENDANCE_DISTANCE + " real not null, "
+                    + ATTENDANCE_LECTURE_ID + " integer, " + ATTENDANCE_STUDENT_ID + " integer, " + ATTENDANCE_REMARK + " text, "
                     + "FOREIGN KEY(" + ATTENDANCE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "), "
                     + "FOREIGN KEY(" + ATTENDANCE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
 
@@ -90,7 +91,7 @@ public class DBAdapter {
 
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "MyDB";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
 
     final Context context;
@@ -178,8 +179,7 @@ public class DBAdapter {
                 db.query(true, TABLE_LECTURES, new String[] {LECTURE_ID},
                         LECTURE_NAME + "='" + name + "'", null, null, null, null, null);
 
-        if (mCursor != null) {
-            mCursor.moveToFirst();
+        if (mCursor != null && mCursor.moveToFirst()) {
             lecture_id = mCursor.getInt(0);
         }
 
@@ -217,8 +217,24 @@ public class DBAdapter {
         Cursor mCursor = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID},
                 STUDENT_LECTURE_ID + "='" + lecture_id + "' and " + STUDENT_JMBAG + "='" + jmbag + "'",
                 null, null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
+        if (mCursor != null && mCursor.moveToFirst()) {
+            id = mCursor.getInt(0);
+        }
+
+        Log.d(TAG_SQL, "Getting student id = " + id + " of student jmbag = " + jmbag
+                + " and lecture id = " + lecture_id);
+        return id;
+    }
+
+    public int getStudentID(int lecture_id, int jmbag, String name, String surname)
+    {
+        int id = -1;
+        Cursor mCursor = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_SURNAME},
+                STUDENT_LECTURE_ID + "='" + lecture_id + "' and " + STUDENT_JMBAG + "='" + jmbag
+                        + "' and " + STUDENT_NAME + " LIKE '" + name + "' and " + STUDENT_SURNAME
+                        + " LIKE '" + surname + "'", null, null, null, null, null);
+
+        if (mCursor != null && mCursor.moveToFirst()) {
             id = mCursor.getInt(0);
         }
 
@@ -237,8 +253,9 @@ public class DBAdapter {
     public Cursor getAllStudentsOfLecture(int id, CharSequence name)
     {
         Log.d(TAG_SQL, "Getting all students of lecture_id = " + id);
-        return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_JMBAG},
-                        STUDENT_LECTURE_ID + "='" + id + "' and " + STUDENT_NAME + " LIKE '%" + name + "%'" ,
+        return db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_SURNAME, STUDENT_JMBAG},
+                        STUDENT_LECTURE_ID + "='" + id + "' and (" + STUDENT_NAME + " LIKE '%" + name + "%' or "
+                                + STUDENT_SURNAME + " LIKE '%" + name + "%')",
                         null, null, null, null, null);
     }
 
@@ -295,16 +312,33 @@ public class DBAdapter {
 
     public boolean doesStudentExist(int jmbag, int lecture_id)
     {
-        Cursor c = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_SURNAME},
+        return getStudentID(jmbag, lecture_id) != -1;
+        /*Cursor c = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_SURNAME},
                 STUDENT_LECTURE_ID + "='" + lecture_id + "' and " + STUDENT_JMBAG + "='" + jmbag + "'" ,
-                null, null, null, null, null);;
+                null, null, null, null, null);
         if (c.moveToFirst()) {
             Log.d(TAG_SQL, "Student with jmbag " + jmbag + " already exit, student is: " + c.getString(1)
                     + " " + c.getString(2));
             return true;
         }
 
-        return false;
+        return false;*/
+    }
+
+    public boolean doesStudentExist(int jmbag, int lecture_id, String name, String surname)
+    {
+        return getStudentID(jmbag, lecture_id, name, surname) != -1;
+        /*Cursor c = db.query(true, TABLE_STUDENTS, new String[] {STUDENT_ID, STUDENT_NAME, STUDENT_SURNAME},
+                STUDENT_LECTURE_ID + "='" + lecture_id + "' and " + STUDENT_JMBAG + "='" + jmbag
+                + "' and " + STUDENT_NAME + " LIKE '" + name + "' and " + STUDENT_SURNAME
+                + " LIKE '" + surname + "'", null, null, null, null, null);
+        if (c.moveToFirst()) {
+            Log.d(TAG_SQL, "Student with jmbag " + jmbag + " already exit, student is: " + c.getString(1)
+                    + " " + c.getString(2));
+            return true;
+        }
+
+        return false;*/
     }
 
     public boolean newStudent(String name, String surname, int JMBAG, int lecture_id)
@@ -342,6 +376,38 @@ public class DBAdapter {
             initialValues.put(SIGNATURE_COORD+i, pen_up.get(i));
         db.insert(TABLE_SIGNATURES, null, initialValues);
         return true;
+    }
+
+    public boolean newAttendance(int student_id, int lecture_id, double signature_distance)
+    {
+        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        String now = df.format(new Date());
+
+        String find_query = ATTENDANCE_STUDENT_ID + "='" + student_id + "' and "
+                + ATTENDANCE_LECTURE_ID + "='" + lecture_id + "' and "
+                + ATTENDANCE_DATE + " LIKE '" + now + "'";
+
+        Cursor c = db.query(true, TABLE_ATTENDANCES, new String[] {ATTENDANCE_ID, ATTENDANCE_DISTANCE},
+                find_query, null, null, null, null, null);
+        if(c.getCount() == 1) {
+            c.moveToFirst();
+            Log.d(TAG_SQL, "Somebody already signed student = " + student_id + " today.");
+            double min_signature_distance =
+                    signature_distance < c.getDouble(1) ? signature_distance : c.getDouble(1);
+            ContentValues args = new ContentValues();
+            args.put(ATTENDANCE_REMARK, "Multiple_signatures");
+            args.put(ATTENDANCE_DISTANCE, min_signature_distance);
+            return db.update(TABLE_ATTENDANCES, args, find_query, null) > 0;
+        }
+        else {
+            Log.d(TAG_SQL, "Add student = " + student_id + " into attendance of lecture " + lecture_id);
+            ContentValues initialValues = new ContentValues();
+            initialValues.put(ATTENDANCE_STUDENT_ID, student_id);
+            initialValues.put(ATTENDANCE_LECTURE_ID, lecture_id);
+            initialValues.put(ATTENDANCE_DATE, now);
+            initialValues.put(ATTENDANCE_DISTANCE, signature_distance);
+            return db.insert(TABLE_ATTENDANCES, null, initialValues) > 0;
+        }
     }
 
 

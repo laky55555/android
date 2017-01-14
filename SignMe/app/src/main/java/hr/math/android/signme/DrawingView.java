@@ -177,4 +177,24 @@ public class DrawingView extends View {
         discardSignature();
         return true;
     }
+
+    /**
+     *
+     * @param student_id
+     * @param lecture_id
+     * @return -1 if signature was too long, student needs to repeat signature,
+     *          number of minimal distance of current signature and signatures in database.
+     */
+    public double checkSignature(int student_id, int lecture_id)
+    {
+        if(x_coord.size() > 999) {
+            discardSignature();
+            return -1;
+        }
+
+        
+        //TODO: tu dolazi provjera koliko je rukopis dobar.
+        // salje se x_coord, y_coord i pen_start u funkciju za provjeru i vraca se rezultat funkcije.
+        return 15;
+    }
 }

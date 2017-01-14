@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.InputType;
@@ -26,11 +27,10 @@ import android.widget.Toast;
 
 public class FindStudentFragment extends Fragment {
 
-    private int NUMBER_OF_SIGNATRUE_FOR_NEW_STUDENTS = 3;
     DBAdapter db;
     private int lecture_id;
-    private int student_id;
     private final String TAG = "FindStudentFragment";
+    private AutoCompleteTextView textView;
 
     public static FindStudentFragment newInstance(int id) {
         FindStudentFragment fragmentDemo = new FindStudentFragment();
@@ -71,37 +71,36 @@ public class FindStudentFragment extends Fragment {
         check_attendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: treba jos napraviti da se posalje ime i otvori potpisivanje
-                Toast.makeText(getActivity(), "Starting signature for name: ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Starting signature for student", Toast.LENGTH_LONG).show();
+            checkExistingStudent();
             }
         });
 
         add_new_student.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: treba jos napraviti da se posalje ime i otvori potpisivanje
-                popUpNewStudents();
-                Toast.makeText(getActivity(), "Creating new student: ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Creating new student: ", Toast.LENGTH_LONG).show();
+            popUpNewStudents();
             }
         });
 
         // Setup any handles to view objects here
-        AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.list_of_names);
+        textView = (AutoCompleteTextView) view.findViewById(R.id.list_of_names);
         // Get the string array
         //String[] countries = getResources().getStringArray(R.array.countries_array);
         // Create the adapter and set it to the AutoCompleteTextView
         db = new DBAdapter(getContext());
         db.open();
         //CursorAdapter adapter = new ClientCursorAdapter(getContext(), R.layout.fragmetn_select_name, db.getAllStudentsOfLecture(0), 0);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getContext(), android.R.layout.simple_dropdown_item_1line,
-                null, new String[]{"name"}, new int[]{android.R.id.text1});
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getContext(), android.R.layout.two_line_list_item,
+                null, new String[]{"name", "JMBAG"}, new int[]{android.R.id.text1, android.R.id.text2});
 
 
         adapter.setCursorToStringConverter(new SimpleCursorAdapter.CursorToStringConverter() {
             @Override
             public CharSequence convertToString(Cursor cursor) {
                 final int colIndex = cursor.getColumnIndexOrThrow("name");
-                return cursor.getString(colIndex);
+                return cursor.getString(colIndex) + " " + cursor.getString(2) + " " + cursor.getString(3);
             }
         });
 
@@ -119,6 +118,35 @@ public class FindStudentFragment extends Fragment {
 
         textView.setAdapter(adapter);
         //db.close();
+    }
+
+    private void noStudentMessage(String student)
+    {
+        Snackbar.make(getView(), "There is no student " + student,
+                Snackbar.LENGTH_LONG).show();
+    }
+
+    private void checkExistingStudent() {
+        String wholeText = textView.getText().toString();
+        Log.d(TAG, wholeText);
+        String[] text = wholeText.split(" ");
+        if(text.length != 3)
+            noStudentMessage(wholeText);
+        else {
+            int jmbag;
+            try {
+                jmbag = Integer.parseInt(text[2]);
+            }
+            catch (NumberFormatException e){
+                noStudentMessage(wholeText);
+                return;
+            }
+            int student_id = db.getStudentID(lecture_id, jmbag, text[0], text[1]);
+            if(student_id == -1)
+                noStudentMessage(wholeText);
+            else
+                startSigningScreen(false, student_id);
+        }
     }
 
     private void popUpNewStudents() {
@@ -148,10 +176,10 @@ public class FindStudentFragment extends Fragment {
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                boolean added = addNewStudent(input_name.getText().toString(), input_surname.getText().toString(),
+                int new_student_id = addNewStudent(input_name.getText().toString(), input_surname.getText().toString(),
                         input_jmbag.getText().toString());
-                if(added)
-                    startSigningScreen();
+                if(new_student_id != -1)
+                    startSigningScreen(true, new_student_id);
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -164,7 +192,7 @@ public class FindStudentFragment extends Fragment {
         builder.show();
     }
 
-    private boolean addNewStudent(String name, String surname, String JMBAG)
+    private int addNewStudent(String name, String surname, String JMBAG)
     {
         int jmbag;
         try{
@@ -173,31 +201,30 @@ public class FindStudentFragment extends Fragment {
         catch(NumberFormatException e){
             Log.d(TAG, "Given new student JMBAG = " + JMBAG + ", necessary true number");
             Toast.makeText(getContext(), "JMBAG number is mandatory", Toast.LENGTH_LONG).show();
-            return false;
+            return -1;
         }
 
         db.open();
         if (!db.doesStudentExist(jmbag, lecture_id)) {
             db.newStudent(name, surname, jmbag, lecture_id);
-            student_id = db.getStudentID(lecture_id, jmbag);
             Toast.makeText(getContext(), "Added new student " + name, Toast.LENGTH_SHORT).show();
-            return true;
+            return db.getStudentID(lecture_id, jmbag);
+
         }
         else
             Toast.makeText(getContext(), "Student with JMBAG " + JMBAG + " already exist.", Toast.LENGTH_SHORT).show();
         //db.close();
-        return false;
+        return -1;
     }
 
-    private void startSigningScreen()
+    private void startSigningScreen(boolean learning_new, int student_id)
     {
         Toast.makeText(getContext(), "Starting fragment for drawing", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Starting fragment for drawing");
         // Begin the transaction
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
-        ft.replace(R.id.fragment, DrawingFragment.newInstance(NUMBER_OF_SIGNATRUE_FOR_NEW_STUDENTS,
-                student_id, lecture_id));
+        ft.replace(R.id.fragment, DrawingFragment.newInstance(learning_new, student_id, lecture_id));
         // or ft.add(R.id.your_placeholder, new FooFragment());
         // Complete the changes added above
         ft.commit();

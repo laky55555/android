@@ -137,10 +137,13 @@ public class Signing extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(getIntent().hasExtra("EXTRA"))
+
+        if(getIntent().hasExtra("LECTURE_ID"))
             Log.d(TAG, "onResume intent IMA extra");
-        else
+        else {
             Log.d(TAG, "onResume intent NEMA extra");
+            exit();
+        }
 
         if(isMyAppLauncherDefault())
             Log.d(TAG, "onResume Provjera launchr, MOJ JE");
@@ -196,11 +199,12 @@ public class Signing extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_new_student) {
-            addNewStudent();
-            return true;
-        } else if (id == R.id.action_exit) {
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_new_student) {
+//            addNewStudent();
+//            return true;
+//        } else
+        if (id == R.id.action_exit) {
             Toast.makeText(this,"exit", Toast.LENGTH_LONG).show();
             popUpPassword();
             return true;
@@ -209,9 +213,9 @@ public class Signing extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addNewStudent() {
-        //TODO: dolazi fragment neki pop up za upis novog studenta
-        Toast.makeText(this,"new_student", Toast.LENGTH_LONG).show();
-    }
+//    private void addNewStudent() {
+//        //TODO: dolazi fragment neki pop up za upis novog studenta
+//        Toast.makeText(this,"new_student", Toast.LENGTH_LONG).show();
+//    }
 
 }
