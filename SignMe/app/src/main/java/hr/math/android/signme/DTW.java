@@ -1,6 +1,7 @@
 package hr.math.android.signme;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by mira on 13.01.17..
@@ -8,12 +9,43 @@ import java.util.ArrayList;
 
 public class DTW {
 
-    static public float calculateDistance(ArrayList<Float> x1, ArrayList<Float> y1,
-                                           ArrayList<Float> x2, ArrayList<Float> y2){
+    static public float calculateDistance2(ArrayList<Float> x1, ArrayList<Float> y1, ArrayList<Float> pen1,
+                                           ArrayList<Float> x2, ArrayList<Float> y2, ArrayList<Float> pen2){
+
+        ArrayList<Float> newX1 = new ArrayList<Float>(), newY1 = new ArrayList<Float>();
+        ArrayList<Float> newX2 = new ArrayList<Float>(), newY2 = new ArrayList<Float>();
+        refineSeries(x1, y1, pen1, newX1, newY1);
+        refineSeries(x2, y2, pen2, newX2, newY2);
+
         int m = x1.size();
         int n = x2.size();
         float cost;
         float[][] dtwArray = new float[m + 1][n + 1];
+        float c = (float)0.2;
+
+        for(float[] row : dtwArray)
+            Arrays.fill(row, Float.POSITIVE_INFINITY);
+        dtwArray[0][0] = 0;
+        for(int i = 1; i < m +1; ++i)
+            for(int j = Math.max(0, Math.round(n/m*i-c*n)); j <= Math.min(n, n/m*i+c*n); ++j){
+                cost = euclideanDistance(newX1.get(i-1), newY1.get(i-1), newX2.get(j-1), newY2.get(j-1));
+                dtwArray[i][j] = cost + minElement(dtwArray[i-1][j],
+                                                    dtwArray[i][j-1],
+                                                    dtwArray[i-1][j-1]);
+            }
+
+        return dtwArray[m][n];
+    }
+
+    static public float calculateDistance1(ArrayList<Float> x1, ArrayList<Float> y1, ArrayList<Float> pen1,
+                                           ArrayList<Float> x2, ArrayList<Float> y2, ArrayList<Float> pen2){
+
+        int m = x1.size();
+        int n = x2.size();
+        float cost;
+        float[][] dtwArray = new float[m + 1][n + 1];
+        float c = (float)0.2;
+
         for(int i = 1; i < m + 1; ++i)
             dtwArray[i][0] = Float.POSITIVE_INFINITY;
         for(int i = 1; i < n + 1; ++i)
@@ -27,6 +59,30 @@ public class DTW {
                         dtwArray[i-1][j-1]);
             }
         return dtwArray[m][n];
+    }
+
+
+    private static void refineSeries(ArrayList<Float> x, ArrayList<Float> y, ArrayList<Float> pen,
+                                                 ArrayList<Float> newX, ArrayList<Float> newY){
+
+        float rememberX = -1, rememberY = -1;
+        for(int i = 0; i < x.size(); ++i){
+            if(pen.get(i) == 3){
+                rememberX = x.get(i);
+                rememberY = y.get(i);
+            }
+            else if(pen.get(i) == 1 && i != 0){
+                for(float point = rememberX; point < x.get(i); point+=10)
+                    newX.add(point);
+                for(float point = rememberY; point < y.get(i); point+=10){
+                    newY.add(point);
+                }
+            }
+            else {
+                newX.add(x.get(i));
+                newY.add(y.get(i));
+            }
+        }
     }
 
     public static ArrayList<Float> normaliseXData(ArrayList<Float> x){

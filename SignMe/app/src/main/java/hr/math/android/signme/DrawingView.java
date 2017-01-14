@@ -228,11 +228,11 @@ public class DrawingView extends View {
             Log.d(TAG, "pen koordinate iz baze" + p.toString());
 
             if(i == 1) {
-                min = DTW.calculateDistance(x_coord_norm, y_coord_norm, p, x, y, pen_start);
+                min = DTW.calculateDistance1(x_coord_norm, y_coord_norm, p, x, y, pen_start);
                 Log.d(TAG, "Minmal distance between signatures is: " + min);
             }
             else {
-                min_temp = DTW.calculateDistance(x_coord_norm, y_coord_norm, p, x, y, pen_start);
+                min_temp = DTW.calculateDistance1(x_coord_norm, y_coord_norm, p, x, y, pen_start);
                 Log.d(TAG, "Minmal distance between signatures is: " + min_temp);
                 if (min_temp < min)
                     min = min_temp;
