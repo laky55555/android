@@ -116,7 +116,8 @@ public class Signing extends AppCompatActivity {
 
     private void exit() {
         Intent intent = new Intent(this, MainActivity.class);
-        getPackageManager().clearPackagePreferredActivities(getPackageName());
+        //TODO: to treba vratiti ili negdje drugdje stvaiti jer inace se nemoze izaci iz aplikacije
+        //getPackageManager().clearPackagePreferredActivities(getPackageName());
         startActivity(intent);
         finish();
     }

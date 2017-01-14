@@ -1,6 +1,7 @@
 package hr.math.android.signme;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,12 +11,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class DrawingView extends View {
 
-    private final static String TAG = "DrawingView";
+    private final static String TAG = "DrawingView diff";
 
     private Paint mPaint;
     public int width;
@@ -30,7 +32,11 @@ public class DrawingView extends View {
     private int broj_dodira = 0;
     private ArrayList<Float> x_coord;
     private ArrayList<Float> y_coord;
-    private ArrayList<Integer> pen_start;
+    private ArrayList<Float> pen_start;
+    private final int backgroundColor = 0xFFCCFFFF;
+    private final float touchDownCode = 1;
+    private final float touchMoveCode = 2;
+    private final float touchUpCode = 3;
 
     private DBAdapter db;
 
@@ -67,6 +73,7 @@ public class DrawingView extends View {
 
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+        mCanvas.drawColor(backgroundColor);
     }
 
     @Override
@@ -88,7 +95,7 @@ public class DrawingView extends View {
         mY = y;
         x_coord.add(x);
         y_coord.add(y);
-        pen_start.add(1);
+        pen_start.add(touchDownCode);
 
     }
 
@@ -102,7 +109,7 @@ public class DrawingView extends View {
 
             x_coord.add(x);
             y_coord.add(y);
-            pen_start.add(0);
+            pen_start.add(touchMoveCode);
 
             circlePath.reset();
             circlePath.addCircle(mX, mY, 30, Path.Direction.CW);
@@ -112,7 +119,7 @@ public class DrawingView extends View {
     private void touch_up() {
         mPath.lineTo(mX, mY);
 
-        pen_start.set(pen_start.size() - 1, -1);
+        pen_start.set(pen_start.size() - 1, touchUpCode);
 
         circlePath.reset();
         // commit the path to our offscreen
@@ -126,9 +133,9 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        Log.d("POZICIJA", "x = " + Float.toString(x));
-        Log.d("POZICIJA", "y = " + Float.toString(y));
-        Log.d("BROJ DODIRA", "broj dodira = " + Integer.toString(++broj_dodira));
+        //Log.d("POZICIJA", "x = " + Float.toString(x));
+        //Log.d("POZICIJA", "y = " + Float.toString(y));
+        //Log.d("BROJ DODIRA", "broj dodira = " + Integer.toString(++broj_dodira));
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -150,7 +157,9 @@ public class DrawingView extends View {
     public void discardSignature()
     {
         Log.d(TAG, "Discarding signature");
-        mCanvas.drawColor(Color.WHITE);
+        //mCanvas.drawColor(Color.WHITE);
+        //mCanvas.drawColor(Color.GRAY);
+        mCanvas.drawColor(backgroundColor);
         x_coord.clear();
         y_coord.clear();
         pen_start.clear();
@@ -173,7 +182,7 @@ public class DrawingView extends View {
 //        db.saveSignature(number, student_id, lecture_id, x_coord, "x");
 //        db.saveSignature(number, student_id, lecture_id, y_coord, "y");
 //        db.saveSignature(number, student_id, lecture_id, pen_start, "p");
-        db.saveSignature(number, student_id, lecture_id, x_coord, y_coord, pen_start);
+        db.saveSignature(number, student_id, lecture_id, DTW.normaliseXData(x_coord), DTW.normaliseYData(y_coord), pen_start);
         discardSignature();
         return true;
     }
@@ -185,16 +194,80 @@ public class DrawingView extends View {
      * @return -1 if signature was too long, student needs to repeat signature,
      *          number of minimal distance of current signature and signatures in database.
      */
-    public double checkSignature(int student_id, int lecture_id)
+    public float checkSignature(int student_id, int lecture_id)
     {
         if(x_coord.size() > 999) {
             discardSignature();
             return -1;
         }
 
-        
-        //TODO: tu dolazi provjera koliko je rukopis dobar.
-        // salje se x_coord, y_coord i pen_start u funkciju za provjeru i vraca se rezultat funkcije.
-        return 15;
+        float min = 999;
+        float min_temp;
+
+        db.open();
+        Cursor c = db.getStudentSignature(student_id, lecture_id);
+        Log.d(TAG, "Got " + c.getCount() + " rows.");
+
+        if(c.getCount() % 3 != 0) {
+            discardSignature();
+            return -1;
+        }
+
+        ArrayList<Float> x_coord_norm = DTW.normaliseXData(x_coord);
+        ArrayList<Float> y_coord_norm = DTW.normaliseYData(y_coord);
+
+        for (int i = 1; i <= c.getCount()/3; i++) {
+            ArrayList<Float> x = getArray(c, "x", i);
+            ArrayList<Float> y = getArray(c, "y", i);
+            ArrayList<Float> p = getArray(c, "p", i);
+            Log.d(TAG, "x koordinate potpisa" + x.toString());
+            Log.d(TAG, "y koordinate potpisa" + y.toString());
+            Log.d(TAG, "pen koordinate iz potpisa" + pen_start.toString());
+            Log.d(TAG, "x koordinate iz baze" + x_coord_norm.toString());
+            Log.d(TAG, "y koordinate iz baze" + y_coord_norm.toString());
+            Log.d(TAG, "pen koordinate iz baze" + p.toString());
+
+            if(i == 1) {
+                min = DTW.calculateDistance(x_coord_norm, y_coord_norm, p, x, y, pen_start);
+                Log.d(TAG, "Minmal distance between signatures is: " + min);
+            }
+            else {
+                min_temp = DTW.calculateDistance(x_coord_norm, y_coord_norm, p, x, y, pen_start);
+                Log.d(TAG, "Minmal distance between signatures is: " + min_temp);
+                if (min_temp < min)
+                    min = min_temp;
+            }
+        }
+
+        db.close();
+        Log.d(TAG, "Minmal distance between signatures is: " + min);
+        Toast.makeText(getContext(), "Minmal distance between signatures is: " + min, Toast.LENGTH_LONG).show();
+        return min;
+    }
+
+    private ArrayList<Float> getArray(Cursor c, String axis, int signature_number)
+    {
+        ArrayList<Float> array = new ArrayList<>();
+        int i=2;
+        c.moveToFirst();
+        do {
+            //Log.d(TAG, "signature number = " + signature_number + " iz baze = " + c.getInt(0));
+            //Log.d(TAG, "axis = " + axis + " iz baze = " + c.getString(1));
+            if(c.getInt(0) == signature_number && c.getString(1).equals(axis))
+                while (true) {
+                    try {
+                        float a = c.getFloat(i++);
+                        if(a == 0)
+                            return array;
+                        array.add(a);
+                    }
+                    catch (Exception e) {
+                        Log.d(TAG, "DOBIVENI ARRAY IZ BAZE " + array.toString());
+                        return array;
+                    }
+                }
+        } while (c.moveToNext());
+
+        return array;
     }
 }

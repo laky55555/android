@@ -354,7 +354,7 @@ public class DBAdapter {
 
 
     public boolean saveSignature(int number, int student_id, int lecture_id, ArrayList<Float> x_coord,
-                                 ArrayList<Float> y_coord, ArrayList<Integer> pen_up)
+                                 ArrayList<Float> y_coord, ArrayList<Float> pen_up)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(SIGNATURE_STUDENT_ID, student_id);
@@ -410,6 +410,18 @@ public class DBAdapter {
         }
     }
 
+    public Cursor getStudentSignature(int student_id, int lecture_id)
+    {
+        String find_query = SIGNATURE_STUDENT_ID + "='" + student_id + "' and "
+                + SIGNATURE_LECTURE_ID+ "='" + lecture_id + "'";
+        String[] getRows = new String[number_of_coords+2];
+        getRows[0] = SIGNATURE_NUMBER;
+        getRows[1] = SIGNATURE_AXIS;
+        for (int i = 0; i < number_of_coords; i++)
+            getRows[i+2] = SIGNATURE_COORD + i;
+
+        return db.query(true, TABLE_SIGNATURES, getRows, find_query, null, null, null, null, null);
+    }
 
     /*public boolean saveSignature(int number, int student_id, int lecture_id,
                                  ArrayList array, String axis)
