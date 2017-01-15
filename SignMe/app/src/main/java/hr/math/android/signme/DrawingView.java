@@ -177,6 +177,7 @@ public class DrawingView extends View {
         Log.d(TAG, "pen start = " + pen_start.toString());
         Log.d(TAG, "Saving signature number " + number + " of student "
                 + student_id + " on lecture " + lecture_id);
+        Log.d(TAG, "duljina prije spremanja je: " + x_coord.size() + " " + y_coord.size() +" " + pen_start.size() );
 
         db.open();
 //        db.saveSignature(number, student_id, lecture_id, x_coord, "x");
@@ -201,8 +202,8 @@ public class DrawingView extends View {
             return -1;
         }
 
-        float min = 999;
-        float min_temp;
+        float min = 999, min1 = 999;
+        float min_temp, min_temp1;
 
         db.open();
         Cursor c = db.getStudentSignature(student_id, lecture_id);
@@ -227,21 +228,31 @@ public class DrawingView extends View {
             Log.d(TAG, "y koordinate iz baze" + y_coord_norm.toString());
             Log.d(TAG, "pen koordinate iz baze" + p.toString());
 
+            Log.d(TAG, "duljina iz baze je: " + x.size() + " " + y.size() +" " + p.size() );
+            Log.d(TAG, "duljina live je: " + x_coord_norm.size() + " " + y_coord_norm.size() +" " + pen_start.size() );
+
             if(i == 1) {
-                min = DTW.calculateDistance1(x_coord_norm, y_coord_norm, p, x, y, pen_start);
-                Log.d(TAG, "Minmal distance between signatures is: " + min);
+                min = DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+                min1 = DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+                Log.d(TAG, "Minmal distance1 between signatures is: " + min
+                        + "minimal disatance2 is " + min1);
             }
             else {
-                min_temp = DTW.calculateDistance1(x_coord_norm, y_coord_norm, p, x, y, pen_start);
-                Log.d(TAG, "Minmal distance between signatures is: " + min_temp);
+                min_temp = DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+                min_temp1 = DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+                Log.d(TAG, "Minmal distance between signatures is: " + min_temp +
+                            "minimal distance2 is " + min_temp1);
                 if (min_temp < min)
                     min = min_temp;
+                if(min_temp1 < min1)
+                    min1 = min_temp1;
             }
         }
 
         db.close();
-        Log.d(TAG, "Minmal distance between signatures is: " + min);
-        Toast.makeText(getContext(), "Minmal distance between signatures is: " + min, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Minmal distance between signatures is: " + min + "minimal distance1 is " + min1);
+        Toast.makeText(getContext(), "Minmal distance between signatures is: " + min + "mini dist1 is " + min1,
+                                                                            Toast.LENGTH_LONG).show();
         return min;
     }
 

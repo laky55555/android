@@ -1,7 +1,11 @@
 package hr.math.android.signme;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by mira on 13.01.17..
@@ -17,8 +21,8 @@ public class DTW {
         refineSeries(x1, y1, pen1, newX1, newY1);
         refineSeries(x2, y2, pen2, newX2, newY2);
 
-        int m = x1.size();
-        int n = x2.size();
+        int m = newX1.size();
+        int n = newX2.size();
         float cost;
         float[][] dtwArray = new float[m + 1][n + 1];
         float c = (float)0.2;
@@ -26,13 +30,19 @@ public class DTW {
         for(float[] row : dtwArray)
             Arrays.fill(row, Float.POSITIVE_INFINITY);
         dtwArray[0][0] = 0;
-        for(int i = 1; i < m +1; ++i)
-            for(int j = Math.max(0, Math.round(n/m*i-c*n)); j <= Math.min(n, n/m*i+c*n); ++j){
-                cost = euclideanDistance(newX1.get(i-1), newY1.get(i-1), newX2.get(j-1), newY2.get(j-1));
-                dtwArray[i][j] = cost + minElement(dtwArray[i-1][j],
-                                                    dtwArray[i][j-1],
-                                                    dtwArray[i-1][j-1]);
+        Log.d(TAG, "m i n su " + m +" " + n);
+        for(int i = 1; i < m +1; ++i) {
+//            Log.d(TAG, "za i=" + i + "j ide od " + Math.max(1, Math.round(((float)n / (float)m) * i - c * (float)n)) + " do "
+//                        + Math.min(n,((float)n / (float)m) * (float)i + c * (float) n) + "razmak " + ((((float)n / (float)m) * (float)i) + (c * (float) n))
+//                + " razmak " + (float)n/(float)m * i);
+            for (int j = Math.max(1, Math.round(((float)n / (float)m) * i - c * (float)n));
+                 j <= Math.min(n, ((float)n / (float)m) * (float)i + c * (float) n); ++j) {
+                cost = euclideanDistance(newX1.get(i - 1), newY1.get(i - 1), newX2.get(j - 1), newY2.get(j - 1));
+                dtwArray[i][j] = cost + minElement(dtwArray[i - 1][j],
+                        dtwArray[i][j - 1],
+                        dtwArray[i - 1][j - 1]);
             }
+        }
 
         return dtwArray[m][n];
     }
@@ -64,25 +74,34 @@ public class DTW {
 
     private static void refineSeries(ArrayList<Float> x, ArrayList<Float> y, ArrayList<Float> pen,
                                                  ArrayList<Float> newX, ArrayList<Float> newY){
+//        Log.d(TAG, "duljina nizova prije profinjenja je: " + x.size() + " " + y.size() + " " + pen.size());
 
         float rememberX = -1, rememberY = -1;
         for(int i = 0; i < x.size(); ++i){
             if(pen.get(i) == 3){
+                newX.add(x.get(i));
+                newY.add(y.get(i));
                 rememberX = x.get(i);
                 rememberY = y.get(i);
             }
             else if(pen.get(i) == 1 && i != 0){
-                for(float point = rememberX; point < x.get(i); point+=10)
-                    newX.add(point);
-                for(float point = rememberY; point < y.get(i); point+=10){
-                    newY.add(point);
+                float xNow = x.get(i), yNow = y.get(i);
+                float diffX = (xNow - rememberX)/11, diffY = (yNow - rememberY)/11;
+                for(int k = 1; k < 11; ++k){
+                    newX.add(rememberX + diffX * k);
+                    newY.add(rememberY + diffY * k);
                 }
+                newX.add(xNow);
+                newY.add(yNow);
             }
             else {
                 newX.add(x.get(i));
                 newY.add(y.get(i));
             }
         }
+        Log.d(TAG, "profinjeni niz je " + newX.toString());
+        Log.d(TAG, "profinjeni niz je " + newY.toString());
+//        Log.d(TAG, "duljina nizova nakon profinjenja je: " + newX.size() + " " + newY.size() + " " + pen.size());
     }
 
     public static ArrayList<Float> normaliseXData(ArrayList<Float> x){
