@@ -86,7 +86,7 @@ public class DrawingView extends View {
     }
 
     private float mX, mY;
-    private static final float TOUCH_TOLERANCE = 4;
+    private static final float TOUCH_TOLERANCE = 2;
 
     private void touch_start(float x, float y) {
         mPath.reset();
@@ -180,10 +180,52 @@ public class DrawingView extends View {
         Log.d(TAG, "duljina prije spremanja je: " + x_coord.size() + " " + y_coord.size() +" " + pen_start.size() );
 
         db.open();
-//        db.saveSignature(number, student_id, lecture_id, x_coord, "x");
-//        db.saveSignature(number, student_id, lecture_id, y_coord, "y");
-//        db.saveSignature(number, student_id, lecture_id, pen_start, "p");
-        db.saveSignature(number, student_id, lecture_id, DTW.normaliseXData(x_coord), DTW.normaliseYData(y_coord), pen_start);
+
+        Cursor c = db.getStudentSignature(student_id, lecture_id);
+        Log.d(TAG, "Got " + c.getCount() + " rows.");
+
+        if(c.getCount() % 3 != 0) {
+            discardSignature();
+            return false;
+        }
+
+        ArrayList<Float> x_normalised = DTW.normaliseXData(x_coord);
+        ArrayList<Float> y_normalised = DTW.normaliseYData(y_coord);
+
+        db.saveSignature(number, student_id, lecture_id, x_normalised, y_normalised, pen_start);
+
+        float max1 = 0, max_temp1;
+        float max2 = 0, max_temp2;
+
+        // In database we save signatures by number from last.
+        for (int i = 1; i <= c.getCount()/3; i++) {
+            ArrayList<Float> x = getArray(c, "x", i);
+            ArrayList<Float> y = getArray(c, "y", i);
+            ArrayList<Float> p = getArray(c, "p", i);
+            Log.d(TAG, "x koordinate iz baze" + x.toString());
+            Log.d(TAG, "y koordinate iz baze" + y.toString());
+            Log.d(TAG, "pen koordinate iz baze" + p.toString());
+            Log.d(TAG, "x koordinate trenutni potpis" + x_normalised.toString());
+            Log.d(TAG, "y koordinate trenutni potpis" + y_normalised.toString());
+            Log.d(TAG, "pen koordinate trenutni potpis" + pen_start.toString());
+
+            Log.d(TAG, "duljina iz baze je: " + x.size() + " " + y.size() +" " + p.size() );
+            Log.d(TAG, "duljina live je: " + x_normalised.size() + " " + y_normalised.size() +" " + pen_start.size() );
+
+
+            max_temp1 = DTW.calculateDistance1(x_normalised, y_normalised, pen_start, x, y, p);
+            max_temp2 = DTW.calculateDistance2(x_normalised, y_normalised, pen_start, x, y, p);
+            Log.d(TAG, "Maximal distance between signatures is: " + max_temp1 +
+                    "maximal distance2 is " + max_temp2);
+            if (max_temp1 > max1)
+                max1 = max_temp1;
+            if (max_temp2 > max2)
+                max2 = max_temp2;
+        }
+
+        if(c.getCount() != 0)
+            db.updateMaxDistance(student_id, lecture_id, max1, max2);
+        db.close();
         discardSignature();
         return true;
     }
@@ -202,12 +244,15 @@ public class DrawingView extends View {
             return -1;
         }
 
-        float min = 999, min1 = 999;
-        float min_temp, min_temp1;
+        //TODO: maknuti if nego staviti infinity
+        float min1, min2;
+        ArrayList<Float> min_sum = new ArrayList<>();
+        min_sum.add(0F);
+        min_sum.add(0F);
 
         db.open();
         Cursor c = db.getStudentSignature(student_id, lecture_id);
-        Log.d(TAG, "Got " + c.getCount() + " rows.");
+        Log.d(TAG, "Got " + c.getCount() + " rows. from student id " + student_id + " and lecture id = " + lecture_id);
 
         if(c.getCount() % 3 != 0) {
             discardSignature();
@@ -231,28 +276,29 @@ public class DrawingView extends View {
             Log.d(TAG, "duljina iz baze je: " + x.size() + " " + y.size() +" " + p.size() );
             Log.d(TAG, "duljina live je: " + x_coord_norm.size() + " " + y_coord_norm.size() +" " + pen_start.size() );
 
-            if(i == 1) {
-                min = DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p);
-                min1 = DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p);
-                Log.d(TAG, "Minmal distance1 between signatures is: " + min
-                        + "minimal disatance2 is " + min1);
-            }
-            else {
-                min_temp = DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p);
-                min_temp1 = DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p);
-                Log.d(TAG, "Minmal distance between signatures is: " + min_temp +
-                            "minimal distance2 is " + min_temp1);
-                if (min_temp < min)
-                    min = min_temp;
-                if(min_temp1 < min1)
-                    min1 = min_temp1;
-            }
+
+            //Log.d(TAG, "min1 = " + DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p));
+            //Log.d(TAG, "min2 = " + DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p));
+            min1 = DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+            min2 = DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+            Log.d(TAG, "Minmal distance between signatures is: " + min1 +
+                        " minimal distance2 is " + min2 + " min_sum before " + min_sum.toString());
+            min_sum.set(0, min_sum.get(0) + min1);
+            min_sum.set(1, min_sum.get(1) + min2);
+            Log.d(TAG, " min_sum after " + min_sum.toString());
+        }
+
+        float min = Float.POSITIVE_INFINITY;
+        ArrayList<Float> max_distances = db.getMaxDistance(student_id, lecture_id);
+        for (int i = 0; i < max_distances.size(); i++) {
+            min_sum.set(i, min_sum.get(i)/max_distances.get(i)/c.getCount()*3);
+            if (min > min_sum.get(i))
+                min = min_sum.get(i);
         }
 
         db.close();
-        Log.d(TAG, "Minmal distance between signatures is: " + min + "minimal distance1 is " + min1);
-        Toast.makeText(getContext(), "Minmal distance between signatures is: " + min + "mini dist1 is " + min1,
-                                                                            Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Minmal distance between signatures is: " + min_sum.toString(), Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Minmal distance between signatures is: " + min_sum.toString());
         return min;
     }
 

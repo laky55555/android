@@ -11,11 +11,19 @@
 
     <EditText
         android:id="@+id/password1"
-        android:inputType="textPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/enter_password"
         android:layout_below="@+id/password_for_exit"/>
+
+
+    <TextView
+        android:id="@+id/eye"
+        android:layout_alignBaseline="@id/password1"
+        android:layout_toRightOf="@id/password1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/eye"/>
 
     <EditText
         android:id="@+id/password2"

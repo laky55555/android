@@ -13,6 +13,7 @@ import android.widget.Toast;
 public class DrawingFragment extends Fragment {
 
     private final static String TAG = "DrawingFragment";
+    private int number_of_signatures = 1;
     private int number_of_drawings = 3;
     private int student_id;
     private int lecture_id;
@@ -73,11 +74,12 @@ public class DrawingFragment extends Fragment {
 
                 if(learning_new_signature) {
                     Toast.makeText(getActivity(), "Save current signature", Toast.LENGTH_LONG).show();
-                    if (!drawing_view.saveSignature(number_of_drawings, student_id, lecture_id)) {
+                    if (!drawing_view.saveSignature(number_of_signatures, student_id, lecture_id)) {
                         Log.d(TAG, "Too many coordinates. Number of coordinates must be less than 1000");
                         Toast.makeText(getContext(), "Try to sign faster ;).\nYou are too slow.", Toast.LENGTH_LONG).show();
                         return;
                     }
+                    number_of_signatures++;
                     number_of_drawings--;
                     text.setText(getResources().getString(R.string.please_sign)
                             + " " + Integer.toString(number_of_drawings) + " " + getResources().getString(R.string.more_time));
@@ -87,7 +89,7 @@ public class DrawingFragment extends Fragment {
                 // If we are checking signature against already known signature in database
                 else {
                     Toast.makeText(getActivity(), "Checking current signature", Toast.LENGTH_LONG).show();
-                    double signature_result = drawing_view.checkSignature(student_id, lecture_id);
+                    float signature_result = drawing_view.checkSignature(student_id, lecture_id);
                     if (signature_result == -1) {
                         Log.d(TAG, "Too many coordinates. Number of coordinates must be less than 1000");
                         Toast.makeText(getContext(), "Try to sign faster ;).\nYou are too slow.", Toast.LENGTH_LONG).show();
@@ -109,7 +111,7 @@ public class DrawingFragment extends Fragment {
         });
     }
 
-    private void signedOnLesson(int student_id, int lecture_id, double signature_distance)
+    private void signedOnLesson(int student_id, int lecture_id, float signature_distance)
     {
         DBAdapter db = new DBAdapter(getContext());
         db.open();

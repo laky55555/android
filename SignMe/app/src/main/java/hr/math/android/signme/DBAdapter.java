@@ -88,10 +88,23 @@ public class DBAdapter {
         return table;
     }
 
+    static final String TABLE_MAX_DISTANCES = "max_distances";
+    static final String  MAX_DISTANCE_ID = "_id";
+    static final String  MAX_DISTANCE_DISTANCE = "distance";
+    static final String  MAX_DISTANCE_STUDENT_ID = "student_id";
+    static final String  MAX_DISTANCE_LECTURE_ID = "lecture_id";
+
+    private static final String CREATE_MAX_DISTANCES =
+            "create table " + TABLE_MAX_DISTANCES + " (" + MAX_DISTANCE_ID + " integer primary key autoincrement, "
+                    + MAX_DISTANCE_DISTANCE + "0 real not null, " + MAX_DISTANCE_DISTANCE + "1 real, " + MAX_DISTANCE_DISTANCE + "2 real, "
+                    + MAX_DISTANCE_LECTURE_ID + " integer, " + MAX_DISTANCE_STUDENT_ID + " integer, "
+                    + "FOREIGN KEY(" + MAX_DISTANCE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "), "
+                    + "FOREIGN KEY(" + MAX_DISTANCE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
+
 
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "MyDB";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     final Context context;
@@ -121,6 +134,7 @@ public class DBAdapter {
                 CREATE_SIGNATURES = create_signatures_table();
                 db.execSQL(CREATE_SIGNATURES);
                 db.execSQL(CREATE_ATENDANCES);
+                db.execSQL(CREATE_MAX_DISTANCES);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -135,6 +149,7 @@ public class DBAdapter {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SIGNATURES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_LECTURES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAX_DISTANCES);
             onCreate(db);
         }
     }
@@ -167,6 +182,7 @@ public class DBAdapter {
         db.execSQL("DELETE FROM " + TABLE_SIGNATURES);
         db.execSQL("DELETE FROM " + TABLE_STUDENTS);
         db.execSQL("DELETE FROM " + TABLE_LECTURES);
+        db.execSQL("DELETE FROM " + TABLE_MAX_DISTANCES);
         // TODO: PISE DA JE DOBRO NAPRAVITI VACUUM???
         db.execSQL("VACUUM");
         return true;
@@ -268,6 +284,7 @@ public class DBAdapter {
     public boolean deleteStudentFromLecture(int student_id, int lecture_id) {
         deleteStudentAttendance(student_id, lecture_id);
         deleteSignature(student_id, lecture_id);
+        deleteMaxDistance(student_id, lecture_id);
         return true;
     }
 
@@ -283,6 +300,13 @@ public class DBAdapter {
         Log.d(TAG_SQL, "Deleting student_id = " + student_id + ", lecture_id = "
                 + lecture_id + " from table " + TABLE_SIGNATURES);
         return db.delete(TABLE_SIGNATURES, SIGNATURE_STUDENT_ID + "='" + student_id + "'" + " and "
+                + SIGNATURE_LECTURE_ID + "='" + lecture_id + "'", null) > 0;
+    }
+    private boolean deleteMaxDistance(int student_id, int lecture_id)
+    {
+        Log.d(TAG_SQL, "Deleting student_id = " + student_id + ", lecture_id = "
+                + lecture_id + " from table " + TABLE_MAX_DISTANCES);
+        return db.delete(TABLE_MAX_DISTANCES, SIGNATURE_STUDENT_ID + "='" + student_id + "'" + " and "
                 + SIGNATURE_LECTURE_ID + "='" + lecture_id + "'", null) > 0;
     }
 
@@ -378,7 +402,7 @@ public class DBAdapter {
         return true;
     }
 
-    public boolean newAttendance(int student_id, int lecture_id, double signature_distance)
+    public boolean newAttendance(int student_id, int lecture_id, float signature_distance)
     {
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
         String now = df.format(new Date());
@@ -392,8 +416,8 @@ public class DBAdapter {
         if(c.getCount() == 1) {
             c.moveToFirst();
             Log.d(TAG_SQL, "Somebody already signed student = " + student_id + " today.");
-            double min_signature_distance =
-                    signature_distance < c.getDouble(1) ? signature_distance : c.getDouble(1);
+            float min_signature_distance =
+                    signature_distance < c.getFloat(1) ? signature_distance : c.getFloat(1);
             ContentValues args = new ContentValues();
             args.put(ATTENDANCE_REMARK, "Multiple_signatures");
             args.put(ATTENDANCE_DISTANCE, min_signature_distance);
@@ -421,6 +445,50 @@ public class DBAdapter {
             getRows[i+2] = SIGNATURE_COORD + i;
 
         return db.query(true, TABLE_SIGNATURES, getRows, find_query, null, null, null, null, null);
+    }
+
+    public boolean updateMaxDistance(int student_id, int lecture_id, float max1, float max2)
+    {
+        String find_query = MAX_DISTANCE_STUDENT_ID + "='" + student_id + "' and "
+                + MAX_DISTANCE_LECTURE_ID+ "='" + lecture_id + "'";
+
+        ContentValues args = new ContentValues();
+        args.put(MAX_DISTANCE_DISTANCE + "0", max1);
+        args.put(MAX_DISTANCE_DISTANCE + "1", max2);
+
+        Cursor c = db.query(true, TABLE_MAX_DISTANCES, new String[] {MAX_DISTANCE_ID, MAX_DISTANCE_DISTANCE+"0", MAX_DISTANCE_DISTANCE+"1"},
+                find_query, null, null, null, null, null);
+        if(c.getCount() == 1) {
+            c.moveToFirst();
+            if(c.getFloat(1) > max1)
+                args.put(MAX_DISTANCE_DISTANCE + "0", c.getFloat(1));
+            if(c.getFloat(2) > max2)
+                args.put(MAX_DISTANCE_DISTANCE + "1", c.getFloat(2));
+
+            Log.d(TAG_SQL, "Updated in table on: " + args.get(MAX_DISTANCE_DISTANCE + "0") + " and " + args.get(MAX_DISTANCE_DISTANCE+"1") );
+            return db.update(TABLE_MAX_DISTANCES, args, find_query, null) == 1;
+        }
+        else {
+            args.put(MAX_DISTANCE_DISTANCE + "0", max1);
+            args.put(MAX_DISTANCE_DISTANCE + "1", max2);
+            args.put(MAX_DISTANCE_LECTURE_ID, lecture_id);
+            args.put(MAX_DISTANCE_STUDENT_ID, student_id);
+            Log.d(TAG_SQL, "Inserted in table: " + max1 + " and " + max2);
+            return db.insert(TABLE_MAX_DISTANCES, null, args) > 0;
+        }
+    }
+
+    public ArrayList<Float> getMaxDistance(int student_id, int lecture_id)
+    {
+        ArrayList<Float> array = new ArrayList<>();
+        String find_query = MAX_DISTANCE_STUDENT_ID + "='" + student_id + "' and "
+                + MAX_DISTANCE_LECTURE_ID+ "='" + lecture_id + "'";
+        Cursor c = db.query(true, TABLE_MAX_DISTANCES, new String[] {MAX_DISTANCE_ID, MAX_DISTANCE_DISTANCE+"0", MAX_DISTANCE_DISTANCE+"1"},
+                find_query, null, null, null, null, null);
+        c.moveToFirst();
+        array.add(c.getFloat(1));
+        array.add(c.getFloat(2));
+        return array;
     }
 
     /*public boolean saveSignature(int number, int student_id, int lecture_id,
