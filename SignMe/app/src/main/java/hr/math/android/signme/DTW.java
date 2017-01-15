@@ -1,5 +1,6 @@
 package hr.math.android.signme;
 
+import android.util.FloatProperty;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class DTW {
     }
 
     private static ArrayList<Float> normaliseAndTranslateData(ArrayList<Float> array, float length){
-        float min = 0, max = 0, element;
+        float min = Float.POSITIVE_INFINITY, max = 0, element;
         for(int i = 0; i < array.size(); ++i){
             element = array.get(i);
             if(min > element)
@@ -121,9 +122,13 @@ public class DTW {
             if(max < element)
                 max = element;
         }
+        min -= 0.1;
         float divisor = (max - min) / length;
+        Log.d("DTW", "min = " + min + " max = " + max);
         for(int i = 0; i < array.size(); ++i)
             array.set(i, (array.get(i) - min) / divisor);
+
+        Log.d("DTW", "array after normalization " + array.toString());
         return  array;
     }
 

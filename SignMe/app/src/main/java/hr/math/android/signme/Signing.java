@@ -47,6 +47,7 @@ public class Signing extends AppCompatActivity {
         else {
             Log.d(TAG, "onCreate intent NEMA extra");
             Toast.makeText(this, "onCreate intent NEMA extra.", Toast.LENGTH_SHORT).show();
+            //TODO: tu ne ide u exit(main) nego u neki limbo activity koji ce pitati pass za izlaz!
             exit();
         }
     }

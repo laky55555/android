@@ -76,9 +76,10 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Toast.makeText(this,"hjkjh", Toast.LENGTH_LONG).show();
+            startSettingsFragment();
             return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -99,20 +100,9 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra(PARAMETER_ADD, "ADD");
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
-            DBAdapter db = new DBAdapter(this);
-            db.open().deleteAllLectures();
-            db.close();
+            startSettingsFragment();
         } else if (id == R.id.nav_check_attendance) {
-            Toast.makeText(this,"hjkjh", Toast.LENGTH_LONG).show();
-            Log.d("JLKJLKJ", "KKJKJLJLKJLJLK");
-
-            // Begin the transaction
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            // Replace the contents of the container with the new fragment
-            ft.replace(R.id.your_placeholder, new LecturesListFragment());
-            // or ft.add(R.id.your_placeholder, new FooFragment());
-            // Complete the changes added above
-            ft.commit();
+            startCheckAttendanceFragment();
 
         } else if (id == R.id.nav_share_one) {
 
@@ -125,6 +115,28 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startSettingsFragment()
+    {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.your_placeholder, new SettingsFragment());
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+    }
+
+    private void startCheckAttendanceFragment()
+    {
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.your_placeholder, new LecturesListFragment());
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+
     }
 
 }

@@ -221,12 +221,12 @@ public class DrawingView extends View {
             ArrayList<Float> x = getArray(c, "x", i);
             ArrayList<Float> y = getArray(c, "y", i);
             ArrayList<Float> p = getArray(c, "p", i);
-            Log.d(TAG, "x koordinate potpisa" + x.toString());
-            Log.d(TAG, "y koordinate potpisa" + y.toString());
-            Log.d(TAG, "pen koordinate iz potpisa" + pen_start.toString());
-            Log.d(TAG, "x koordinate iz baze" + x_coord_norm.toString());
-            Log.d(TAG, "y koordinate iz baze" + y_coord_norm.toString());
-            Log.d(TAG, "pen koordinate iz baze" + p.toString());
+            Log.d(TAG, "x koordinate iz baze" + x.toString());
+            Log.d(TAG, "y koordinate iz baze" + y.toString());
+            Log.d(TAG, "pen koordinate iz baze" + pen_start.toString());
+            Log.d(TAG, "x koordinate trenutni potpis" + x_coord_norm.toString());
+            Log.d(TAG, "y koordinate trenutni potpis" + y_coord_norm.toString());
+            Log.d(TAG, "pen koordinate trenutni potpis" + p.toString());
 
             Log.d(TAG, "duljina iz baze je: " + x.size() + " " + y.size() +" " + p.size() );
             Log.d(TAG, "duljina live je: " + x_coord_norm.size() + " " + y_coord_norm.size() +" " + pen_start.size() );

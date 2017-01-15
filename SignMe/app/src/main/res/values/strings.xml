@@ -42,4 +42,10 @@
     <string name="more_time">more time/s :)</string>
 
 
+    <string name="password_for_exit">Enter password for exiting signing.</string>
+    <string name="enter_password">Enter password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="save_password">Save new password</string>
+
+
 </resources>

@@ -102,49 +102,4 @@ public class LecturesListFragment extends Fragment {
         db.close();
     }
 
-    public static void resetPreferredLauncherAndOpenChooser(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-        ComponentName componentName = new ComponentName(context, FakeLauncherActivity.class);
-        packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-
-        Intent selector = new Intent(Intent.ACTION_MAIN);
-        selector.addCategory(Intent.CATEGORY_HOME);
-        selector.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(selector);
-
-        packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
-    }
-
-    private boolean isMyAppLauncherDefault() {
-        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
-        filter.addCategory(Intent.CATEGORY_HOME);
-
-        List<IntentFilter> filters = new ArrayList<IntentFilter>();
-        filters.add(filter);
-
-        //final String myPackageName = getActivity().getPackageName();
-        final String myPackageName = "hr.math.android.signme.signing";
-        List<ComponentName> activities = new ArrayList<ComponentName>();
-        final PackageManager packageManager = (PackageManager) getActivity().getPackageManager();
-
-        packageManager.getPreferredActivities(filters, activities, null);
-
-        for (ComponentName activity : activities) {
-            if (myPackageName.equals(activity.getPackageName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /*@Override
-    public void onResume() {
-        super.onResume();
-        if(!isMyAppLauncherDefault()) {
-            Toast.makeText(getActivity(), "NIJE LAUNCHER", Toast.LENGTH_SHORT).show();
-            Log.d("RESET", "ajmo launcher");
-            resetPreferredLauncherAndOpenChooser(getContext());
-        }
-    }*/
-
 }
