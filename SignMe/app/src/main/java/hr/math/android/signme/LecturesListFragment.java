@@ -92,6 +92,8 @@ public class LecturesListFragment extends Fragment {
                 }*/
                 //else {
                     //getActivity().finishActivity(Signing.class);
+                    //TODO: ne dopustiti korisniku da ide u potpisivanje ako pass nije postavio
+                    //TODO: odluciti da li cemo korisniku ispisati password prije ulaska u activity
                     Intent intent = new Intent(getActivity(), Signing.class);
                     intent.putExtra("LECTURE_NAME", lecture.getString(1));
                     intent.putExtra("LECTURE_ID", lecture.getInt(0));

@@ -19,7 +19,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class SettingsFragment extends Fragment {
 
     public static final String MYPREFS = "pref";
-    private int prefMode = MODE_PRIVATE;
+    public static final int prefMode = MODE_PRIVATE;
     private String old_pass;
 
     private EditText pass1;

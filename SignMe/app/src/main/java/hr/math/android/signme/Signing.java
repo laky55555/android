@@ -1,23 +1,32 @@
 package hr.math.android.signme;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static hr.math.android.signme.SettingsFragment.MYPREFS;
+import static hr.math.android.signme.SettingsFragment.prefMode;
 
 public class Signing extends AppCompatActivity {
 
@@ -40,15 +49,13 @@ public class Signing extends AppCompatActivity {
                     + " lecture id = " + lecture_id, Toast.LENGTH_SHORT).show();
 
             db = new DBAdapter(this);
-            //TODO: tu se sad pokrece fragment s potpisivanjem
             startSelectNameFragment();
-            //startDrawingFragment();
         }
         else {
             Log.d(TAG, "onCreate intent NEMA extra");
             Toast.makeText(this, "onCreate intent NEMA extra.", Toast.LENGTH_SHORT).show();
-            //TODO: tu ne ide u exit(main) nego u neki limbo activity koji ce pitati pass za izlaz!
-            exit();
+            //TODO: treba istestirati da li se nekako korisnici koji nesmiju doci do main-a docepati ovog dijela!
+            exit(false);
         }
     }
 
@@ -106,34 +113,58 @@ public class Signing extends AppCompatActivity {
 
 
 
-    public void checkPassword(View view) {
-        popUpPassword();
-    }
-
     private void popUpPassword() {
-        //TODO: tu dolazi neki pop up fragment ili tako nesto za unijeti password
-        exit();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.password_for_exit);
+
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText input_password = new EditText(this);
+        input_password.setHint(R.string.enter_password);
+        input_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        layout.addView(input_password);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                checkPassword(input_password.getText().toString());
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
-    private void exit() {
+    private void exit(boolean userExit) {
         Intent intent = new Intent(this, MainActivity.class);
-        //TODO: to treba vratiti ili negdje drugdje stvaiti jer inace se nemoze izaci iz aplikacije
-        //getPackageManager().clearPackagePreferredActivities(getPackageName());
+        if(userExit)
+            getPackageManager().clearPackagePreferredActivities(getPackageName());
         startActivity(intent);
         finish();
     }
 
-    /*public void checkPassword(View view) {
-        String pass = ((EditText) findViewById(R.id.password)).getText().toString();
-        if(pass.equals(password)){
-            Intent intent = new Intent(this, MainActivity.class);
-            getPackageManager().clearPackagePreferredActivities(getPackageName());
-            startActivity(intent);
+    private String load_password() {
+        SharedPreferences mySharedPreferences = getSharedPreferences(MYPREFS, prefMode);
+        //TODO: pustamo trenutno da je u slucaju greske pass: MiraJeNajbolja
+        return  mySharedPreferences.getString("pass", "MiraJeNajbolja");
+    }
+
+    private void checkPassword(String input_password) {
+        String stored_pass = load_password();
+        if(stored_pass.equals(input_password)){
+            exit(true);
         }
         else
             Toast.makeText(this, "Krivi pass", Toast.LENGTH_SHORT).show();
-        finish();
-    }*/
+    }
 
 
     @Override
@@ -144,15 +175,19 @@ public class Signing extends AppCompatActivity {
             Log.d(TAG, "onResume intent IMA extra");
         else {
             Log.d(TAG, "onResume intent NEMA extra");
-            exit();
+            exit(false);
         }
 
         if(isMyAppLauncherDefault())
             Log.d(TAG, "onResume Provjera launchr, MOJ JE");
         else
             Log.d(TAG, "onResume Provjera launchr, Nije MOJ");
-        if(!isMyAppLauncherDefault())
+        if(!isMyAppLauncherDefault()) {
             resetPreferredLauncherAndOpenChooser(getApplicationContext());
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.addCategory(Intent.CATEGORY_HOME);
+            startActivity(i);
+        }
     }
 
 
@@ -170,7 +205,26 @@ public class Signing extends AppCompatActivity {
     }
 
     private boolean isMyAppLauncherDefault() {
-        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        final Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        final ResolveInfo res = getPackageManager().resolveActivity(intent, 0);
+        if (res.activityInfo == null) {
+            // should not happen. A home is always installed, isn't it?
+            Log.d("TEST", "nema launchera");
+        } else if ("android".equals(res.activityInfo.packageName)) {
+            // No default selected
+            Log.d("TEST", "nema defult launchera");
+        } else {
+            Log.d("TEST", "ima odabranog: " + res.activityInfo.packageName);
+            Log.d("TEST", "ima odabranog: " + res.activityInfo.name);
+            Log.d("TEST", "packageName = " + getPackageName());
+            if(res.activityInfo.packageName.equals(getPackageName()))
+                return true;
+            // res.activityInfo.packageName and res.activityInfo.name gives you the default app
+        }
+        return false;
+
+        /*final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
         filter.addCategory(Intent.CATEGORY_HOME);
 
         List<IntentFilter> filters = new ArrayList<IntentFilter>();
@@ -187,7 +241,7 @@ public class Signing extends AppCompatActivity {
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
 
     @Override
@@ -214,10 +268,4 @@ public class Signing extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-//    private void addNewStudent() {
-//        //TODO: dolazi fragment neki pop up za upis novog studenta
-//        Toast.makeText(this,"new_student", Toast.LENGTH_LONG).show();
-//    }
-
 }

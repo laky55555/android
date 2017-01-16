@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-
+//TODO: prebaciti ovaj activity u fragment i includati slanje maila
 public class LecturesList extends AppCompatActivity {
     ArrayList<String> lectures;
     ArrayList<String> lectures_ids;
@@ -58,7 +58,7 @@ public class LecturesList extends AppCompatActivity {
             }
         };*/
 
-        ListView listView = (ListView)findViewById(R.id.list_of_lectures);
+        ListView listView = (ListView) findViewById(R.id.list_of_lectures);
         initializeAllLectures();
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, lectures);
         listView.setAdapter(adapter);
@@ -66,7 +66,7 @@ public class LecturesList extends AppCompatActivity {
         initializeFloatingActionButton();
 
         Intent intent = getIntent();
-        if(intent.hasExtra(MainActivity.PARAMETER_ADD))
+        if (intent.hasExtra(MainActivity.PARAMETER_ADD))
             findViewById(R.id.add_new_lecture).performClick();
     }
 
@@ -75,7 +75,7 @@ public class LecturesList extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, R.string.adding_new_lectures , Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, R.string.adding_new_lectures, Snackbar.LENGTH_LONG).show();
                 popUpAdd();
             }
         });
@@ -92,7 +92,7 @@ public class LecturesList extends AppCompatActivity {
                     if (checked.get(i))
                         forDelete.add(lectures.get(i));
                 }
-                if(forDelete.size() > 0)
+                if (forDelete.size() > 0)
                     popUpDelete(forDelete);
             }
         });
@@ -111,17 +111,15 @@ public class LecturesList extends AppCompatActivity {
 
         Long id_number;
         int number_of_lessons;
-        try{
+        try {
             id_number = Long.parseLong(id);
-        }
-        catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             Log.d("Lecture ID", "Given lecture ID = " + id + ", assigning -1.");
             id_number = -1L;
         }
-        try{
-            number_of_lessons= Integer.parseInt(num_of_lessons);
-        }
-        catch(NumberFormatException e){
+        try {
+            number_of_lessons = Integer.parseInt(num_of_lessons);
+        } catch (NumberFormatException e) {
             Log.d("NUMBER OF LECTURES", "Given number = " + num_of_lessons);
             Toast.makeText(this, "Number of lectures is mandatory", Toast.LENGTH_LONG).show();
             return;
@@ -135,8 +133,7 @@ public class LecturesList extends AppCompatActivity {
             lectures.add(name);
             lectures_ids.add(id_number.toString());
             adapter.notifyDataSetChanged();
-        }
-        else
+        } else
             Toast.makeText(this, "Lecture with " + name + " already exist.", Toast.LENGTH_SHORT).show();
         db.close();
 
@@ -210,7 +207,7 @@ public class LecturesList extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                for(int i = 0; i<forDelete.size(); ++i) {
+                for (int i = 0; i < forDelete.size(); ++i) {
                     db.deleteLecture(forDelete.get(i));
                     lectures.remove(forDelete.get(i));
                 }
