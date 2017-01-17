@@ -8,9 +8,12 @@ import static android.content.Context.MODE_PRIVATE;
 
 class Password {
 
+    private static final String TAG = "Password";
     private static final String KEYWORD = "pass";
     private static final String PREFERENCES = "pref";
     private static final int prefMode = MODE_PRIVATE;
+
+    private static final String defaultMessage = "iz supljeg u prazno";
 
     private SharedPreferences mySharedPreferences;
 
@@ -21,7 +24,7 @@ class Password {
 
     String getPassword() {
         //TODO: tu dolazi dekriptiranje
-        return mySharedPreferences.getString(KEYWORD, "iz supljeg u prazno");
+        return mySharedPreferences.getString(KEYWORD, defaultMessage);
     }
 
     boolean saveNewPassword(String newPassword){
@@ -33,7 +36,7 @@ class Password {
     }
 
     boolean isPasswordInitialized() {
-        return mySharedPreferences.contains(KEYWORD);
+        return mySharedPreferences.contains(KEYWORD) && (getPassword().trim().length() > 0);
     }
 
 }

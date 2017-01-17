@@ -111,17 +111,19 @@ public class EditLecturesFragment extends Fragment {
                 Cursor lecture = (Cursor)listView.getItemAtPosition(position);
                 Password pass = new Password(getActivity());
                 if(!pass.isPasswordInitialized()) {
-                    //TODO: ne dopustiti korisniku da ide u potpisivanje ako pass nije postavio
-                    //popUpInitializePass return da li je inicijaliziran
-                    //ako vrati false return;
+                    Intent intent = new Intent(getActivity(), NewPassword.class);
+                    intent.putExtra("LECTURE_NAME", lecture.getString(1));
+                    intent.putExtra("LECTURE_ID", lecture.getInt(0));
+                    startActivity(intent);
                 }
-
-                Toast.makeText(getContext(), getResources().getString(R.string.current_password)
-                        + " " + pass.getPassword(), Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getActivity(), Signing.class);
-                intent.putExtra("LECTURE_NAME", lecture.getString(1));
-                intent.putExtra("LECTURE_ID", lecture.getInt(0));
-                startActivity(intent);
+                else {
+                    Toast.makeText(getContext(), getResources().getString(R.string.current_password)
+                            + " " + pass.getPassword(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getActivity(), Signing.class);
+                    intent.putExtra("LECTURE_NAME", lecture.getString(1));
+                    intent.putExtra("LECTURE_ID", lecture.getInt(0));
+                    startActivity(intent);
+                }
             }
         });
     }

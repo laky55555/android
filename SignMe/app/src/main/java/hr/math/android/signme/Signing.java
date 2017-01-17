@@ -1,5 +1,6 @@
 package hr.math.android.signme;
 
+import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -8,13 +9,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.PixelFormat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -26,10 +31,15 @@ public class Signing extends AppCompatActivity {
     private int lecture_id;
     private String TAG = "SIGNING";
 
+    private WindowManager manager;
+    private View view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signing);
+
+        disableStatusBar();
 
         if(getIntent().hasExtra("LECTURE_ID")) {
             lecture_name = getIntent().getStringExtra("LECTURE_NAME");
@@ -118,6 +128,7 @@ public class Signing extends AppCompatActivity {
         if(userExit) {
             intent = new Intent(this, MainActivity.class);
             getPackageManager().clearPackagePreferredActivities(getPackageName());
+            manager.removeView(view);
         }
         else
             intent = new Intent(this, Limbo.class);
@@ -207,4 +218,30 @@ public class Signing extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void disableStatusBar() {
+
+        manager = ((WindowManager) getApplicationContext()
+                .getSystemService(Context.WINDOW_SERVICE));
+
+        WindowManager.LayoutParams localLayoutParams = new WindowManager.LayoutParams();
+        localLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        localLayoutParams.gravity = Gravity.TOP;
+        localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|
+
+        // this is to enable the notification to recieve touch events
+        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+
+        // Draws over status bar
+        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+
+        localLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        localLayoutParams.height = (int) (50 * getResources()
+                .getDisplayMetrics().scaledDensity);
+        localLayoutParams.format = PixelFormat.TRANSPARENT;
+
+        view = new customViewGroup(this);
+
+        manager.addView(view, localLayoutParams);
+        //manager.removeView(view);
+    }
 }

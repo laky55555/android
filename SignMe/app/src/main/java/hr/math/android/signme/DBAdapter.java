@@ -52,7 +52,8 @@ class DBAdapter {
     //      kad e to bude mijenalo treba paziti na nacin brisanja studenata jer treba vidjeti koliko predmeta student slusa
     //      te ako ga brisemo iz zadnjeg kojeg slusa tada brisemo potpis, do sad brisemo potpis kad brisemo predmet
     //TODO: treba se odlučiti koliko koordinata za potpise ce svaki student imati za sad 1000
-    static final int number_of_coords = 1000;
+    static final int MAX_NUM_OF_COORDS = 1000;
+    static final int MIN_NUM_OF_COORDS = 200;
     static final String TABLE_SIGNATURES = "signatures";
     static final String SIGNATURE_ID = "_id";
     static final String SIGNATURE_STUDENT_ID = "student_id";
@@ -73,7 +74,7 @@ class DBAdapter {
                  "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
                 + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_LECTURE_ID + " integer, " + SIGNATURE_AXIS
                 + " text not null, " + SIGNATURE_NUMBER + " integer not null";
-        for(int i = 0; i < number_of_coords; i++)
+        for(int i = 0; i < MAX_NUM_OF_COORDS; i++)
             table += ", " + SIGNATURE_COORD + Integer.toString(i) + " real";
         table += ", FOREIGN KEY(" + SIGNATURE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + ")";
         table += ", FOREIGN KEY(" + SIGNATURE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "));";

@@ -1,22 +1,25 @@
 package hr.math.android.signme;
 
 import android.app.Activity;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class SettingsFragment extends Fragment {
+
+//TODO: double code here and in SettingsFragment (settings would have more options than this pop up). Think of something smart ;)
+public class NewPassword extends AppCompatActivity {
 
     private EditText pass1;
     private EditText pass2;
@@ -25,15 +28,24 @@ public class SettingsFragment extends Fragment {
 
     private Password passwordClass;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, parent, false);
-    }
+    private String lectureName;
+    private int lectureId;
+
+    private Activity activity;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_password);
 
-        initializeButtons(view);
+        lectureId = -1;
+        if(getIntent().hasExtra("LECTURE_ID")) {
+            lectureName = getIntent().getStringExtra("LECTURE_NAME");
+            lectureId = getIntent().getIntExtra("LECTURE_ID", -1);
+            activity = this;
+        }
+
+        initializeButtons();
 
         if(passwordClass.isPasswordInitialized())
             pass1.setText(passwordClass.getPassword());
@@ -46,17 +58,16 @@ public class SettingsFragment extends Fragment {
         togglePasswordVisibility();
     }
 
-    private void initializeButtons(View view) {
-        pass1 = (EditText) view.findViewById(R.id.password1);
-        pass1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        pass2 = (EditText) view.findViewById(R.id.password2);
-        eye = (TextView) view.findViewById(R.id.eye);
-        save_button = (Button) view.findViewById(R.id.save_password);
+    private void initializeButtons() {
 
-        passwordClass = new Password(getActivity());
+        pass1 = (EditText) findViewById(R.id.password1);
+        pass1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        pass2 = (EditText) findViewById(R.id.password2);
+        eye = (TextView) findViewById(R.id.eye);
+        save_button = (Button) findViewById(R.id.save_password);
+        passwordClass = new Password(this);
 
     }
-
     private void togglePasswordVisibility() {
         eye.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,18 +85,23 @@ public class SettingsFragment extends Fragment {
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                 String pass1Text = pass1.getText().toString();
                 if(pass1Text.equals(pass2.getText().toString()) && pass1Text.trim().length() > 0) {
                     passwordClass.saveNewPassword(pass1Text);
                     Snackbar.make(v, "New password saved", Snackbar.LENGTH_LONG).show();
-                    hideKeyboard();
+                    if(lectureId != -1) {
+                        Intent intent = new Intent(activity, Signing.class);
+                        intent.putExtra("LECTURE_NAME", lectureName);
+                        intent.putExtra("LECTURE_ID", lectureId);
+                        startActivity(intent);
+                    }
+                    finish();
                 } else if (pass1Text.trim().length() == 0)
                     Snackbar.make(v, "Password must contain at least one character", Snackbar.LENGTH_LONG).show();
                 else
                     Snackbar.make(v, "First and second passwords are different", Snackbar.LENGTH_LONG).show();
-
-                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
             }
         });
@@ -110,11 +126,4 @@ public class SettingsFragment extends Fragment {
         };
     }
 
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view = getActivity().getCurrentFocus();
-        if (view == null)
-            view = new View(getActivity());
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 }

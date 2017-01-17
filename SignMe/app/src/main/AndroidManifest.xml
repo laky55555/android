@@ -3,6 +3,8 @@
     package="hr.math.android.signme">
 
     <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <!--<uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -41,6 +43,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Limbo" />
+        <activity android:name=".NewPassword"
+            android:theme="@style/Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>

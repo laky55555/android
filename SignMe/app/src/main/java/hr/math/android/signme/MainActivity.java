@@ -1,7 +1,11 @@
 package hr.math.android.signme;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+
+//TODO: Write user message to enter airplane mode (couldn't be done programmatically)
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -35,6 +41,18 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         startSettingsFragment();
+        checkPermission();
+    }
+
+    public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE= 5469;
+    public void checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            }
+        }
     }
 
     @Override
@@ -59,6 +77,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             startSettingsFragment();
+            return true;
+        } else if (id == R.id.action_change_password) {
+            Intent intent = new Intent(this, NewPassword.class);
+            startActivity(intent);
             return true;
         }
         //TODO: add direct change of password like pop up
