@@ -167,13 +167,13 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    public long newLecture(String name)
-    {
-        ContentValues initialValues = new ContentValues();
-        initialValues.put(LECTURE_NAME, name);
-        Log.d(TAG_SQL, "Added lecture " + name + " to database.");
-        return db.insert(TABLE_LECTURES, null, initialValues);
-    }
+//    public long newLecture(String name)
+//    {
+//        ContentValues initialValues = new ContentValues();
+//        initialValues.put(LECTURE_NAME, name);
+//        Log.d(TAG_SQL, "Added lecture " + name + " to database.");
+//        return db.insert(TABLE_LECTURES, null, initialValues);
+//    }
 
     public boolean deleteAllLectures()
     {

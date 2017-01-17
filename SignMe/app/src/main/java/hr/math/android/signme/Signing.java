@@ -6,8 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.v4.app.FragmentTransaction;
@@ -17,24 +15,17 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static hr.math.android.signme.SettingsFragment.MYPREFS;
-import static hr.math.android.signme.SettingsFragment.prefMode;
 
 public class Signing extends AppCompatActivity {
 
     private String lecture_name;
     private int lecture_id;
-    private int column_for_change;
-    private DBAdapter db;
     private String TAG = "SIGNING";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,18 +34,18 @@ public class Signing extends AppCompatActivity {
         if(getIntent().hasExtra("LECTURE_ID")) {
             lecture_name = getIntent().getStringExtra("LECTURE_NAME");
             lecture_id = getIntent().getIntExtra("LECTURE_ID", -1);
+
             Log.d(TAG, "onCreate intent IMA extra lecture name = "
                     + lecture_name + " lecture id = " + lecture_id);
             Toast.makeText(this, "onCreate intent ima extra lecture name = " + lecture_name
                     + " lecture id = " + lecture_id, Toast.LENGTH_SHORT).show();
 
-            db = new DBAdapter(this);
+            setTitle(lecture_name);
             startSelectNameFragment();
         }
         else {
             Log.d(TAG, "onCreate intent NEMA extra");
             Toast.makeText(this, "onCreate intent NEMA extra.", Toast.LENGTH_SHORT).show();
-            //TODO: treba istestirati da li se nekako korisnici koji nesmiju doci do main-a docepati ovog dijela!
             exit(false);
         }
     }
@@ -63,22 +54,7 @@ public class Signing extends AppCompatActivity {
         Toast.makeText(this,"Starting fragment for finding student", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Starting fragment for finding student");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
         ft.replace(R.id.fragment, FindStudentFragment.newInstance(lecture_id));
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
-        ft.commit();
-    }
-
-    private void startDrawingFragment() {
-        Toast.makeText(this,"Starting fragment for drawing", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "Starting fragment for drawing");
-        // Begin the transaction
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
-        ft.replace(R.id.fragment, new DrawingFragment());
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
         ft.commit();
     }
 
@@ -96,21 +72,6 @@ public class Signing extends AppCompatActivity {
         Log.d(TAG, "onKeyDown Called");
         Toast.makeText(this, "Stistnut je back.", Toast.LENGTH_SHORT).show();
     }
-
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
-            Log.d(TAG, "onKeyDown Called");
-            Toast.makeText(this, "Stistnut je back.", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        Log.d(TAG, "Stistnut je: " + keyCode);
-        Toast.makeText(this, "Stistnut je: " + keyCode, Toast.LENGTH_SHORT).show();
-        return super.onKeyDown(keyCode, event);
-    }*/
-
 
 
     private void popUpPassword() {
@@ -143,27 +104,26 @@ public class Signing extends AppCompatActivity {
         builder.show();
     }
 
-    private void exit(boolean userExit) {
-        Intent intent = new Intent(this, MainActivity.class);
-        if(userExit)
-            getPackageManager().clearPackagePreferredActivities(getPackageName());
-        startActivity(intent);
-        finish();
-    }
-
-    private String load_password() {
-        SharedPreferences mySharedPreferences = getSharedPreferences(MYPREFS, prefMode);
-        //TODO: pustamo trenutno da je u slucaju greske pass: MiraJeNajbolja
-        return  mySharedPreferences.getString("pass", "MiraJeNajbolja");
-    }
-
     private void checkPassword(String input_password) {
-        String stored_pass = load_password();
+        String stored_pass = new Password(this).getPassword();
         if(stored_pass.equals(input_password)){
             exit(true);
         }
         else
             Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
+    }
+
+    private void exit(boolean userExit) {
+        Intent intent;
+        if(userExit) {
+            intent = new Intent(this, MainActivity.class);
+            getPackageManager().clearPackagePreferredActivities(getPackageName());
+        }
+        else
+            intent = new Intent(this, Limbo.class);
+
+        startActivity(intent);
+        finish();
     }
 
 
@@ -223,30 +183,10 @@ public class Signing extends AppCompatActivity {
             // res.activityInfo.packageName and res.activityInfo.name gives you the default app
         }
         return false;
-
-        /*final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
-        filter.addCategory(Intent.CATEGORY_HOME);
-
-        List<IntentFilter> filters = new ArrayList<IntentFilter>();
-        filters.add(filter);
-
-        final String myPackageName = getPackageName();
-        List<ComponentName> activities = new ArrayList<ComponentName>();
-        final PackageManager packageManager = (PackageManager) getPackageManager();
-
-        packageManager.getPreferredActivities(filters, activities, null);
-
-        for (ComponentName activity : activities) {
-            if (myPackageName.equals(activity.getPackageName())) {
-                return true;
-            }
-        }
-        return false;*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.signing_menu, menu);
         return true;
     }
@@ -255,11 +195,6 @@ public class Signing extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_new_student) {
-//            addNewStudent();
-//            return true;
-//        } else
         if (id == R.id.action_exit) {
             Toast.makeText(this, "exit", Toast.LENGTH_LONG).show();
             popUpPassword();
@@ -268,4 +203,5 @@ public class Signing extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

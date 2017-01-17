@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
@@ -122,8 +123,16 @@ public class FindStudentFragment extends Fragment {
 
     private void noStudentMessage(String student)
     {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         Snackbar.make(getView(), "There is no student " + student,
                 Snackbar.LENGTH_LONG).show();
+    }
+
+    private void badStudentInfo(String name, String surname, String jmbag)
+    {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        Snackbar.make(getView(), "Given student info is not valid.\nName = " + name + "; Surname = "
+                + surname + "; JMBAG = " + jmbag, Snackbar.LENGTH_LONG).show();
     }
 
     private void checkExistingStudent() {
@@ -180,6 +189,9 @@ public class FindStudentFragment extends Fragment {
                         input_jmbag.getText().toString());
                 if(new_student_id != -1)
                     startSigningScreen(true, new_student_id);
+                else
+                    badStudentInfo(input_name.getText().toString(), input_surname.getText().toString(),
+                            input_jmbag.getText().toString());
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -195,6 +207,16 @@ public class FindStudentFragment extends Fragment {
     private int addNewStudent(String name, String surname, String JMBAG)
     {
         int jmbag;
+        if(name.trim().length() == 0) {
+            Log.d(TAG, "Given new student name = " + name + ", necessary student name");
+            Toast.makeText(getContext(), "Student name is mandatory", Toast.LENGTH_LONG).show();
+            return -1;
+        }
+        if(surname.trim().length() == 0) {
+            Log.d(TAG, "Given new student surname = " + surname + ", necessary student surname");
+            Toast.makeText(getContext(), "Student surname is mandatory", Toast.LENGTH_LONG).show();
+            return -1;
+        }
         try{
             jmbag = Integer.parseInt(JMBAG);
         }

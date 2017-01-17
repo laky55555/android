@@ -109,8 +109,15 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor lecture = (Cursor)listView.getItemAtPosition(position);
-                 //TODO: ne dopustiti korisniku da ide u potpisivanje ako pass nije postavio
-                //TODO: odluciti da li cemo korisniku ispisati password prije ulaska u activity
+                Password pass = new Password(getActivity());
+                if(!pass.isPasswordInitialized()) {
+                    //TODO: ne dopustiti korisniku da ide u potpisivanje ako pass nije postavio
+                    //popUpInitializePass return da li je inicijaliziran
+                    //ako vrati false return;
+                }
+
+                Toast.makeText(getContext(), getResources().getString(R.string.current_password)
+                        + " " + pass.getPassword(), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getActivity(), Signing.class);
                 intent.putExtra("LECTURE_NAME", lecture.getString(1));
                 intent.putExtra("LECTURE_ID", lecture.getInt(0));
@@ -205,7 +212,9 @@ public class EditLecturesFragment extends Fragment {
     private void addNewLecture(String name) {
 
         if (!db.doesLectureExist(name)) {
-            db.newLecture(name);
+            DBLectures dbl = new DBLectures(getContext());
+            dbl.open();
+            dbl.newLecture(name);
             Toast.makeText(activity, "Added new lecture", Toast.LENGTH_SHORT).show();
             cursor.requery();
             adapter.notifyDataSetChanged();

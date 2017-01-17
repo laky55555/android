@@ -1,13 +1,8 @@
 package hr.math.android.signme;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,14 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CheckedTextView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    public final static String PARAMETER_ADD = "hr.math.android.extra.ADD";
 
 
     @Override
@@ -33,15 +25,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -50,7 +33,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         startSettingsFragment();
     }
@@ -67,7 +49,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -76,11 +57,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startSettingsFragment();
             return true;
         }
+        //TODO: add direct change of password like pop up
 
 
         return super.onOptionsItemSelected(item);
@@ -90,24 +71,19 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
 
         int id = item.getItemId();
 
         if (id == R.id.nav_lectures_list) {
-            /*Intent intent = new Intent(this, LecturesList.class);
-            startActivity(intent);*/
             startLectures(true, false);
         } else if (id == R.id.nav_add_lecture) {
-            //startEditLectures(true);
             startLectures(true, true);
         } else if (id == R.id.nav_settings) {
             startSettingsFragment();
         } else if (id == R.id.nav_check_attendance) {
-            //startCheckAttendanceFragment();
             startLectures(false, false);
         } else if (id == R.id.nav_share_one) {
-
+            //TODO: see what to do with share buttons, maybe delete them??
         } else if (id == R.id.nav_send_all) {
 
         } else if (id == R.id.nav_send_one) {
@@ -122,33 +98,7 @@ public class MainActivity extends AppCompatActivity
     private void startSettingsFragment()
     {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
         ft.replace(R.id.your_placeholder, new SettingsFragment());
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
-        ft.commit();
-    }
-
-    private void startCheckAttendanceFragment()
-    {
-        // Begin the transaction
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
-        ft.replace(R.id.your_placeholder, new LecturesListFragment());
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
-        ft.commit();
-
-    }
-
-    private void startEditLectures(boolean addNewLecture)
-    {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        EditLecturesFragment fragmentDemo = EditLecturesFragment.newInstance(true, addNewLecture);
-        // Replace the contents of the container with the new fragment
-        ft.replace(R.id.your_placeholder, fragmentDemo);
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
         ft.commit();
     }
 
@@ -156,11 +106,16 @@ public class MainActivity extends AppCompatActivity
     {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         EditLecturesFragment fragmentDemo = EditLecturesFragment.newInstance(editLectures, addNewLecture);
-        // Replace the contents of the container with the new fragment
         ft.replace(R.id.your_placeholder, fragmentDemo);
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
         ft.commit();
     }
 
+    //TODO: make listener so if user open navigation bar hideKeyboard function is called
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = getCurrentFocus();
+        if (view == null)
+            view = new View(this);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

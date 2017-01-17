@@ -47,5 +47,7 @@
     <string name="confirm_password">Confirm password</string>
     <string name="save_password">Save new password</string>
 
+    <string name="current_password">Current password is: </string>
+
 
 </resources>

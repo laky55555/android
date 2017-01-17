@@ -37,6 +37,8 @@ public class DrawingView extends View {
     private final float touchDownCode = 1;
     private final float touchMoveCode = 2;
     private final float touchUpCode = 3;
+    private final int minimalCoordNumber = 200;
+    private final int maximalCoordNumber = 999;
 
     private DBAdapter db;
 
@@ -166,12 +168,18 @@ public class DrawingView extends View {
         broj_dodira = 0;
     }
 
-    public boolean saveSignature(int number, int student_id, int lecture_id)
+    public int saveSignature(int number, int student_id, int lecture_id)
     {
-        if(x_coord.size() > 999) {
+        if(x_coord.size() > maximalCoordNumber) {
             discardSignature();
-            return false;
+            return -1;
         }
+
+        if(x_coord.size() < minimalCoordNumber) {
+            discardSignature();
+            return -2;
+        }
+
         Log.d(TAG, "x coord = " + x_coord.toString());
         Log.d(TAG, "y coord = " + y_coord.toString());
         Log.d(TAG, "pen start = " + pen_start.toString());
@@ -186,7 +194,7 @@ public class DrawingView extends View {
 
         if(c.getCount() % 3 != 0) {
             discardSignature();
-            return false;
+            return -3;
         }
 
         ArrayList<Float> x_normalised = DTW.normaliseXData(x_coord);
@@ -227,24 +235,27 @@ public class DrawingView extends View {
             db.updateMaxDistance(student_id, lecture_id, max1, max2);
         db.close();
         discardSignature();
-        return true;
+        return 1;
     }
 
     /**
      *
      * @param student_id
      * @param lecture_id
-     * @return -1 if signature was too long, student needs to repeat signature,
-     *          number of minimal distance of current signature and signatures in database.
+     * @return -1 if signature was too long, -2 if signature was too short and student needs to repeat signature,
+     *          otherwise number of minimal distance of current signature and signatures in database.
      */
     public float checkSignature(int student_id, int lecture_id)
     {
-        if(x_coord.size() > 999) {
+        if(x_coord.size() > maximalCoordNumber) {
             discardSignature();
             return -1;
         }
+        if(x_coord.size() < minimalCoordNumber) {
+            discardSignature();
+            return -2;
+        }
 
-        //TODO: maknuti if nego staviti infinity
         float min1, min2;
         ArrayList<Float> min_sum = new ArrayList<>();
         min_sum.add(0F);

@@ -13,15 +13,13 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LecturesList" />
         <activity
             android:name=".FakeLauncherActivity"
             android:enabled="false">
@@ -34,8 +32,7 @@
         </activity>
         <activity
             android:name=".Signing"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,6 +40,7 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
+        <activity android:name=".Limbo" />
     </application>
 
 </manifest>
