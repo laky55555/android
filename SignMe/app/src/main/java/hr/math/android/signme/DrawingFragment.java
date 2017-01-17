@@ -82,7 +82,7 @@ public class DrawingFragment extends Fragment {
 
     private void signedOnLesson(int student_id, int lecture_id, float signature_distance)
     {
-        DBAdapter db = new DBAdapter(getContext());
+        DBAttendance db = new DBAttendance(getContext());
         db.open();
         db.newAttendance(student_id, lecture_id, signature_distance);
         db.close();
@@ -145,7 +145,7 @@ public class DrawingFragment extends Fragment {
     }
 
     private void signatureTooLong() {
-        Log.d(TAG, "Too many coordinates. Number of coordinates must be less than 1000");
+        Log.d(TAG, "Too many coordinates. Number of coordinates must be less than " + DBAdapter.number_of_coords);
         Toast.makeText(getContext(), "Try to sign faster ;).\nYou are too slow.", Toast.LENGTH_LONG).show();
     }
 }

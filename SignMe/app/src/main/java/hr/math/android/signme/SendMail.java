@@ -23,7 +23,7 @@ import jxl.write.biff.RowsExceededException;
 
 public class SendMail {
 
-
+    //TODO: napraviti slanje mailova!!!!!!!!!!!
     private static void exportToExcel() {
         final String fileName = "TodoList.xls";
 

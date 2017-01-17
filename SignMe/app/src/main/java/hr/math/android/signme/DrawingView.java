@@ -37,10 +37,12 @@ public class DrawingView extends View {
     private final float touchDownCode = 1;
     private final float touchMoveCode = 2;
     private final float touchUpCode = 3;
-    private final int minimalCoordNumber = 200;
-    private final int maximalCoordNumber = 999;
 
-    private DBAdapter db;
+    //Max number of coordinates is limited by DBAdapter number of columns in TABLE SIGNATURES.
+    private final int minimalCoordNumber = 200;
+
+    private DBDistances dbDistances;
+    private DBSignatures dbSignatures;
 
     public DrawingView(Context c, AttributeSet attrs) {
         super(c, attrs);
@@ -65,7 +67,8 @@ public class DrawingView extends View {
         x_coord = new ArrayList<>(500);
         y_coord = new ArrayList<>(500);
         pen_start = new ArrayList<>(500);
-        db = new DBAdapter(getContext());
+        dbDistances = new DBDistances(getContext());
+        dbSignatures = new DBSignatures(getContext());
 
     }
 
@@ -170,7 +173,7 @@ public class DrawingView extends View {
 
     public int saveSignature(int number, int student_id, int lecture_id)
     {
-        if(x_coord.size() > maximalCoordNumber) {
+        if(x_coord.size() > DBAdapter.number_of_coords) {
             discardSignature();
             return -1;
         }
@@ -187,9 +190,10 @@ public class DrawingView extends View {
                 + student_id + " on lecture " + lecture_id);
         Log.d(TAG, "duljina prije spremanja je: " + x_coord.size() + " " + y_coord.size() +" " + pen_start.size() );
 
-        db.open();
+        dbDistances.open();
+        dbSignatures.open();
 
-        Cursor c = db.getStudentSignature(student_id, lecture_id);
+        Cursor c = dbSignatures.getStudentSignature(student_id, lecture_id);
         Log.d(TAG, "Got " + c.getCount() + " rows.");
 
         if(c.getCount() % 3 != 0) {
@@ -200,7 +204,7 @@ public class DrawingView extends View {
         ArrayList<Float> x_normalised = DTW.normaliseXData(x_coord);
         ArrayList<Float> y_normalised = DTW.normaliseYData(y_coord);
 
-        db.saveSignature(number, student_id, lecture_id, x_normalised, y_normalised, pen_start);
+        dbSignatures.saveSignature(number, student_id, lecture_id, x_normalised, y_normalised, pen_start);
 
         float max1 = 0, max_temp1;
         float max2 = 0, max_temp2;
@@ -232,8 +236,9 @@ public class DrawingView extends View {
         }
 
         if(c.getCount() != 0)
-            db.updateMaxDistance(student_id, lecture_id, max1, max2);
-        db.close();
+            dbDistances.updateMaxDistance(student_id, lecture_id, max1, max2);
+        dbDistances.close();
+        dbSignatures.close();
         discardSignature();
         return 1;
     }
@@ -247,7 +252,7 @@ public class DrawingView extends View {
      */
     public float checkSignature(int student_id, int lecture_id)
     {
-        if(x_coord.size() > maximalCoordNumber) {
+        if(x_coord.size() > DBAdapter.number_of_coords) {
             discardSignature();
             return -1;
         }
@@ -261,8 +266,9 @@ public class DrawingView extends View {
         min_sum.add(0F);
         min_sum.add(0F);
 
-        db.open();
-        Cursor c = db.getStudentSignature(student_id, lecture_id);
+        dbDistances.open();
+        dbSignatures.open();
+        Cursor c = dbSignatures.getStudentSignature(student_id, lecture_id);
         Log.d(TAG, "Got " + c.getCount() + " rows. from student id " + student_id + " and lecture id = " + lecture_id);
 
         if(c.getCount() % 3 != 0) {
@@ -300,14 +306,15 @@ public class DrawingView extends View {
         }
 
         float min = Float.POSITIVE_INFINITY;
-        ArrayList<Float> max_distances = db.getMaxDistance(student_id, lecture_id);
+        ArrayList<Float> max_distances = dbDistances.getMaxDistance(student_id, lecture_id);
         for (int i = 0; i < max_distances.size(); i++) {
             min_sum.set(i, min_sum.get(i)/max_distances.get(i)/c.getCount()*3);
             if (min > min_sum.get(i))
                 min = min_sum.get(i);
         }
 
-        db.close();
+        dbSignatures.close();
+        dbDistances.close();
         Toast.makeText(getContext(), "Minmal distance between signatures is: " + min_sum.toString(), Toast.LENGTH_LONG).show();
         Log.d(TAG, "Minmal distance between signatures is: " + min_sum.toString());
         return min;

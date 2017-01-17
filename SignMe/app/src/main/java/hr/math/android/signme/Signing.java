@@ -146,6 +146,9 @@ public class Signing extends AppCompatActivity {
             resetPreferredLauncherAndOpenChooser(getApplicationContext());
             Intent i = new Intent(Intent.ACTION_MAIN);
             i.addCategory(Intent.CATEGORY_HOME);
+            i.putExtra("LECTURE_NAME", lecture_name);
+            i.putExtra("LECTURE_ID", lecture_id);
+            //i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(i);
         }
     }

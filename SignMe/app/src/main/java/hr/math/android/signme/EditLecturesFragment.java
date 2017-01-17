@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class EditLecturesFragment extends Fragment {
 
-    private DBAdapter db;
+    private DBLectures db;
     private CursorAdapter adapter;
     private Activity activity;
     private Cursor cursor;
@@ -71,7 +71,7 @@ public class EditLecturesFragment extends Fragment {
         Log.d("EDIT", "TU SAMMMMMMMMM");
         activity = getActivity();
         this.view = view;
-        db = new DBAdapter(getContext());
+        db = new DBLectures(getContext());
         db.open();
         cursor = db.getAllLectures();
 
@@ -212,9 +212,7 @@ public class EditLecturesFragment extends Fragment {
     private void addNewLecture(String name) {
 
         if (!db.doesLectureExist(name)) {
-            DBLectures dbl = new DBLectures(getContext());
-            dbl.open();
-            dbl.newLecture(name);
+            db.newLecture(name);
             Toast.makeText(activity, "Added new lecture", Toast.LENGTH_SHORT).show();
             cursor.requery();
             adapter.notifyDataSetChanged();

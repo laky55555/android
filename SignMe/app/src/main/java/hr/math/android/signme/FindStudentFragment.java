@@ -28,7 +28,7 @@ import android.widget.Toast;
 
 public class FindStudentFragment extends Fragment {
 
-    DBAdapter db;
+    DBStudents db;
     private int lecture_id;
     private final String TAG = "FindStudentFragment";
     private AutoCompleteTextView textView;
@@ -53,16 +53,17 @@ public class FindStudentFragment extends Fragment {
         }
     }
 
-    // The onCreateView method is called when Fragment should create its View object hierarchy,
-    // either dynamically or via XML layout inflation.
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
         return inflater.inflate(R.layout.fragmetn_select_name, parent, false);
     }
 
-    // This event is triggered soon after onCreateView().
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
@@ -72,7 +73,6 @@ public class FindStudentFragment extends Fragment {
         check_attendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Toast.makeText(getActivity(), "Starting signature for student", Toast.LENGTH_LONG).show();
             checkExistingStudent();
             }
         });
@@ -80,19 +80,12 @@ public class FindStudentFragment extends Fragment {
         add_new_student.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Toast.makeText(getActivity(), "Creating new student: ", Toast.LENGTH_LONG).show();
             popUpNewStudents();
             }
         });
 
-        // Setup any handles to view objects here
-        textView = (AutoCompleteTextView) view.findViewById(R.id.list_of_names);
-        // Get the string array
-        //String[] countries = getResources().getStringArray(R.array.countries_array);
-        // Create the adapter and set it to the AutoCompleteTextView
-        db = new DBAdapter(getContext());
+        db = new DBStudents(getContext());
         db.open();
-        //CursorAdapter adapter = new ClientCursorAdapter(getContext(), R.layout.fragmetn_select_name, db.getAllStudentsOfLecture(0), 0);
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(getContext(), android.R.layout.two_line_list_item,
                 null, new String[]{"name", "JMBAG"}, new int[]{android.R.id.text1, android.R.id.text2});
 
@@ -100,25 +93,22 @@ public class FindStudentFragment extends Fragment {
         adapter.setCursorToStringConverter(new SimpleCursorAdapter.CursorToStringConverter() {
             @Override
             public CharSequence convertToString(Cursor cursor) {
-                final int colIndex = cursor.getColumnIndexOrThrow("name");
-                return cursor.getString(colIndex) + " " + cursor.getString(2) + " " + cursor.getString(3);
+                return cursor.getString(1) + " " + cursor.getString(2) + " " + cursor.getString(3);
             }
         });
 
-        // This will run a query to find the descriptions for a given vehicle.
         adapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence description) {
                 Cursor managedCursor = db.getAllStudentsOfLecture(lecture_id, description);
-                Log.d("TESSST", "Query has " + managedCursor.getCount());
-                Log.d("TESSST", "Number of students in lecture = " + db.numberOfStudents(lecture_id));
+                Log.d("AutoComplete", "Query has " + managedCursor.getCount());
+                Log.d("AutoComplete", "Number of students in lecture = " + db.numberOfStudents(lecture_id));
                 return managedCursor;
             }
         });
 
-
+        textView = (AutoCompleteTextView) view.findViewById(R.id.list_of_names);
         textView.setAdapter(adapter);
-        //db.close();
     }
 
     private void noStudentMessage(String student)
@@ -226,8 +216,7 @@ public class FindStudentFragment extends Fragment {
             return -1;
         }
 
-        db.open();
-        if (!db.doesStudentExist(jmbag, lecture_id)) {
+        if (!db.doesStudentExist(lecture_id, jmbag)) {
             db.newStudent(name, surname, jmbag, lecture_id);
             Toast.makeText(getContext(), "Added new student " + name, Toast.LENGTH_SHORT).show();
             return db.getStudentID(lecture_id, jmbag);
@@ -235,7 +224,6 @@ public class FindStudentFragment extends Fragment {
         }
         else
             Toast.makeText(getContext(), "Student with JMBAG " + JMBAG + " already exist.", Toast.LENGTH_SHORT).show();
-        //db.close();
         return -1;
     }
 
@@ -243,12 +231,8 @@ public class FindStudentFragment extends Fragment {
     {
         Toast.makeText(getContext(), "Starting fragment for drawing", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Starting fragment for drawing");
-        // Begin the transaction
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
         ft.replace(R.id.fragment, DrawingFragment.newInstance(learning_new, student_id, lecture_id));
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
         ft.commit();
     }
 
