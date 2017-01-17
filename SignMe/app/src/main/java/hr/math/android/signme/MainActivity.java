@@ -33,14 +33,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -95,17 +95,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_lectures_list) {
-            Intent intent = new Intent(this, LecturesList.class);
-            startActivity(intent);
+            /*Intent intent = new Intent(this, LecturesList.class);
+            startActivity(intent);*/
+            startLectures(true, false);
         } else if (id == R.id.nav_add_lecture) {
-            Intent intent = new Intent(this, LecturesList.class);
-            intent.putExtra(PARAMETER_ADD, "ADD");
-            startActivity(intent);
+            //startEditLectures(true);
+            startLectures(true, true);
         } else if (id == R.id.nav_settings) {
             startSettingsFragment();
         } else if (id == R.id.nav_check_attendance) {
-            startCheckAttendanceFragment();
-
+            //startCheckAttendanceFragment();
+            startLectures(false, false);
         } else if (id == R.id.nav_share_one) {
 
         } else if (id == R.id.nav_send_all) {
@@ -139,6 +139,28 @@ public class MainActivity extends AppCompatActivity
         // Complete the changes added above
         ft.commit();
 
+    }
+
+    private void startEditLectures(boolean addNewLecture)
+    {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        EditLecturesFragment fragmentDemo = EditLecturesFragment.newInstance(true, addNewLecture);
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.your_placeholder, fragmentDemo);
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+    }
+
+    private void startLectures(boolean editLectures, boolean addNewLecture)
+    {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        EditLecturesFragment fragmentDemo = EditLecturesFragment.newInstance(editLectures, addNewLecture);
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.your_placeholder, fragmentDemo);
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
     }
 
 }

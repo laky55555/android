@@ -56,7 +56,7 @@ public class LecturesListFragment extends Fragment {
             @Override
             public View newView(Context context, Cursor cursor, ViewGroup parent) {
                 //return LayoutInflater.from(context).inflate(R.layout.nova_lista, parent, false);
-                return LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_checked, parent, false);
+                return LayoutInflater.from(context).inflate(android.R.layout.simple_selectable_list_item, parent, false);
             }
 
             @Override

@@ -313,8 +313,10 @@ public class DBAdapter {
 
     public Cursor getAllLectures()
     {
-        return db.query(TABLE_LECTURES, new String[] {LECTURE_ID, LECTURE_NAME},
+        Cursor c = db.query(TABLE_LECTURES, new String[] {LECTURE_ID, LECTURE_NAME},
                 null, null, null, null, null);
+        //c.setNotificationUri();
+        return c;
     }
 
     /**

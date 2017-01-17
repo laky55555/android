@@ -163,7 +163,7 @@ public class Signing extends AppCompatActivity {
             exit(true);
         }
         else
-            Toast.makeText(this, "Krivi pass", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -261,7 +261,7 @@ public class Signing extends AppCompatActivity {
 //            return true;
 //        } else
         if (id == R.id.action_exit) {
-            Toast.makeText(this,"exit", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "exit", Toast.LENGTH_LONG).show();
             popUpPassword();
             return true;
         }
