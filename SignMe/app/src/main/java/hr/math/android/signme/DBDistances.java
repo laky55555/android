@@ -19,16 +19,16 @@ class DBDistances extends DBAdapter {
         super(ctx);
     }
 
-    boolean updateMaxDistance(int student_id, int lecture_id, ArrayList<Float> max)
+    boolean updateMaxDistance(int studentId, int lectureId, ArrayList<Float> max)
     {
-        String findQuery = MAX_DISTANCE_STUDENT_ID + "='" + student_id + "' and "
-                + MAX_DISTANCE_LECTURE_ID+ "='" + lecture_id + "'";
+        String findQuery = MAX_DISTANCE_STUDENT_ID + "='" + studentId + "' and "
+                + MAX_DISTANCE_LECTURE_ID+ "='" + lectureId + "'";
 
         ContentValues args = new ContentValues();
         String[] columns = new String[max.size() + 1];
 
-        args.put(MAX_DISTANCE_LECTURE_ID, lecture_id);
-        args.put(MAX_DISTANCE_STUDENT_ID, student_id);
+        args.put(MAX_DISTANCE_LECTURE_ID, lectureId);
+        args.put(MAX_DISTANCE_STUDENT_ID, studentId);
 
         for (int i = 0; i < max.size(); i++) {
             args.put(MAX_DISTANCE_DISTANCE + i, max.get(i));
@@ -58,11 +58,11 @@ class DBDistances extends DBAdapter {
         }
     }
 
-    ArrayList<Float> getMaxDistance(int student_id, int lecture_id)
+    ArrayList<Float> getMaxDistance(int studentId, int lectureId)
     {
         ArrayList<Float> array = new ArrayList<>();
-        String findQuery = MAX_DISTANCE_STUDENT_ID + "='" + student_id + "' and "
-                + MAX_DISTANCE_LECTURE_ID+ "='" + lecture_id + "'";
+        String findQuery = MAX_DISTANCE_STUDENT_ID + "='" + studentId + "' and "
+                + MAX_DISTANCE_LECTURE_ID+ "='" + lectureId + "'";
         Cursor c = db.query(true, TABLE_MAX_DISTANCES, new String[] {MAX_DISTANCE_ID, MAX_DISTANCE_DISTANCE+"0", MAX_DISTANCE_DISTANCE+"1"},
                 findQuery, null, null, null, null, null);
         c.moveToFirst();

@@ -29,14 +29,14 @@ import android.widget.Toast;
 public class FindStudentFragment extends Fragment {
 
     DBStudents db;
-    private int lecture_id;
+    private int lectureId;
     private final String TAG = "FindStudentFragment";
     private AutoCompleteTextView textView;
 
     public static FindStudentFragment newInstance(int id) {
         FindStudentFragment fragmentDemo = new FindStudentFragment();
         Bundle args = new Bundle();
-        args.putInt("lecture_id", id);
+        args.putInt("lectureId", id);
         fragmentDemo.setArguments(args);
         return fragmentDemo;
     }
@@ -45,10 +45,10 @@ public class FindStudentFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Get back arguments
-        lecture_id = getArguments().getInt("lecture_id", -1);
-        if(lecture_id == -1) {
-            Toast.makeText(getContext(), "Some error in lecture_id = " + lecture_id, Toast.LENGTH_LONG).show();
-            Log.d(TAG, "Error in getting lecture id for activity, lecture_id = " + lecture_id);
+        lectureId = getArguments().getInt("lectureId", -1);
+        if(lectureId == -1) {
+            Toast.makeText(getContext(), "Some error in lectureId = " + lectureId, Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Error in getting lecture id for activity, lectureId = " + lectureId);
             getActivity().getFragmentManager().popBackStack();
         }
     }
@@ -100,9 +100,9 @@ public class FindStudentFragment extends Fragment {
         adapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence description) {
-                Cursor managedCursor = db.getAllStudentsOfLecture(lecture_id, description);
+                Cursor managedCursor = db.getAllStudentsOfLecture(lectureId, description);
                 Log.d("AutoComplete", "Query has " + managedCursor.getCount());
-                Log.d("AutoComplete", "Number of students in lecture = " + db.numberOfStudents(lecture_id));
+                Log.d("AutoComplete", "Number of students in lecture = " + db.numberOfStudents(lectureId));
                 return managedCursor;
             }
         });
@@ -140,11 +140,11 @@ public class FindStudentFragment extends Fragment {
                 noStudentMessage(wholeText);
                 return;
             }
-            int student_id = db.getStudentID(lecture_id, jmbag, text[0], text[1]);
-            if(student_id == -1)
+            int studentId = db.getStudentID(lectureId, jmbag, text[0], text[1]);
+            if(studentId == -1)
                 noStudentMessage(wholeText);
             else
-                startSigningScreen(false, student_id);
+                startSigningScreen(false, studentId);
         }
     }
 
@@ -155,33 +155,33 @@ public class FindStudentFragment extends Fragment {
         final LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText input_name = new EditText(getActivity());
-        input_name.setHint(R.string.add_name);
-        input_name.setInputType(InputType.TYPE_CLASS_TEXT);
-        layout.addView(input_name);
+        final EditText inputName = new EditText(getActivity());
+        inputName.setHint(R.string.add_name);
+        inputName.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(inputName);
 
-        final EditText input_surname = new EditText(getActivity());
-        input_surname.setHint(R.string.add_surname);
-        input_surname.setInputType(InputType.TYPE_CLASS_TEXT);
-        layout.addView(input_surname);
+        final EditText inputSurname = new EditText(getActivity());
+        inputSurname.setHint(R.string.add_surname);
+        inputSurname.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(inputSurname);
 
-        final EditText input_jmbag = new EditText(getActivity());
-        input_jmbag.setHint(R.string.add_jmbag);
-        input_jmbag.setInputType(InputType.TYPE_CLASS_NUMBER);
-        layout.addView(input_jmbag);
+        final EditText inputJmbag = new EditText(getActivity());
+        inputJmbag.setHint(R.string.add_jmbag);
+        inputJmbag.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(inputJmbag);
 
         builder.setView(layout);
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int new_student_id = addNewStudent(input_name.getText().toString(), input_surname.getText().toString(),
-                        input_jmbag.getText().toString());
-                if(new_student_id != -1)
-                    startSigningScreen(true, new_student_id);
+                int new_studentId = addNewStudent(inputName.getText().toString(), inputSurname.getText().toString(),
+                        inputJmbag.getText().toString());
+                if(new_studentId != -1)
+                    startSigningScreen(true, new_studentId);
                 else
-                    badStudentInfo(input_name.getText().toString(), input_surname.getText().toString(),
-                            input_jmbag.getText().toString());
+                    badStudentInfo(inputName.getText().toString(), inputSurname.getText().toString(),
+                            inputJmbag.getText().toString());
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -216,10 +216,10 @@ public class FindStudentFragment extends Fragment {
             return -1;
         }
 
-        if (!db.doesStudentExist(lecture_id, jmbag)) {
-            db.newStudent(name, surname, jmbag, lecture_id);
+        if (!db.doesStudentExist(lectureId, jmbag)) {
+            db.newStudent(name, surname, jmbag, lectureId);
             Toast.makeText(getContext(), "Added new student " + name, Toast.LENGTH_SHORT).show();
-            return db.getStudentID(lecture_id, jmbag);
+            return db.getStudentID(lectureId, jmbag);
 
         }
         else
@@ -227,12 +227,12 @@ public class FindStudentFragment extends Fragment {
         return -1;
     }
 
-    private void startSigningScreen(boolean learning_new, int student_id)
+    private void startSigningScreen(boolean learningNew, int studentId)
     {
         Toast.makeText(getContext(), "Starting fragment for drawing", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Starting fragment for drawing");
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment, DrawingFragment.newInstance(learning_new, student_id, lecture_id));
+        ft.replace(R.id.fragment, DrawingFragment.newInstance(learningNew, studentId, lectureId));
         ft.commit();
     }
 

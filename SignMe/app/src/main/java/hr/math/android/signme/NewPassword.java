@@ -23,7 +23,7 @@ public class NewPassword extends AppCompatActivity {
 
     private EditText pass1;
     private EditText pass2;
-    private Button save_button;
+    private Button saveButton;
     private TextView eye;
 
     private Password passwordClass;
@@ -64,7 +64,7 @@ public class NewPassword extends AppCompatActivity {
         pass1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         pass2 = (EditText) findViewById(R.id.password2);
         eye = (TextView) findViewById(R.id.eye);
-        save_button = (Button) findViewById(R.id.save_password);
+        saveButton = (Button) findViewById(R.id.save_password);
         passwordClass = new Password(this);
 
     }
@@ -82,7 +82,7 @@ public class NewPassword extends AppCompatActivity {
     }
 
     private void saveButtonListener() {
-        save_button.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);

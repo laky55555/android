@@ -20,7 +20,7 @@ public class SettingsFragment extends Fragment {
 
     private EditText pass1;
     private EditText pass2;
-    private Button save_button;
+    private Button saveButton;
     private TextView eye;
 
     private Password passwordClass;
@@ -51,7 +51,7 @@ public class SettingsFragment extends Fragment {
         pass1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         pass2 = (EditText) view.findViewById(R.id.password2);
         eye = (TextView) view.findViewById(R.id.eye);
-        save_button = (Button) view.findViewById(R.id.save_password);
+        saveButton = (Button) view.findViewById(R.id.save_password);
 
         passwordClass = new Password(getActivity());
 
@@ -71,7 +71,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void saveButtonListener() {
-        save_button.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);

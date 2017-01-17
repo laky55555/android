@@ -42,8 +42,8 @@ public class EditLecturesFragment extends Fragment {
     public static EditLecturesFragment newInstance(boolean editLectures, boolean addNewLecture) {
         EditLecturesFragment fragmentDemo = new EditLecturesFragment();
         Bundle args = new Bundle();
-        args.putBoolean("edit_lectures", editLectures);
-        args.putBoolean("add_lecture", addNewLecture);
+        args.putBoolean("editLectures", editLectures);
+        args.putBoolean("addLecture", addNewLecture);
         fragmentDemo.setArguments(args);
         return fragmentDemo;
     }
@@ -51,8 +51,8 @@ public class EditLecturesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addNewLecture = getArguments().getBoolean("add_lecture", false);
-        editLectures = getArguments().getBoolean("edit_lectures", false);
+        addNewLecture = getArguments().getBoolean("addLecture", false);
+        editLectures = getArguments().getBoolean("editLectures", false);
     }
 
     @Override
@@ -188,17 +188,17 @@ public class EditLecturesFragment extends Fragment {
         final LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText input_name = new EditText(activity);
-        input_name.setHint(R.string.add_lecture);
-        input_name.setInputType(InputType.TYPE_CLASS_TEXT);
-        layout.addView(input_name);
+        final EditText inputName = new EditText(activity);
+        inputName.setHint(R.string.add_lecture);
+        inputName.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(inputName);
 
         builder.setView(layout);
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                addNewLecture(input_name.getText().toString());
+                addNewLecture(inputName.getText().toString());
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

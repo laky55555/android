@@ -27,8 +27,8 @@ import android.widget.Toast;
 
 public class Signing extends AppCompatActivity {
 
-    private String lecture_name;
-    private int lecture_id;
+    private String lectureName;
+    private int lectureId;
     private String TAG = "SIGNING";
 
     private WindowManager manager;
@@ -42,15 +42,15 @@ public class Signing extends AppCompatActivity {
         disableStatusBar();
 
         if(getIntent().hasExtra("LECTURE_ID")) {
-            lecture_name = getIntent().getStringExtra("LECTURE_NAME");
-            lecture_id = getIntent().getIntExtra("LECTURE_ID", -1);
+            lectureName = getIntent().getStringExtra("LECTURE_NAME");
+            lectureId = getIntent().getIntExtra("LECTURE_ID", -1);
 
             Log.d(TAG, "onCreate intent IMA extra lecture name = "
-                    + lecture_name + " lecture id = " + lecture_id);
-            Toast.makeText(this, "onCreate intent ima extra lecture name = " + lecture_name
-                    + " lecture id = " + lecture_id, Toast.LENGTH_SHORT).show();
+                    + lectureName + " lecture id = " + lectureId);
+            Toast.makeText(this, "onCreate intent ima extra lecture name = " + lectureName
+                    + " lecture id = " + lectureId, Toast.LENGTH_SHORT).show();
 
-            setTitle(lecture_name);
+            setTitle(lectureName);
             startSelectNameFragment();
         }
         else {
@@ -64,7 +64,7 @@ public class Signing extends AppCompatActivity {
         Toast.makeText(this,"Starting fragment for finding student", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Starting fragment for finding student");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment, FindStudentFragment.newInstance(lecture_id));
+        ft.replace(R.id.fragment, FindStudentFragment.newInstance(lectureId));
         ft.commit();
     }
 
@@ -123,12 +123,17 @@ public class Signing extends AppCompatActivity {
             Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        manager.removeView(view);
+    }
+
     private void exit(boolean userExit) {
         Intent intent;
         if(userExit) {
             intent = new Intent(this, MainActivity.class);
             getPackageManager().clearPackagePreferredActivities(getPackageName());
-            manager.removeView(view);
         }
         else
             intent = new Intent(this, Limbo.class);
@@ -157,8 +162,8 @@ public class Signing extends AppCompatActivity {
             resetPreferredLauncherAndOpenChooser(getApplicationContext());
             Intent i = new Intent(Intent.ACTION_MAIN);
             i.addCategory(Intent.CATEGORY_HOME);
-            i.putExtra("LECTURE_NAME", lecture_name);
-            i.putExtra("LECTURE_ID", lecture_id);
+            i.putExtra("LECTURE_NAME", lectureName);
+            i.putExtra("LECTURE_ID", lectureId);
             //i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(i);
         }

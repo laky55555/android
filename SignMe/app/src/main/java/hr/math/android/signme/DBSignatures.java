@@ -32,12 +32,12 @@ class DBSignatures extends DBAdapter{
     }
 
 
-    boolean saveSignature(int number, int student_id, int lecture_id, ArrayList<Float> xCoord,
+    boolean saveSignature(int number, int studentId, int lectureId, ArrayList<Float> xCoord,
                                  ArrayList<Float> yCoord, ArrayList<Float> penUp)
     {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(SIGNATURE_STUDENT_ID, student_id);
-        initialValues.put(SIGNATURE_LECTURE_ID, lecture_id);
+        initialValues.put(SIGNATURE_STUDENT_ID, studentId);
+        initialValues.put(SIGNATURE_LECTURE_ID, lectureId);
         initialValues.put(SIGNATURE_NUMBER, number);
 
         initialValues.put(SIGNATURE_AXIS, "x");

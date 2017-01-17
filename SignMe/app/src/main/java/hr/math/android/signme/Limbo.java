@@ -50,16 +50,16 @@ public class Limbo extends AppCompatActivity {
         builder.show();
     }
 
-    private void checkPassword(String input_password) {
-        String stored_pass = new Password(this).getPassword();
-        if(stored_pass.equals(input_password)){
+    private void checkPassword(String inputPassword) {
+        String storedPass = new Password(this).getPassword();
+        if(storedPass.equals(inputPassword)){
             Intent intent = new Intent(this, MainActivity.class);
             getPackageManager().clearPackagePreferredActivities(getPackageName());
             startActivity(intent);
             finish();
         }
         else
-            Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Krivi pass, tocni pass = " + storedPass, Toast.LENGTH_SHORT).show();
     }
 
 }

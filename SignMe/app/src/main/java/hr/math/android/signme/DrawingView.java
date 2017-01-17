@@ -29,14 +29,13 @@ public class DrawingView extends View {
     Context context;
     private Paint circlePaint;
     private Path circlePath;
-    private int broj_dodira = 0;
-    ArrayList<Float> x_coord;
-    ArrayList<Float> y_coord;
-    ArrayList<Float> pen_start;
+    ArrayList<Float> xCoordinates;
+    ArrayList<Float> yCoordinates;
+    ArrayList<Float> penStart;
     private final int backgroundColor = 0xFFCCFFFF;
-    private final float touchDownCode = 1;
-    private final float touchMoveCode = 2;
-    private final float touchUpCode = 3;
+    final float touchDownCode = 1;
+    final float touchMoveCode = 2;
+    final float touchUpCode = 3;
 
 
     public DrawingView(Context c, AttributeSet attrs) {
@@ -59,9 +58,9 @@ public class DrawingView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
-        x_coord = new ArrayList<>(500);
-        y_coord = new ArrayList<>(500);
-        pen_start = new ArrayList<>(500);
+        xCoordinates = new ArrayList<>(500);
+        yCoordinates = new ArrayList<>(500);
+        penStart = new ArrayList<>(500);
 
     }
 
@@ -86,18 +85,18 @@ public class DrawingView extends View {
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 2;
 
-    private void touch_start(float x, float y) {
+    private void touchStart(float x, float y) {
         mPath.reset();
         mPath.moveTo(x, y);
         mX = x;
         mY = y;
-        x_coord.add(x);
-        y_coord.add(y);
-        pen_start.add(touchDownCode);
+        xCoordinates.add(x);
+        yCoordinates.add(y);
+        penStart.add(touchDownCode);
 
     }
 
-    private void touch_move(float x, float y) {
+    private void touchMove(float x, float y) {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
@@ -105,19 +104,19 @@ public class DrawingView extends View {
             mX = x;
             mY = y;
 
-            x_coord.add(x);
-            y_coord.add(y);
-            pen_start.add(touchMoveCode);
+            xCoordinates.add(x);
+            yCoordinates.add(y);
+            penStart.add(touchMoveCode);
 
             circlePath.reset();
             circlePath.addCircle(mX, mY, 30, Path.Direction.CW);
         }
     }
 
-    private void touch_up() {
+    private void touchUp() {
         mPath.lineTo(mX, mY);
 
-        pen_start.set(pen_start.size() - 1, touchUpCode);
+        penStart.set(penStart.size() - 1, touchUpCode);
 
         circlePath.reset();
         // commit the path to our offscreen
@@ -137,15 +136,15 @@ public class DrawingView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                touch_start(x, y);
+                touchStart(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                touch_move(x, y);
+                touchMove(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touch_up();
+                touchUp();
                 invalidate();
                 break;
         }
@@ -158,30 +157,29 @@ public class DrawingView extends View {
         //mCanvas.drawColor(Color.WHITE);
         //mCanvas.drawColor(Color.GRAY);
         mCanvas.drawColor(backgroundColor);
-        x_coord.clear();
-        y_coord.clear();
-        pen_start.clear();
-        broj_dodira = 0;
+        xCoordinates.clear();
+        yCoordinates.clear();
+        penStart.clear();
     }
 
 //    public int saveSignature(int number, int student_id, int lecture_id)
 //    {
-//        if(x_coord.size() > DBAdapter.number_of_coords) {
+//        if(xCoordinates.size() > DBAdapter.number_of_coords) {
 //            discardSignature();
 //            return -1;
 //        }
 //
-//        if(x_coord.size() < minimalCoordNumber) {
+//        if(xCoordinates.size() < minimalCoordNumber) {
 //            discardSignature();
 //            return -2;
 //        }
 //
-//        Log.d(TAG, "x coord = " + x_coord.toString());
-//        Log.d(TAG, "y coord = " + y_coord.toString());
-//        Log.d(TAG, "pen start = " + pen_start.toString());
+//        Log.d(TAG, "x coord = " + xCoordinates.toString());
+//        Log.d(TAG, "y coord = " + yCoordinates.toString());
+//        Log.d(TAG, "pen start = " + penStart.toString());
 //        Log.d(TAG, "Saving signature number " + number + " of student "
 //                + student_id + " on lecture " + lecture_id);
-//        Log.d(TAG, "duljina prije spremanja je: " + x_coord.size() + " " + y_coord.size() +" " + pen_start.size() );
+//        Log.d(TAG, "duljina prije spremanja je: " + xCoordinates.size() + " " + yCoordinates.size() +" " + penStart.size() );
 //
 //        dbDistances.open();
 //        dbSignatures.open();
@@ -194,10 +192,10 @@ public class DrawingView extends View {
 //            return -3;
 //        }
 //
-//        ArrayList<Float> x_normalised = DTW.normaliseXData(x_coord);
-//        ArrayList<Float> y_normalised = DTW.normaliseYData(y_coord);
+//        ArrayList<Float> x_normalised = DTW.normaliseXData(xCoordinates);
+//        ArrayList<Float> y_normalised = DTW.normaliseYData(yCoordinates);
 //
-//        dbSignatures.saveSignature(number, student_id, lecture_id, x_normalised, y_normalised, pen_start);
+//        dbSignatures.saveSignature(number, student_id, lecture_id, x_normalised, y_normalised, penStart);
 //
 //        float max1 = 0, max_temp1;
 //        float max2 = 0, max_temp2;
@@ -212,14 +210,14 @@ public class DrawingView extends View {
 //            Log.d(TAG, "pen koordinate iz baze" + p.toString());
 //            Log.d(TAG, "x koordinate trenutni potpis" + x_normalised.toString());
 //            Log.d(TAG, "y koordinate trenutni potpis" + y_normalised.toString());
-//            Log.d(TAG, "pen koordinate trenutni potpis" + pen_start.toString());
+//            Log.d(TAG, "pen koordinate trenutni potpis" + penStart.toString());
 //
 //            Log.d(TAG, "duljina iz baze je: " + x.size() + " " + y.size() +" " + p.size() );
-//            Log.d(TAG, "duljina live je: " + x_normalised.size() + " " + y_normalised.size() +" " + pen_start.size() );
+//            Log.d(TAG, "duljina live je: " + x_normalised.size() + " " + y_normalised.size() +" " + penStart.size() );
 //
 //
-//            max_temp1 = DTW.calculateDistance1(x_normalised, y_normalised, pen_start, x, y, p);
-//            max_temp2 = DTW.calculateDistance2(x_normalised, y_normalised, pen_start, x, y, p);
+//            max_temp1 = DTW.calculateDistance1(x_normalised, y_normalised, penStart, x, y, p);
+//            max_temp2 = DTW.calculateDistance2(x_normalised, y_normalised, penStart, x, y, p);
 //            Log.d(TAG, "Maximal distance between signatures is: " + max_temp1 +
 //                    "maximal distance2 is " + max_temp2);
 //            if (max_temp1 > max1)
@@ -245,11 +243,11 @@ public class DrawingView extends View {
      */
 //    public float checkSignature(int student_id, int lecture_id)
 //    {
-//        if(x_coord.size() > DBAdapter.number_of_coords) {
+//        if(xCoordinates.size() > DBAdapter.number_of_coords) {
 //            discardSignature();
 //            return -1;
 //        }
-//        if(x_coord.size() < minimalCoordNumber) {
+//        if(xCoordinates.size() < minimalCoordNumber) {
 //            discardSignature();
 //            return -2;
 //        }
@@ -269,8 +267,8 @@ public class DrawingView extends View {
 //            return -1;
 //        }
 //
-//        ArrayList<Float> x_coord_norm = DTW.normaliseXData(x_coord);
-//        ArrayList<Float> y_coord_norm = DTW.normaliseYData(y_coord);
+//        ArrayList<Float> xCoordinates_norm = DTW.normaliseXData(xCoordinates);
+//        ArrayList<Float> yCoordinates_norm = DTW.normaliseYData(yCoordinates);
 //
 //        for (int i = 1; i <= c.getCount()/3; i++) {
 //            ArrayList<Float> x = getArray(c, "x", i);
@@ -278,19 +276,19 @@ public class DrawingView extends View {
 //            ArrayList<Float> p = getArray(c, "p", i);
 //            Log.d(TAG, "x koordinate iz baze" + x.toString());
 //            Log.d(TAG, "y koordinate iz baze" + y.toString());
-//            Log.d(TAG, "pen koordinate iz baze" + pen_start.toString());
-//            Log.d(TAG, "x koordinate trenutni potpis" + x_coord_norm.toString());
-//            Log.d(TAG, "y koordinate trenutni potpis" + y_coord_norm.toString());
+//            Log.d(TAG, "pen koordinate iz baze" + penStart.toString());
+//            Log.d(TAG, "x koordinate trenutni potpis" + xCoordinates_norm.toString());
+//            Log.d(TAG, "y koordinate trenutni potpis" + yCoordinates_norm.toString());
 //            Log.d(TAG, "pen koordinate trenutni potpis" + p.toString());
 //
 //            Log.d(TAG, "duljina iz baze je: " + x.size() + " " + y.size() +" " + p.size() );
-//            Log.d(TAG, "duljina live je: " + x_coord_norm.size() + " " + y_coord_norm.size() +" " + pen_start.size() );
+//            Log.d(TAG, "duljina live je: " + xCoordinates_norm.size() + " " + yCoordinates_norm.size() +" " + penStart.size() );
 //
 //
-//            //Log.d(TAG, "min1 = " + DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p));
-//            //Log.d(TAG, "min2 = " + DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p));
-//            min1 = DTW.calculateDistance1(x_coord_norm, y_coord_norm, pen_start, x, y, p);
-//            min2 = DTW.calculateDistance2(x_coord_norm, y_coord_norm, pen_start, x, y, p);
+//            //Log.d(TAG, "min1 = " + DTW.calculateDistance1(xCoordinates_norm, yCoordinates_norm, penStart, x, y, p));
+//            //Log.d(TAG, "min2 = " + DTW.calculateDistance2(xCoordinates_norm, yCoordinates_norm, penStart, x, y, p));
+//            min1 = DTW.calculateDistance1(xCoordinates_norm, yCoordinates_norm, penStart, x, y, p);
+//            min2 = DTW.calculateDistance2(xCoordinates_norm, yCoordinates_norm, penStart, x, y, p);
 //            Log.d(TAG, "Minmal distance between signatures is: " + min1 +
 //                        " minimal distance2 is " + min2 + " min_sum before " + min_sum.toString());
 //            min_sum.set(0, min_sum.get(0) + min1);
