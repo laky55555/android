@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="hr.math.android.kolokvij2.Baza">
+
+    <Button
+        android:text="Dodaj 6 redaka po tablici"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="fillTables"/>
+
+
+    <Button
+        android:text="Pronadi najplacenijeg djelatnika"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="findMaxSalary"/>
+
+    <EditText
+        android:id="@+id/highest_paying"
+        android:hint="Najplaceniji:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="Ispis svih radnih mjesta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="printWorkspace"/>
+
+    <Button
+        android:text="Ispis svih zaposlenika"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="printEmployees"/>
+
+
+
+</LinearLayout>
