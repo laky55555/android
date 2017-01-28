@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+
+//TODO: vidjeti da li tu uopce mozemo ikad doci osim klikom na home i pocetnog ekrana??
 public class Limbo extends AppCompatActivity {
 
     @Override

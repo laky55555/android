@@ -39,8 +39,6 @@ public class Signing extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signing);
 
-        disableStatusBar();
-
         if(getIntent().hasExtra("LECTURE_ID")) {
             lectureName = getIntent().getStringExtra("LECTURE_NAME");
             lectureId = getIntent().getIntExtra("LECTURE_ID", -1);
@@ -51,6 +49,8 @@ public class Signing extends AppCompatActivity {
                     + " lecture id = " + lectureId, Toast.LENGTH_SHORT).show();
 
             setTitle(lectureName);
+
+            disableStatusBar();
             startSelectNameFragment();
         }
         else {
@@ -58,6 +58,7 @@ public class Signing extends AppCompatActivity {
             Toast.makeText(this, "onCreate intent NEMA extra.", Toast.LENGTH_SHORT).show();
             exit(false);
         }
+
     }
 
     private void startSelectNameFragment() {
@@ -123,24 +124,49 @@ public class Signing extends AppCompatActivity {
             Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
     }
 
+    //TODO: tu mozda bolje ne napraviti removeView nego u exitu samo za treu i poslati intentu u limb
     @Override
     protected void onStop() {
         super.onStop();
-        manager.removeView(view);
+        Log.d("STOP", "POZVAN ON STOP");
+        if(view.getWindowToken() != null)
+            manager.removeView(view);
     }
 
-    private void exit(boolean userExit) {
-        Intent intent;
-        if(userExit) {
-            intent = new Intent(this, MainActivity.class);
-            getPackageManager().clearPackagePreferredActivities(getPackageName());
-        }
-        else
-            intent = new Intent(this, Limbo.class);
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("STOP", "POZVAN ON RESTART");
+        disableStatusBar();
+    }
 
+    //TODO: ako se nemoze u limbo doci iz potpisivanja inace druga
+    private void exit(boolean userExit) {
+        Log.d("STOP", "POZVAN exit");
+        Intent intent;
+        intent = new Intent(this, MainActivity.class);
+        getPackageManager().clearPackagePreferredActivities(getPackageName());
+        Log.d("STOP", "pokrenut novi activity");
         startActivity(intent);
+        Log.d("STOP", "pozvan finish()");
         finish();
     }
+
+//    private void exit(boolean userExit) {
+//        Log.d("STOP", "POZVAN exit");
+//        Intent intent;
+//        if(userExit) {
+//            intent = new Intent(this, MainActivity.class);
+//            getPackageManager().clearPackagePreferredActivities(getPackageName());
+//        }
+//        else
+//            intent = new Intent(this, Limbo.class);
+//
+//        Log.d("STOP", "pokrenut novi activity");
+//        startActivity(intent);
+//        Log.d("STOP", "pozvan finish()");
+//        finish();
+//    }
 
 
     @Override

@@ -1,13 +1,17 @@
 package hr.math.android.signme;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -53,6 +57,13 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }
+
+        /*if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SYSTEM_ALERT_WINDOW)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW},ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+        }*/
     }
 
     @Override
@@ -83,8 +94,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             return true;
         }
-        //TODO: add direct change of password like pop up
-
 
         return super.onOptionsItemSelected(item);
     }

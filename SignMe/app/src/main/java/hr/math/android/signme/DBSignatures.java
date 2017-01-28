@@ -22,10 +22,10 @@ class DBSignatures extends DBAdapter{
     {
         String findQuery = SIGNATURE_STUDENT_ID + "='" + studentId + "' and "
                 + SIGNATURE_LECTURE_ID+ "='" + lectureId + "'";
-        String[] getRows = new String[DBAdapter.MAX_NUM_OF_COORDS+2];
+        String[] getRows = new String[MAX_NUM_OF_COORDS +2];
         getRows[0] = SIGNATURE_NUMBER;
         getRows[1] = SIGNATURE_AXIS;
-        for (int i = 0; i < DBAdapter.MAX_NUM_OF_COORDS; i++)
+        for (int i = 0; i < MAX_NUM_OF_COORDS; i++)
             getRows[i+2] = SIGNATURE_COORD + i;
 
         return db.query(true, TABLE_SIGNATURES, getRows, findQuery, null, null, null, null, null);
