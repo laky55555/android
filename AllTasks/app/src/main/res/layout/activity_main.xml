@@ -98,11 +98,31 @@
             android:onClick="startEighthClass"/>
 
         <Button
+            android:id="@+id/button_ninth_class"
+            android:text="@string/ninth_class"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_eighth_class"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:onClick="startNinthClass"/>
+
+        <Button
+            android:id="@+id/button_tenth_class"
+            android:text="@string/tenth_class"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_ninth_class"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:onClick="startTenthClass"/>
+
+        <Button
             android:id="@+id/button_test_no_back"
             android:text="@string/test_no_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/button_eighth_class"
+            android:layout_below="@+id/button_tenth_class"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:onClick="startTestNoBack"/>

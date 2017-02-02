@@ -17,9 +17,11 @@ import java.util.List;
 import hr.math.android.alltasks.eight.EighthClass;
 import hr.math.android.alltasks.fifth.FifthClass;
 import hr.math.android.alltasks.fourth.FourthClass;
+import hr.math.android.alltasks.ninth.NinthClass;
 import hr.math.android.alltasks.second.SecondClass;
 import hr.math.android.alltasks.seventh.SeventhClass;
 import hr.math.android.alltasks.sixth.SixthClass;
+import hr.math.android.alltasks.tenth.TenthClass;
 import hr.math.android.alltasks.test.FakeLauncherActivity;
 import hr.math.android.alltasks.test.FingerSigning;
 import hr.math.android.alltasks.test.NoBack;
@@ -108,6 +110,28 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Function starts activity representing ninth class.
+     * @param view The View passed into the method is a reference to the widget that was clicked.
+     */
+    public void startNinthClass(View view) {
+        Intent intent = new Intent(this, NinthClass.class);
+        startActivity(intent);
+    }
+    /**
+     * Function starts activity representing tenth class.
+     * @param view The View passed into the method is a reference to the widget that was clicked.
+     */
+    public void startTenthClass(View view) {
+        Intent intent = new Intent(this, TenthClass.class);
+        intent.putExtra("START", true);
+        startActivity(intent);
+    }
+
+
+
+
+    //BONUS PART
     public void startTestNoBack(View view) {
         Intent intent = new Intent(this, NoBack.class);
         //intent.addCategory(Intent.CATEGORY_HOME);

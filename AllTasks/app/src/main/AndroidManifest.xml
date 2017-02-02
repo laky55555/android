@@ -1,109 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="hr.math.android.alltasks">
+          package="hr.math.android.alltasks">
 
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality. 
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/pic1"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+            android:allowBackup="true"
+            android:icon="@drawable/pic1"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".second.SecondClass" />
+        <activity android:name=".second.SecondClass"/>
         <!--
              Activity SecondWindowLikeDialog has different theme
             so it makes it look like dialog window.
         -->
         <activity
-            android:name=".second.SecondWindowLikeDialog"
-            android:theme="@style/Theme.AppCompat.Dialog" />
-        <activity android:name=".second.SecondReceiveText" />
-        <activity android:name=".second.SecondReceiveTexts" />
-        <activity android:name=".third.ThirdClass" />
-        <activity android:name=".fourth.FourthClass" />
+                android:name=".second.SecondWindowLikeDialog"
+                android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".second.SecondReceiveText"/>
+        <activity android:name=".second.SecondReceiveTexts"/>
+        <activity android:name=".third.ThirdClass"/>
+        <activity android:name=".fourth.FourthClass"/>
 
         <receiver
-            android:name=".third.ThirdMyBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
+                android:name=".third.ThirdMyBroadcastReceiver"
+                android:enabled="true"
+                android:exported="true">
             <intent-filter>
-                <action android:name="hr.math.android.alltasks.NEW_LIFEFORM" />
+                <action android:name="hr.math.android.alltasks.NEW_LIFEFORM"/>
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".ChargingChanged"
-            android:enabled="true"
-            android:exported="true">
+                android:name=".ChargingChanged"
+                android:enabled="true"
+                android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
             </intent-filter>
         </receiver>
 
-        <activity android:name=".third.ThirdBothFragments" />
-        <activity android:name=".third.ThirdAlternatingFragments" />
-        <activity android:name=".third.ThirdMixFragments" />
-        <activity android:name=".fifth.FifthClass" />
-        <activity android:name=".fifth.FifthSharedPreferences" />
-        <activity android:name=".fifth.FifthFileSaving" />
-        <activity android:name=".fifth.FifthReadFile" />
-        <activity android:name=".fifth.FifthLogDebug" />
-        <activity android:name=".fifth.FifthOptionsContextMenu" />
+        <activity android:name=".third.ThirdBothFragments"/>
+        <activity android:name=".third.ThirdAlternatingFragments"/>
+        <activity android:name=".third.ThirdMixFragments"/>
+        <activity android:name=".fifth.FifthClass"/>
+        <activity android:name=".fifth.FifthSharedPreferences"/>
+        <activity android:name=".fifth.FifthFileSaving"/>
+        <activity android:name=".fifth.FifthReadFile"/>
+        <activity android:name=".fifth.FifthLogDebug"/>
+        <activity android:name=".fifth.FifthOptionsContextMenu"/>
         <activity
-            android:name=".fifth.FifthBonusOptionsMenu"
-            android:label="@string/title_activity_fifth_bonus_options_menu" />
-        <activity android:name=".fourth.FourthLinearLayout" />
-        <activity android:name=".fourth.FourthViewElements" />
-        <activity android:name=".fourth.FourthListView" />
-        <activity android:name=".fourth.FourthProgressBar" />
-        <activity android:name=".fourth.FourthGalery" />
-        <activity android:name=".sixth.SixthClass" />
-        <activity android:name=".seventh.SeventhClass" />
-        <activity android:name=".seventh.SeventhEmbeddedCP" />
+                android:name=".fifth.FifthBonusOptionsMenu"
+                android:label="@string/title_activity_fifth_bonus_options_menu"/>
+        <activity android:name=".fourth.FourthLinearLayout"/>
+        <activity android:name=".fourth.FourthViewElements"/>
+        <activity android:name=".fourth.FourthListView"/>
+        <activity android:name=".fourth.FourthProgressBar"/>
+        <activity android:name=".fourth.FourthGalery"/>
+        <activity android:name=".sixth.SixthClass"/>
+        <activity android:name=".seventh.SeventhClass"/>
+        <activity android:name=".seventh.SeventhEmbeddedCP"/>
 
         <provider
-            android:name=".seventh.BookProvider"
-            android:authorities="hr.math.android.alltasks.seventh.contprov" />
+                android:name=".seventh.BookProvider"
+                android:authorities="hr.math.android.alltasks.seventh.contprov"/>
 
-        <activity android:name=".seventh.SeventhTestingBookProvider" />
-        <activity android:name=".eight.EighthClass" />
-        <activity android:name=".eight.EighthSendSmsMail" />
-        <activity android:name=".eight.EighthDownloadPicTxt" />
+        <activity android:name=".seventh.SeventhTestingBookProvider"/>
+        <activity android:name=".eight.EighthClass"/>
+        <activity android:name=".eight.EighthSendSmsMail"/>
+        <activity android:name=".eight.EighthDownloadPicTxt"/>
         <activity
-            android:name=".test.NoBack"
-            android:launchMode="singleTask">
+                android:name=".test.NoBack"
+                android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.HOME"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".test.EnterPassword"
-            android:theme="@style/Theme.AppCompat.Dialog" />
+                android:name=".test.EnterPassword"
+                android:theme="@style/Theme.AppCompat.Dialog"/>
         <activity
-            android:name=".test.FakeLauncherActivity"
-            android:enabled="false">
+                android:name=".test.FakeLauncherActivity"
+                android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".test.FingerSigning"></activity>
+        <activity android:name=".test.FingerSigning"/>
+        <activity android:name=".ninth.NinthClass">
+        </activity>
+        <activity android:name=".tenth.TenthClass">
+        </activity>
+        <activity
+                android:name=".ninth.NotificationView"
+                android:label="Details of notification">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name=".ninth.MyService">
+        </service>
+        <service android:name=".ninth.ServiceCountdown">
+        </service>
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key"/>
+
+        <activity
+                android:name=".tenth.MapsActivity"
+                android:label="@string/title_activity_maps">
+        </activity>
     </application>
 
 </manifest>

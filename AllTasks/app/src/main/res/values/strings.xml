@@ -9,7 +9,6 @@
     <string name="send_input_text">Send input text</string>
     <string name="send_multiple_texts">Send text on 3 different ways</string>
 
-
     <string name="third_class">Third Class</string>
     <string name="google_search">Start google search</string>
     <string name="add_number">Add number</string>
@@ -22,7 +21,6 @@
     <string name="fragment1">Hello from fragment 1</string>
     <string name="fragment2">Hello from fragment 2</string>
     <string name="start_fragment2">Start fragment 2</string>
-
 
     <string name="fourth_class">Fourth Class</string>
     <string name="start_linear_layout">Linear Layout</string>
@@ -50,7 +48,6 @@
         <item>SPA</item>
         <item>Programiranje</item>
     </string-array>
-
 
     <string name="fifth_class">Fifth Class</string>
     <string name="shared_preferences">Start shared preferences</string>
@@ -94,10 +91,20 @@
     <string name="send_sms_sneaky">Send SMS untraceable</string>
     <string name="send_email">Send e-mail</string>
 
+    <string name="ninth_class">Ninth Class</string>
+    <string name="start_service">Start service</string>
+    <string name="stop_service">Stop service</string>
+    <string name="send_notification">Send notification</string>
+    <string name="start_main">Start main activity</string>
+    <string name="notification_view">This is notification view</string>
+    <string name="start_counter">Start countdown</string>
+
+    <string name="tenth_class">Tenth Class</string>
 
     <string name="test_no_back">Start no back</string>
     <string name="exit">Exit</string>
     <string name="enter_password">Enter Password</string>
     <string name="finger_signing">Finger signing</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>
