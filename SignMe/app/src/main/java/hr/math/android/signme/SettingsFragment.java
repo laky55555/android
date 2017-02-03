@@ -99,7 +99,8 @@ public class SettingsFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(pass1.getText().toString().equals(pass2.getText().toString()))
+                String password1 = pass1.getText().toString();
+                if(password1.trim().length() != 0 && password1.equals(pass2.getText().toString()))
                     pass2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
                 else
                     pass2.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);

@@ -5,10 +5,11 @@
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <!--<uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/writing"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

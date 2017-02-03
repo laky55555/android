@@ -39,6 +39,8 @@ public class Signing extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signing);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         if(getIntent().hasExtra("LECTURE_ID")) {
             lectureName = getIntent().getStringExtra("LECTURE_NAME");
             lectureId = getIntent().getIntExtra("LECTURE_ID", -1);

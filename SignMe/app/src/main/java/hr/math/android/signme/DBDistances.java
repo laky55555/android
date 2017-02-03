@@ -21,38 +21,39 @@ class DBDistances extends DBAdapter {
 
     boolean updateMaxDistance(int studentId, int lectureId, ArrayList<Float> max)
     {
-        String findQuery = MAX_DISTANCE_STUDENT_ID + "='" + studentId + "' and "
-                + MAX_DISTANCE_LECTURE_ID+ "='" + lectureId + "'";
+        String findQuery = STUDENT_ID + "='" + studentId + "' and "
+                + LECTURE_ID+ "='" + lectureId + "'";
 
         ContentValues args = new ContentValues();
         String[] columns = new String[max.size() + 1];
 
-        args.put(MAX_DISTANCE_LECTURE_ID, lectureId);
-        args.put(MAX_DISTANCE_STUDENT_ID, studentId);
+        args.put(LECTURE_ID, lectureId);
+        args.put(STUDENT_ID, studentId);
 
         for (int i = 0; i < max.size(); i++) {
-            args.put(MAX_DISTANCE_DISTANCE + i, max.get(i));
-            columns[i] = MAX_DISTANCE_DISTANCE + i;
+            args.put(DISTANCE + i, max.get(i));
+            columns[i] = DISTANCE + i;
         }
 
         Cursor c = db.query(true, TABLE_MAX_DISTANCES, columns, findQuery, null, null, null, null, null);
+        // If maximum already exist in table update result.
         if(c.getCount() == 1) {
             c.moveToFirst();
 
             // Update all columns with maximal element
             for (int i = 0; i < max.size(); i++)
                 if(c.getFloat(i) > max.get(i))
-                    args.put(MAX_DISTANCE_DISTANCE + i, c.getFloat(i));
+                    args.put(DISTANCE + i, c.getFloat(i));
 
             c.close();
 
             for (int i = 0; i < max.size(); i++)
-                Log.d(TAG_SQL, "Updated in table on: " + args.get(MAX_DISTANCE_DISTANCE + i));
+                Log.v(TAG_SQL, "Updated in table on: " + args.get(DISTANCE + i));
 
             return db.update(TABLE_MAX_DISTANCES, args, findQuery, null) == 1;
         }
         else {
-            Log.d(TAG_SQL, "Inserted in table: " + max.toString());
+            Log.v(TAG_SQL, "Inserted in table: " + max.toString());
             c.close();
             return db.insert(TABLE_MAX_DISTANCES, null, args) > 0;
         }
@@ -61,9 +62,10 @@ class DBDistances extends DBAdapter {
     ArrayList<Float> getMaxDistance(int studentId, int lectureId)
     {
         ArrayList<Float> array = new ArrayList<>();
-        String findQuery = MAX_DISTANCE_STUDENT_ID + "='" + studentId + "' and "
-                + MAX_DISTANCE_LECTURE_ID+ "='" + lectureId + "'";
-        Cursor c = db.query(true, TABLE_MAX_DISTANCES, new String[] {MAX_DISTANCE_ID, MAX_DISTANCE_DISTANCE+"0", MAX_DISTANCE_DISTANCE+"1"},
+        String findQuery = STUDENT_ID + "='" + studentId + "' and "
+                + LECTURE_ID+ "='" + lectureId + "'";
+        //TODO: tu je isto hardcodiran broj algoritama s kojim usporedujemo. Vidi todo na DBAdapter.
+        Cursor c = db.query(true, TABLE_MAX_DISTANCES, new String[] {ID, DISTANCE+"0", DISTANCE+"1"},
                 findQuery, null, null, null, null, null);
         c.moveToFirst();
         array.add(c.getFloat(1));
@@ -71,5 +73,14 @@ class DBDistances extends DBAdapter {
         c.close();
         return array;
     }
+
+    boolean deleteMaxDistance(int studentId, int lectureId)
+    {
+        Log.v(TAG_SQL, "Deleting studentId = " + studentId + ", lectureId = "
+                + lectureId + " from table " + TABLE_MAX_DISTANCES);
+        return db.delete(TABLE_MAX_DISTANCES, STUDENT_ID + "='" + studentId + "'" + " and "
+                + LECTURE_ID + "='" + lectureId + "'", null) > 0;
+    }
+
 
 }

@@ -9,95 +9,85 @@ import android.util.Log;
 
 class DBAdapter {
 
-    static final String TAG_SQL = "SQLITE";
+    private static final String TAG = "DBAdapter";
+    private static final String DATABASE_NAME = "MyDB";
+    private static final int DATABASE_VERSION = 1;
 
+
+    // Names of used tables.
     static final String TABLE_LECTURES = "lectures";
-    static final String LECTURE_ID = "_id";
-    static final String LECTURE_NAME = "name";
+    static final String TABLE_STUDENTS = "students";
+    static final String TABLE_ATTENDANCES = "attendances";
+    static final String TABLE_SIGNATURES = "signatures";
+    static final String TABLE_MAX_DISTANCES = "max_distances";
+
+    static final String ID = "_id";
+    static final String NAME = "name";
+
+    // Foreign keys.
+    static final String LECTURE_ID = "id_lecture";
+    static final String STUDENT_ID = "id_student";
+
+    // Additional student columns.
+    static final String SURNAME = "surname";
+    static final String JMBAG = "JMBAG";
+    static final String DISTANCE = "signature_distance";
+
+    // Additional attendance columns.
+    static final String DATE = "date";
+    static final String REMARK = "remark";
+
+    // Additional signature columns.
+    static final int MAX_NUM_OF_COORDS = 1000;
+    static final int MIN_NUM_OF_COORDS = 200;
+    // Describing axis of variables saved. x, y, or z (z is for pen up and down).
+    static final String AXIS = "axis";
+    static final String COORDINATE = "coordinate";
+    // For each student there could be multiple signatures saved for each lecture.
+    static final String SIGNATURE_NUMBER = "signature_number";
+
 
     private static final String CREATE_LECTURES =
-            "create table " + TABLE_LECTURES + " (" + LECTURE_ID + " integer primary key autoincrement, "
-                    + LECTURE_NAME + " text not null);";
-
-    static final String TABLE_STUDENTS = "students";
-    static final String STUDENT_ID = "_id";
-    static final String STUDENT_NAME = "name";
-    static final String STUDENT_SURNAME = "surname";
-    static final String STUDENT_JMBAG = "JMBAG";
-    static final String STUDENT_LECTURE_ID = "id_lecture";
+            "create table " + TABLE_LECTURES + " (" + ID + " integer primary key autoincrement, "
+                    + NAME + " text not null);";
 
     private static final String CREATE_STUDENTS =
-            "create table " + TABLE_STUDENTS + " (" + STUDENT_ID + " integer primary key autoincrement, "
-                    + STUDENT_NAME + " text not null, " + STUDENT_SURNAME + " text not null, "
-                    + STUDENT_JMBAG + " integer not null, " + STUDENT_LECTURE_ID + " integer, "
-                    + "FOREIGN KEY(" + STUDENT_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "));";
-
-
-    static final String TABLE_ATTENDANCES = "attendance";
-    static final String ATTENDANCE_ID = "_id";
-    static final String ATTENDANCE_DATE = "date";
-    static final String ATTENDANCE_DISTANCE = "signature_distance";
-    static final String ATTENDANCE_LECTURE_ID = "lecture_id";
-    static final String ATTENDANCE_STUDENT_ID = "student_id";
-    static final String ATTENDANCE_REMARK = "remark";
+            "create table " + TABLE_STUDENTS + " (" + ID + " integer primary key autoincrement, "
+                    + NAME + " text not null, " + SURNAME + " text not null, "
+                    + JMBAG + " integer not null, " + LECTURE_ID + " integer, "
+                    + "FOREIGN KEY(" + LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + ID + "));";
 
     private static final String CREATE_ATTENDANCES =
-            "create table " + TABLE_ATTENDANCES + " (" + ATTENDANCE_ID + " integer primary key autoincrement, "
-                    + ATTENDANCE_DATE + " text not null, " + ATTENDANCE_DISTANCE + " real not null, "
-                    + ATTENDANCE_LECTURE_ID + " integer, " + ATTENDANCE_STUDENT_ID + " integer, " + ATTENDANCE_REMARK + " text, "
-                    + "FOREIGN KEY(" + ATTENDANCE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "), "
-                    + "FOREIGN KEY(" + ATTENDANCE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
+            "create table " + TABLE_ATTENDANCES + " (" + ID + " integer primary key autoincrement, "
+                    + DATE + " text not null, " + DISTANCE + " real not null, "
+                    + LECTURE_ID + " integer, " + STUDENT_ID + " integer, " + REMARK + " text, "
+                    + "FOREIGN KEY(" + LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + ID + "), "
+                    + "FOREIGN KEY(" + STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + ID + "));";
 
     //TODO: odluciti da li ce se studenti moci potpisivati drugacije na drugim predmetima?? u pocetku DA!;
     //      kad e to bude mijenalo treba paziti na nacin brisanja studenata jer treba vidjeti koliko predmeta student slusa
     //      te ako ga brisemo iz zadnjeg kojeg slusa tada brisemo potpis, do sad brisemo potpis kad brisemo predmet
     //TODO: treba se odlučiti koliko koordinata za potpise ce svaki student imati za sad 1000
-    static final int MAX_NUM_OF_COORDS = 1000;
-    static final int MIN_NUM_OF_COORDS = 200;
-    static final String TABLE_SIGNATURES = "signatures";
-    static final String SIGNATURE_ID = "_id";
-    static final String SIGNATURE_STUDENT_ID = "student_id";
-    static final String SIGNATURE_LECTURE_ID = "lecture_id";
-    static final String SIGNATURE_AXIS = "axis";
-    static final String SIGNATURE_COORD = "coord";
-    static final String SIGNATURE_NUMBER = "signature_number";
-
     private static String CREATE_SIGNATURES;
-//            "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
-//                    + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_AXIS + " text not null";
-//    for(int i = 0; i < number_of_coords; i++)
-//        CREATE_SIGNATURES += ", " + SIGNATURE_COORD + Integer.toString(i) + " real";
-//    CREATE_SIGNATURES += ", FOREIGN KEY(" + SIGNATURE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
-
     static private String createSignaturesTable() {
          String table =
-                 "create table " + TABLE_SIGNATURES + " (" + SIGNATURE_ID + " integer primary key autoincrement, "
-                + SIGNATURE_STUDENT_ID + " integer, " + SIGNATURE_LECTURE_ID + " integer, " + SIGNATURE_AXIS
+                 "create table " + TABLE_SIGNATURES + " (" + ID + " integer primary key autoincrement, "
+                + STUDENT_ID + " integer, " + LECTURE_ID + " integer, " + AXIS
                 + " text not null, " + SIGNATURE_NUMBER + " integer not null";
         for(int i = 0; i < MAX_NUM_OF_COORDS; i++)
-            table += ", " + SIGNATURE_COORD + Integer.toString(i) + " real";
-        table += ", FOREIGN KEY(" + SIGNATURE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + ")";
-        table += ", FOREIGN KEY(" + SIGNATURE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "));";
+            table += ", " + COORDINATE + Integer.toString(i) + " real";
+        table += ", FOREIGN KEY(" + STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + ID + ")";
+        table += ", FOREIGN KEY(" + LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + ID + "));";
         return table;
     }
 
-    static final String TABLE_MAX_DISTANCES = "max_distances";
-    static final String  MAX_DISTANCE_ID = "_id";
-    static final String  MAX_DISTANCE_DISTANCE = "distance";
-    static final String  MAX_DISTANCE_STUDENT_ID = "student_id";
-    static final String  MAX_DISTANCE_LECTURE_ID = "lecture_id";
-
+    //TODO: tu je hardcodirano 3 mjesta za distance za 3 razlicita algoritma, mozda promijeniti
     private static final String CREATE_MAX_DISTANCES =
-            "create table " + TABLE_MAX_DISTANCES + " (" + MAX_DISTANCE_ID + " integer primary key autoincrement, "
-                    + MAX_DISTANCE_DISTANCE + "0 real not null, " + MAX_DISTANCE_DISTANCE + "1 real, " + MAX_DISTANCE_DISTANCE + "2 real, "
-                    + MAX_DISTANCE_LECTURE_ID + " integer, " + MAX_DISTANCE_STUDENT_ID + " integer, "
-                    + "FOREIGN KEY(" + MAX_DISTANCE_LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + LECTURE_ID + "), "
-                    + "FOREIGN KEY(" + MAX_DISTANCE_STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + STUDENT_ID + "));";
-
-
-    private static final String TAG = "DBAdapter";
-    private static final String DATABASE_NAME = "MyDB";
-    private static final int DATABASE_VERSION = 2;
+            "create table " + TABLE_MAX_DISTANCES + " (" + ID + " integer primary key autoincrement, "
+                    + DISTANCE + "0 real not null, " + DISTANCE + "1 real, " + DISTANCE + "2 real, "
+                    + LECTURE_ID + " integer, " + STUDENT_ID + " integer, "
+                    + "FOREIGN KEY(" + LECTURE_ID + ") REFERENCES " + TABLE_LECTURES + "(" + ID + "), "
+                    + "FOREIGN KEY(" + STUDENT_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + ID + "));";
 
 
     final Context context;
@@ -122,6 +112,7 @@ class DBAdapter {
         public void onCreate(SQLiteDatabase db)
         {
             try {
+                Log.v(TAG, "Creating new database and all tables.");
                 db.execSQL(CREATE_LECTURES);
                 db.execSQL(CREATE_STUDENTS);
                 CREATE_SIGNATURES = createSignaturesTable();
@@ -129,6 +120,7 @@ class DBAdapter {
                 db.execSQL(CREATE_ATTENDANCES);
                 db.execSQL(CREATE_MAX_DISTANCES);
             } catch (SQLException e) {
+                Log.v(TAG, "Error in creating new database.");
                 e.printStackTrace();
             }
         }
@@ -136,7 +128,7 @@ class DBAdapter {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
         {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+            Log.v(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SIGNATURES);

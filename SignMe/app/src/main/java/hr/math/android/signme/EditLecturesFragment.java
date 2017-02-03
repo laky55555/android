@@ -159,8 +159,8 @@ public class EditLecturesFragment extends Fragment {
         fab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, R.string.sending_stats + "To jos trevba napraviti", Snackbar.LENGTH_LONG).show();
-                popUpSend();
+                Snackbar.make(view, R.string.sending_stats, Snackbar.LENGTH_LONG).show();
+                popUpSend(getCheckedLectures());
             }
         });
         Log.d("EDIT", "Zavrsio inicijalizaciju");
@@ -252,9 +252,20 @@ public class EditLecturesFragment extends Fragment {
         builder.show();
     }
 
-    private void popUpSend()
+    private void popUpSend(final ArrayList<String> forSend)
     {
-        Toast.makeText(getContext(), "POP up send", Toast.LENGTH_SHORT);
+        if (forSend.size() < 1)
+            return;
+
+        int lectureIds[] = new int[forSend.size()];
+        DBLectures lectures = new DBLectures(getContext());
+        lectures.open();
+        for(int i=0; i<lectureIds.length; i++)
+            lectureIds[i] = lectures.getLectureID(forSend.get(i));
+        lectures.close();
+
+        Intent i = SendMail.sendMail(getContext(), lectureIds);
+        startActivity(i);
     }
 
 }

@@ -1,6 +1,8 @@
 package hr.math.android.signme;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -23,14 +25,71 @@ import jxl.write.biff.RowsExceededException;
 
 public class SendMail {
 
-    //TODO: napraviti slanje mailova!!!!!!!!!!!
-    private static void exportToExcel() {
+    private static String TAG = "Send Mail";
+    private static int startRow = 2;
+    private static int startColumn = 3;
+
+
+    private static boolean fillTable(WritableSheet sheet, Context context, int lectureId) {
+        DBAttendance attendance = new DBAttendance(context);
+        attendance.open();
+        Cursor students = attendance.getAllStudentsOfLecture(lectureId);
+        Cursor dates = attendance.getAllDatesOfLecture(lectureId);
+        if(students == null || dates == null)
+            return false;
+        int student_ids[] = new int[students.getCount()];
+        String dateList[] = new String[dates.getCount()];
+        Log.v(TAG, "Number of students = " + students.getCount());
+        Log.v(TAG, "Number of dates = " + dates.getCount());
+        try {
+            int row = startRow;
+            if (students.moveToFirst()) {
+                do {
+                    Log.v(TAG, students.getString(0) + " " + students.getString(1) + " " + students.getString(2) + ", row " + row);
+                    sheet.addCell(new Label(0, row, students.getString(0))); // column and row
+                    sheet.addCell(new Label(1, row, students.getString(1))); // column and row
+                    sheet.addCell(new Label(2, row, students.getString(2))); // column and row
+                    student_ids[row - startRow] = students.getInt(3);
+                    row++;
+                } while (students.moveToNext());
+            }
+
+            int column = startColumn;
+            if (dates.moveToFirst()) {
+                do {
+                    Log.v(TAG, dates.getString(0) + " column " + column);
+                    sheet.addCell(new Label(column, startRow-1, dates.getString(0))); // column and row
+                    dateList[column - startColumn] = dates.getString(0);
+                    column++;
+                } while (dates.moveToNext());
+            }
+
+            for (int i=0; i<student_ids.length; i++) {
+                for (int j=0; j<dateList.length; j++) {
+                    String answer = attendance.hasAttended(student_ids[i], lectureId, dateList[j]);
+                    Log.v(TAG, "student " + student_ids[i] + " on date" + dateList[j] + " answered " + answer);
+                    sheet.addCell(new Label(startColumn + j, startRow + i, answer));
+                }
+            }
+        } catch (RowsExceededException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
+
+        attendance.close();
+        return true;
+    }
+
+    //TODO: now is working just for one lecture, need to change so it can work for array
+    private static void exportToExcel(Context context, int[] lectureIds) {
         final String fileName = "TodoList.xls";
 
         //Saving file in external storage
         java.io.File sdCard = Environment.getExternalStorageDirectory();
         java.io.File directory;
         try{
+//            directory = new java.io.File("excelTablica");
             directory = new java.io.File(sdCard.getAbsolutePath() + "/excelTablica");
             if(!directory.isDirectory()){
                 directory.mkdirs();
@@ -46,20 +105,7 @@ public class SendMail {
                 workbook = Workbook.createWorkbook(file, wbSettings);
                 //Excel sheet name. 0 represents first sheet
                 WritableSheet sheet = workbook.createSheet("MyShoppingList", 0);
-
-                try {
-                    sheet.addCell(new Label(2, 1, "murac")); // column and row
-                    sheet.addCell(new Label(3, 1, "laky"));
-                    for(int i = 1; i < 10; ++i) {
-                        sheet.addCell(new Label(1, i+1, "13.1.2017."));
-                        sheet.addCell(new Label(2, i+1, "+"));
-                        sheet.addCell(new Label(3, i+1, "-"));
-                    }
-                } catch (RowsExceededException e) {
-                    e.printStackTrace();
-                } catch (WriteException e) {
-                    e.printStackTrace();
-                }
+                fillTable(sheet, context, lectureIds[0]);
                 workbook.write();
                 try {
                     workbook.close();
@@ -73,14 +119,14 @@ public class SendMail {
         }
         catch (Exception e)
         {
-            Log.d("exception", "D");
+            Log.d("exception", "D" + e);
         }
 
     }
 
-    public static Intent sendMail(){
+    public static Intent sendMail(Context context, int[] lectureIds){
 
-        exportToExcel();
+        exportToExcel(context, lectureIds);
 
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("text/plain");

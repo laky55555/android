@@ -21,14 +21,14 @@ class DBLectures extends DBAdapter {
     long newLecture(String name)
     {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(LECTURE_NAME, name);
-        Log.d(TAG_SQL, "Added lecture " + name + " to database.");
+        initialValues.put(NAME, name);
+        Log.v(TAG_SQL, "Added lecture " + name + " to database.");
         return db.insert(TABLE_LECTURES, null, initialValues);
     }
 
     boolean deleteAllLectures()
     {
-        Log.d(TAG_SQL, "Dropping all tables.");
+        Log.v(TAG_SQL, "Dropping all tables.");
         db.execSQL("DELETE FROM " + TABLE_ATTENDANCES);
         db.execSQL("DELETE FROM " + TABLE_SIGNATURES);
         db.execSQL("DELETE FROM " + TABLE_STUDENTS);
@@ -43,15 +43,15 @@ class DBLectures extends DBAdapter {
     {
         int lectureId = -1;
         Cursor mCursor =
-                db.query(true, TABLE_LECTURES, new String[] {LECTURE_ID},
-                        LECTURE_NAME + "='" + name + "'", null, null, null, null, null);
+                db.query(true, TABLE_LECTURES, new String[] {ID},
+                        NAME + "='" + name + "'", null, null, null, null, null);
 
         if (mCursor != null && mCursor.moveToFirst()) {
             lectureId = mCursor.getInt(0);
             mCursor.close();
 
         }
-        Log.d(TAG_SQL, "Getting lecture id, lecutre = " + name + " ID = " + lectureId);
+        Log.v(TAG_SQL, "Getting lecture id, lecutre = " + name + " ID = " + lectureId);
         return lectureId;
     }
 
@@ -59,7 +59,7 @@ class DBLectures extends DBAdapter {
     {
         int ID = getLectureID(name);
         if(ID == -1) {
-            Log.d(TAG_SQL, "No lecture with name " + name);
+            Log.v(TAG_SQL, "No lecture with name " + name);
             return false;
         }
         return deleteLectureByID(ID);
@@ -77,13 +77,13 @@ class DBLectures extends DBAdapter {
             } while (student_cursor.moveToNext());
         }
         students.close();
-        Log.d(TAG_SQL, "Deleting lectureId = " + lectureId + " from table " + TABLE_LECTURES);
-        return db.delete(TABLE_LECTURES, LECTURE_ID + "='" + lectureId + "'", null) > 0;
+        Log.v(TAG_SQL, "Deleting lectureId = " + lectureId + " from table " + TABLE_LECTURES);
+        return db.delete(TABLE_LECTURES, ID + "='" + lectureId + "'", null) > 0;
     }
 
     Cursor getAllLectures()
     {
-        return db.query(TABLE_LECTURES, new String[] {LECTURE_ID, LECTURE_NAME},
+        return db.query(TABLE_LECTURES, new String[] {ID, NAME},
                 null, null, null, null, null);
     }
 

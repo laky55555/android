@@ -3,3 +3,5 @@ napisati korisniu poruku kad se aplikacija pokrene da upali airplane mode
 napraviti server tako da se prilikom promjene passworda, novi password posalje na mail korisnika
 
 za pocetni permission pitati korisnika mozda malo drugacije tako da mora potvrditi
+
+napraviti slanje statistike tako da napravi za sve oznacene, a ne samo prvog
