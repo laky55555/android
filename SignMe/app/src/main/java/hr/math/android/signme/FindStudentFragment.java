@@ -56,7 +56,7 @@ public class FindStudentFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragmetn_select_name, parent, false);
+        return inflater.inflate(R.layout.fragment_select_name, parent, false);
     }
 
     @Override
@@ -224,8 +224,8 @@ public class FindStudentFragment extends Fragment {
 
     private void startSigningScreen(boolean learningNew, int studentId)
     {
-        Toast.makeText(getContext(), "Starting fragment for drawing", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "Starting fragment for drawing");
+        Toast.makeText(getContext(), "Starting fragment for fragment_drawing", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Starting fragment for fragment_drawing");
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment, DrawingFragment.newInstance(learningNew, studentId, lectureId));
         ft.commit();

@@ -4,4 +4,6 @@ napraviti server tako da se prilikom promjene passworda, novi password posalje n
 
 za pocetni permission pitati korisnika mozda malo drugacije tako da mora potvrditi
 
-napraviti slanje statistike tako da napravi za sve oznacene, a ne samo prvog
+izbaciti pop up unose iz koda u posebne klase
+
+napraviti pocetni intro https://android-arsenal.com/details/1/3206

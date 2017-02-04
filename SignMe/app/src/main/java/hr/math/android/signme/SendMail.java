@@ -31,10 +31,10 @@ import jxl.write.biff.RowsExceededException;
 
 public class SendMail {
 
-    private static final String fileName = "AttendanceList.xls";
-
     private static String TAG = "Send Mail";
+    // Row from which we start putting students. Must have one for header and one for title.
     private static int startRow = 2;
+    // Column from which header starts. Must have 3 free for JMBAG, name, surname.
     private static int startColumn = 3;
 
 

@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class EditLecturesFragment extends Fragment {
 
@@ -276,12 +277,13 @@ public class EditLecturesFragment extends Fragment {
         }
         lectures.close();
 
-        Log.v("NESTO", lectureIds.toString());
+        Log.v("NESTO", Arrays.toString(lectureIds));
         Intent i = SendMail.sendMail(getContext(), lectureIds, lectureNames);
 
         if(i != null)
             startActivity(i);
-        //TODO: staviti neki info korisniku da nije uspjesno napravljeno..
+        else
+            Snackbar.make(view, R.string.unsuccessful_mail, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

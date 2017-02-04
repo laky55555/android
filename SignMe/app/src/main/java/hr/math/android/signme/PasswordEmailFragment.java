@@ -2,7 +2,6 @@ package hr.math.android.signme;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -15,16 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by ivan on 04.02.17..
  */
 
+/**
+ * Fragment for setting up password and email.
+ * Fragment validate input and behave accordingly of
+ * who called it (popup before signing, popup before sending mail,
+ * plain text in settings).
+ */
 public class PasswordEmailFragment extends Fragment {
 
     private boolean isPopUp;
@@ -41,7 +44,7 @@ public class PasswordEmailFragment extends Fragment {
 
     private int lectureId;
     private String lectureName;
-    private final String TAG = "PasswordFragment";
+    private final String TAG = "PasswordEmailFragment";
 
     public static PasswordEmailFragment newInstance(int lectureId, String lectureName) {
         PasswordEmailFragment fragmentDemo = new PasswordEmailFragment();
@@ -67,7 +70,7 @@ public class PasswordEmailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.new_password_email, parent, false);
+        return inflater.inflate(R.layout.fragment_new_password_email, parent, false);
     }
 
     @Override

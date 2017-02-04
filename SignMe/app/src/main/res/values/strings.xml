@@ -64,6 +64,7 @@
 
     <string name="mail_subject">Attendance up until: </string>
     <string name="mail_text">Attendance from following lectures: </string>
+    <string name="unsuccessful_mail">Sending mail was unsuccessful, please try again.</string>
 
     <string name="student_id">Student ID</string>
     <string name="name">Name</string>

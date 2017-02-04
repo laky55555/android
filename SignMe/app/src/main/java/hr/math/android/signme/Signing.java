@@ -125,7 +125,6 @@ public class Signing extends AppCompatActivity {
             Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
     }
 
-    //TODO: tu mozda bolje ne napraviti removeView nego u exitu samo za treu i poslati intentu u limb
     @Override
     protected void onStop() {
         super.onStop();
