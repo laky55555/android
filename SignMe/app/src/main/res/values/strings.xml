@@ -43,13 +43,31 @@
     <string name="more_time">more time/s :)</string>
 
 
+    <string name="enter_email_text">Enter email for receiving attendance statistic.</string>
+    <string name="enter_email">Enter email address</string>
+    <string name="save_email">Save new email</string>
+    <string name="new_email_saved">New email saved</string>
+    <string name="email_not_valid">Email address is not valid</string>
+
     <string name="password_for_exit">Enter password for exit signing.</string>
     <string name="enter_password">Enter password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="save_password">Save new password</string>
+    <string name="save_pass_email">Save password and email</string>
+    <string name="saved_pass_email">Password and email saved</string>
+    <string name="password_not_valid">Password is not valid</string>
+
 
     <string name="current_password">Current password is: </string>
-    <string name="title_activity_new_password">NewPassword</string>
+    <string name="title_activity_new_password">New Password</string>
+
+
+    <string name="mail_subject">Attendance up until: </string>
+    <string name="mail_text">Attendance from following lectures: </string>
+
+    <string name="student_id">Student ID</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
 
 
 </resources>

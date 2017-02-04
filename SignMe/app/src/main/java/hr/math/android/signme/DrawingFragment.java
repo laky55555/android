@@ -171,6 +171,7 @@ public class DrawingFragment extends Fragment {
             return 1;
     }
 
+    //TODO: u save i load prvi dio ucitavanja podataka je jednak.
     private int saveSignature() {
 
 

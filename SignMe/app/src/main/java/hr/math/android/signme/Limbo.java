@@ -53,7 +53,7 @@ public class Limbo extends AppCompatActivity {
     }
 
     private void checkPassword(String inputPassword) {
-        String storedPass = new Password(this).getPassword();
+        String storedPass = new Preferences(this).getPassword();
         if(storedPass.equals(inputPassword)){
             Intent intent = new Intent(this, MainActivity.class);
             getPackageManager().clearPackagePreferredActivities(getPackageName());

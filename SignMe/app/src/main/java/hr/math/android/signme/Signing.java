@@ -1,6 +1,5 @@
 package hr.math.android.signme;
 
-import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -118,7 +117,7 @@ public class Signing extends AppCompatActivity {
     }
 
     private void checkPassword(String input_password) {
-        String stored_pass = new Password(this).getPassword();
+        String stored_pass = new Preferences(this).getPassword();
         if(stored_pass.equals(input_password)){
             exit(true);
         }

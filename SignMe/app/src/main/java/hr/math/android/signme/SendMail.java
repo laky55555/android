@@ -5,10 +5,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 
 import jxl.Workbook;
@@ -25,22 +31,26 @@ import jxl.write.biff.RowsExceededException;
 
 public class SendMail {
 
+    private static final String fileName = "AttendanceList.xls";
+
     private static String TAG = "Send Mail";
     private static int startRow = 2;
     private static int startColumn = 3;
 
 
-    private static boolean fillTable(WritableSheet sheet, Context context, int lectureId) {
-        DBAttendance attendance = new DBAttendance(context);
-        attendance.open();
-        Cursor students = attendance.getAllStudentsOfLecture(lectureId);
-        Cursor dates = attendance.getAllDatesOfLecture(lectureId);
-        if(students == null || dates == null)
-            return false;
-        int student_ids[] = new int[students.getCount()];
-        String dateList[] = new String[dates.getCount()];
-        Log.v(TAG, "Number of students = " + students.getCount());
-        Log.v(TAG, "Number of dates = " + dates.getCount());
+    private static void fillHeader(WritableSheet sheet, String lectureName, Context context) {
+        try {
+            sheet.addCell(new Label(2, startRow - 2, lectureName)); // column and row
+            sheet.addCell(new Label(0, startRow - 1, context.getString(R.string.student_id))); // column and row
+            sheet.addCell(new Label(1, startRow - 1, context.getString(R.string.name))); // column and row
+            sheet.addCell(new Label(2, startRow - 1, context.getString(R.string.surname))); // column and row
+        } catch (Exception e) {
+            Log.d(TAG, "Error in filling header: " + e);
+        }
+    }
+
+    private static int[] fillStudents(WritableSheet sheet, Cursor students) {
+        int studentIds[] = new int[students.getCount()];
         try {
             int row = startRow;
             if (students.moveToFirst()) {
@@ -49,11 +59,20 @@ public class SendMail {
                     sheet.addCell(new Label(0, row, students.getString(0))); // column and row
                     sheet.addCell(new Label(1, row, students.getString(1))); // column and row
                     sheet.addCell(new Label(2, row, students.getString(2))); // column and row
-                    student_ids[row - startRow] = students.getInt(3);
+                    studentIds[row - startRow] = students.getInt(3);
                     row++;
                 } while (students.moveToNext());
             }
+        } catch (Exception e) {
+            Log.d(TAG, "Error in filling students: " + e);
+        }
 
+        return studentIds;
+    }
+
+    private static String[] fillDates(WritableSheet sheet, Cursor dates) {
+        String dateList[] = new String[dates.getCount()];
+        try {
             int column = startColumn;
             if (dates.moveToFirst()) {
                 do {
@@ -63,85 +82,113 @@ public class SendMail {
                     column++;
                 } while (dates.moveToNext());
             }
+        } catch (Exception e) {
+            Log.d(TAG, "Error in filling dates: " + e);
+        }
 
-            for (int i=0; i<student_ids.length; i++) {
+        return dateList;
+    }
+    private static void fillAttendance(WritableSheet sheet, DBAttendance attendance, int[] studentsIds, String[] dateList, int lectureId) {
+        try {
+            for (int i=0; i<studentsIds.length; i++) {
                 for (int j=0; j<dateList.length; j++) {
-                    String answer = attendance.hasAttended(student_ids[i], lectureId, dateList[j]);
-                    Log.v(TAG, "student " + student_ids[i] + " on date" + dateList[j] + " answered " + answer);
+                    String answer = attendance.hasAttended(studentsIds[i], lectureId, dateList[j]);
+                    Log.v(TAG, "student " + studentsIds[i] + " on date" + dateList[j] + " answered " + answer);
                     sheet.addCell(new Label(startColumn + j, startRow + i, answer));
                 }
             }
-        } catch (RowsExceededException e) {
-            e.printStackTrace();
-        } catch (WriteException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.d(TAG, "Error in filling attendance: " + e);
         }
+    }
+
+    private static boolean fillTable(WritableSheet sheet, Context context, int lectureId, String lectureName) {
+        DBAttendance attendance = new DBAttendance(context);
+        attendance.open();
+        Cursor students = attendance.getAllStudentsOfLecture(lectureId);
+        Cursor dates = attendance.getAllDatesOfLecture(lectureId);
+        if(students == null || dates == null)
+            return false;
+        Log.v(TAG, "Number of students = " + students.getCount());
+        Log.v(TAG, "Number of dates = " + dates.getCount());
+
+        fillHeader(sheet, lectureName, context);
+        int studentIds[] = fillStudents(sheet, students);
+        String dateList[] = fillDates(sheet, dates);
+        fillAttendance(sheet, attendance, studentIds, dateList, lectureId);
 
         attendance.close();
         return true;
     }
 
-    //TODO: now is working just for one lecture, need to change so it can work for array
-    private static void exportToExcel(Context context, int[] lectureIds) {
-        final String fileName = "TodoList.xls";
+    private static void exportToExcel(Context context, int[] lectureIds, String[] lectureNames, File[] files) {
 
-        //Saving file in external storage
-        java.io.File sdCard = Environment.getExternalStorageDirectory();
-        java.io.File directory;
-        try{
-//            directory = new java.io.File("excelTablica");
-            directory = new java.io.File(sdCard.getAbsolutePath() + "/excelTablica");
-            if(!directory.isDirectory()){
-                directory.mkdirs();
-            }
-
-            java.io.File file = new java.io.File(directory, fileName);
-
-            WorkbookSettings wbSettings = new WorkbookSettings();
-            wbSettings.setLocale(new Locale("en", "EN"));
-            WritableWorkbook workbook;
-
-            try {
-                workbook = Workbook.createWorkbook(file, wbSettings);
+        WorkbookSettings wbSettings = new WorkbookSettings();
+        wbSettings.setLocale(new Locale("en", "EN"));
+        WritableWorkbook workbook;
+        try {
+            for (int i=0; i<lectureIds.length; i++) {
+                workbook = Workbook.createWorkbook(files[i], wbSettings);
                 //Excel sheet name. 0 represents first sheet
-                WritableSheet sheet = workbook.createSheet("MyShoppingList", 0);
-                fillTable(sheet, context, lectureIds[0]);
+                WritableSheet sheet = workbook.createSheet(lectureNames[i], i);
+                fillTable(sheet, context, lectureIds[i], lectureNames[i]);
                 workbook.write();
                 try {
                     workbook.close();
                 } catch (WriteException e) {
                     e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (Exception e)
-        {
-            Log.d("exception", "D" + e);
-        }
-
     }
 
-    public static Intent sendMail(Context context, int[] lectureIds){
+    private static File[] createFile(String[] lectureNames) {
+        File root = android.os.Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-        exportToExcel(context, lectureIds);
+        File dir = new File(root.getAbsolutePath());
+        dir.mkdirs();
+        //if(dir.mkdirs())
+        File[] files = new File[lectureNames.length];
+        for (int i=0; i<lectureNames.length; i++)
+            files[i] = new File(dir, lectureNames[i]+".xls");
 
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("text/plain");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"vita89jela@gmail.com"});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "pisem ti pisem");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "ne volim te vise");
-        java.io.File root = Environment.getExternalStorageDirectory();
-        String pathToMyAttachedFile = "excelTablica/TodoList.xls";
-        java.io.File file = new java.io.File(root, pathToMyAttachedFile);
-        if (!file.exists() || !file.canRead()) {
+        return files;
+    }
+
+    public static Intent sendMail(Context context, int[] lectureIds, String[] lectureNames){
+
+        File[] files = createFile(lectureNames);
+        Log.v(TAG, "File path = " + files[0].getAbsolutePath());
+        exportToExcel(context, lectureIds, lectureNames, files);
+
+        // Date for email subject.
+        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        String now = df.format(new Date());
+
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND_MULTIPLE);
+        //Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        //emailIntent.setType("text/plain");
+        emailIntent.setType("plain/text");
+        //TODO: tu dođe mail iz preferences
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"laky55555@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.mail_subject) + now);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.mail_text) + Arrays.toString(lectureNames));
+
+        Log.v(TAG, "FILE path = " + files[0].getAbsolutePath());
+        if (!files[0].exists() || !files[0].canRead()) {
+            Log.v(TAG, "Couldn't find/read file.");
             return null;
         }
-        Uri uri = Uri.fromFile(file);
-        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        return  emailIntent;
+
+        ArrayList<Uri> uris = new ArrayList<Uri>();
+        for(File file:files)
+            uris.add(FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file));
+
+        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        return emailIntent;
     }
 
 }

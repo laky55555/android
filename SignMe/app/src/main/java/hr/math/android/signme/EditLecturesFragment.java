@@ -109,16 +109,18 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor lecture = (Cursor)listView.getItemAtPosition(position);
-                Password pass = new Password(getActivity());
-                if(!pass.isPasswordInitialized()) {
+                Preferences pref = new Preferences(getActivity());
+                if(!pref.isPasswordInitialized() || !pref.isEmailInitialized()) {
                     Intent intent = new Intent(getActivity(), NewPassword.class);
                     intent.putExtra("LECTURE_NAME", lecture.getString(1));
                     intent.putExtra("LECTURE_ID", lecture.getInt(0));
+                    intent.putExtra("PASSWORD", pref.isPasswordInitialized());
+                    intent.putExtra("MAIL", pref.isEmailInitialized());
                     startActivity(intent);
                 }
                 else {
                     Toast.makeText(getContext(), getResources().getString(R.string.current_password)
-                            + " " + pass.getPassword(), Toast.LENGTH_LONG).show();
+                            + " " + pref.getPassword(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getActivity(), Signing.class);
                     intent.putExtra("LECTURE_NAME", lecture.getString(1));
                     intent.putExtra("LECTURE_ID", lecture.getInt(0));
@@ -258,14 +260,21 @@ public class EditLecturesFragment extends Fragment {
             return;
 
         int lectureIds[] = new int[forSend.size()];
+        String lectureNames[] = new String[forSend.size()];
         DBLectures lectures = new DBLectures(getContext());
         lectures.open();
-        for(int i=0; i<lectureIds.length; i++)
+        for(int i=0; i<lectureIds.length; i++) {
             lectureIds[i] = lectures.getLectureID(forSend.get(i));
+            lectureNames[i] = forSend.get(i);
+        }
         lectures.close();
 
-        Intent i = SendMail.sendMail(getContext(), lectureIds);
-        startActivity(i);
+        Log.v("NESTO", lectureIds.toString());
+        Intent i = SendMail.sendMail(getContext(), lectureIds, lectureNames);
+
+        if(i != null)
+            startActivity(i);
+        //TODO: staviti neki info korisniku da nije uspjesno napravljeno..
     }
 
 }
