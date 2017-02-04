@@ -160,6 +160,11 @@ public class SendMail {
 
     public static Intent sendMail(Context context, int[] lectureIds, String[] lectureNames){
 
+        Preferences preferences = new Preferences(context);
+        if(!preferences.isEmailInitialized())
+            return null;
+        String email = preferences.getEmail();
+
         File[] files = createFile(lectureNames);
         Log.v(TAG, "File path = " + files[0].getAbsolutePath());
         exportToExcel(context, lectureIds, lectureNames, files);
@@ -172,8 +177,7 @@ public class SendMail {
         //Intent emailIntent = new Intent(Intent.ACTION_SEND);
         //emailIntent.setType("text/plain");
         emailIntent.setType("plain/text");
-        //TODO: tu dođe mail iz preferences
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"laky55555@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.mail_subject) + now);
         emailIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.mail_text) + Arrays.toString(lectureNames));
 

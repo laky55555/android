@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
             startSettingsFragment();
             return true;
         } else if (id == R.id.action_change_password) {
-            Intent intent = new Intent(this, NewPassword.class);
+            Intent intent = new Intent(this, InitializePassEmailDialog.class);
             startActivity(intent);
             return true;
         }
@@ -158,4 +158,5 @@ public class MainActivity extends AppCompatActivity
             view = new View(this);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
 }

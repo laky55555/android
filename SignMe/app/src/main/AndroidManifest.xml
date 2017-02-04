@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Limbo" />
-        <activity android:name=".NewPassword"
+        <activity android:name=".InitializePassEmailDialog"
             android:theme="@style/Theme.AppCompat.Dialog" />
 
         <provider

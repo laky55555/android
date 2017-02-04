@@ -37,7 +37,7 @@ public class EditLecturesFragment extends Fragment {
     private boolean addNewLecture;
     private boolean editLectures;
     private View view;
-
+    private Preferences pref;
 
     public static EditLecturesFragment newInstance(boolean editLectures, boolean addNewLecture) {
         EditLecturesFragment fragmentDemo = new EditLecturesFragment();
@@ -74,6 +74,7 @@ public class EditLecturesFragment extends Fragment {
         db = new DBLectures(getContext());
         db.open();
         cursor = db.getAllLectures();
+        pref = new Preferences(getActivity());
 
         adapter = new CursorAdapter(getContext(), cursor) {
             @Override
@@ -109,9 +110,8 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor lecture = (Cursor)listView.getItemAtPosition(position);
-                Preferences pref = new Preferences(getActivity());
                 if(!pref.isPasswordInitialized() || !pref.isEmailInitialized()) {
-                    Intent intent = new Intent(getActivity(), NewPassword.class);
+                    Intent intent = new Intent(getActivity(), InitializePassEmailDialog.class);
                     intent.putExtra("LECTURE_NAME", lecture.getString(1));
                     intent.putExtra("LECTURE_ID", lecture.getInt(0));
                     intent.putExtra("PASSWORD", pref.isPasswordInitialized());
@@ -162,7 +162,14 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, R.string.sending_stats, Snackbar.LENGTH_LONG).show();
-                popUpSend(getCheckedLectures());
+                int result = 1;
+                if (!pref.isEmailInitialized()) {
+                    Intent intent = new Intent(getActivity(), InitializePassEmailDialog.class);
+                    //startActivity(intent);
+                    startActivityForResult(intent, result);
+                }
+                else
+                    popUpSend(getCheckedLectures());
             }
         });
         Log.d("EDIT", "Zavrsio inicijalizaciju");
@@ -275,6 +282,13 @@ public class EditLecturesFragment extends Fragment {
         if(i != null)
             startActivity(i);
         //TODO: staviti neki info korisniku da nije uspjesno napravljeno..
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (pref.isEmailInitialized())
+            popUpSend(getCheckedLectures());
     }
 
 }

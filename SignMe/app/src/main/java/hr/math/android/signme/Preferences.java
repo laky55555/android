@@ -1,6 +1,7 @@
 package hr.math.android.signme;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -21,6 +22,11 @@ class Preferences {
     Preferences(Activity activity)
     {
         mySharedPreferences = activity.getSharedPreferences(PREFERENCES, prefMode);
+    }
+
+    Preferences(Context context)
+    {
+        mySharedPreferences = context.getSharedPreferences(PREFERENCES, prefMode);
     }
 
     String getPassword() {

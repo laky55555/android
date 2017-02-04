@@ -28,6 +28,7 @@ import android.widget.Toast;
 public class PasswordEmailFragment extends Fragment {
 
     private boolean isPopUp;
+    private boolean signing;
 
     private EditText pass1;
     private EditText pass2;
@@ -54,14 +55,13 @@ public class PasswordEmailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lectureId = -1;
+        isPopUp = false;
         if(getArguments() != null) {
+            isPopUp = true;
             lectureId = getArguments().getInt("LECTURE_ID", -1);
-            isPopUp = lectureId != -1;
-            if (isPopUp) {
-                lectureName = getArguments().getString("LECTURE_NAME");
-                Log.d(TAG, "Password and Email fragment is in popup" + lectureId);
-            }
+            signing = lectureId > 0;
+            lectureName = getArguments().getString("LECTURE_NAME");
+            Log.d(TAG, "Password and Email fragment is in popup" + lectureId + " " + lectureName);
         }
     }
 
@@ -134,11 +134,14 @@ public class PasswordEmailFragment extends Fragment {
                     preferencesClass.saveNewEmail(email.getText().toString());
                     Snackbar.make(v, getContext().getString(R.string.saved_pass_email), Snackbar.LENGTH_LONG).show();
                     hideKeyboard();
-                    if(isPopUp) {
+                    if(signing) {
                         Intent intent = new Intent(getActivity(), Signing.class);
                         intent.putExtra("LECTURE_NAME", lectureName);
                         intent.putExtra("LECTURE_ID", lectureId);
                         startActivity(intent);
+                        //getActivity().finish();
+                    }
+                    if(isPopUp) {
                         getActivity().finish();
                     }
                 }
