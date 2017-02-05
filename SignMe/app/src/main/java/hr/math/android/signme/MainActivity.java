@@ -8,22 +8,27 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import hr.math.android.signme.Dialogs.InitializePassEmailDialog;
 
 
-//TODO: Write user message to enter airplane mode (couldn't be done programmatically)
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.v("MAIN", "onCreate; Starting main activity.");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -44,28 +50,47 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        startSettingsFragment();
-        checkPermission();
+//        startSettingsFragment();
+//        checkPermission();
+        if(!new Preferences(this).sawIntro()) {
+            startIntro();
+            Log.v("MAIN", "nije vidio intro");
+            //startSettingsFragment();
+            //checkPermission();
+        }
+        else {
+            startSettingsFragment();
+            checkPermission();
+        }
     }
 
-    public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE= 5469;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v("MAIN", "onResume; Starting main activity.");
+    }
+
+    public static int DRAW_OVERLAY = 66;
     public void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+                //startActivity(intent);
+                startActivityForResult(intent, DRAW_OVERLAY);
+                Toast.makeText(this, "NEKI GLUPI TEK", Toast.LENGTH_LONG).show();
+                //Snackbar.make(findViewById(R.id.email), getString(R.string.mail_text), Snackbar.LENGTH_INDEFINITE).show();
                 //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW},
                   //      ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE}, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
-        }
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                            Manifest.permission.READ_EXTERNAL_STORAGE}, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+//        }
 
         /*if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.SYSTEM_ALERT_WINDOW)
@@ -128,6 +153,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send_one) {
 
+        } else if (id == R.id.nav_intro) {
+            startIntro();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -157,6 +184,25 @@ public class MainActivity extends AppCompatActivity
         if (view == null)
             view = new View(this);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    static final int INTRO_RESULT = 68;  // The request code
+    private void startIntro() {
+        Intent intent = new Intent(this, MainIntroActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivityForResult(intent, INTRO_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == INTRO_RESULT) {
+            startSettingsFragment();
+            checkPermission();
+        }
+        else if (requestCode == DRAW_OVERLAY) {
+            checkPermission();
+        }
     }
 
 }

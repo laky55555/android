@@ -9,19 +9,19 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.PixelFormat;
+import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import static hr.math.android.signme.Dialogs.CheckPassword.popUpPassword;
 
 
 public class Signing extends AppCompatActivity {
@@ -86,45 +86,6 @@ public class Signing extends AppCompatActivity {
     }
 
 
-    private void popUpPassword() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.password_for_exit);
-
-        final LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        final EditText input_password = new EditText(this);
-        input_password.setHint(R.string.enter_password);
-        input_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        layout.addView(input_password);
-
-        builder.setView(layout);
-
-        builder.setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                checkPassword(input_password.getText().toString());
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-    private void checkPassword(String input_password) {
-        String stored_pass = new Preferences(this).getPassword();
-        if(stored_pass.equals(input_password)){
-            exit(true);
-        }
-        else
-            Toast.makeText(this, "Krivi pass, tocni pass = " + stored_pass, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -141,7 +102,7 @@ public class Signing extends AppCompatActivity {
     }
 
     //TODO: ako se nemoze u limbo doci iz potpisivanja inace druga
-    private void exit(boolean userExit) {
+    public void exit(boolean userExit) {
         Log.d("STOP", "POZVAN exit");
         Intent intent;
         intent = new Intent(this, MainActivity.class);
@@ -149,7 +110,19 @@ public class Signing extends AppCompatActivity {
         Log.d("STOP", "pokrenut novi activity");
         startActivity(intent);
         Log.d("STOP", "pozvan finish()");
+
+        startAirplaneSettings();
         finish();
+
+    }
+
+    private void startAirplaneSettings() {
+        //TODO: Here is if because maybe we will allow users to enter signing without airplane mode.
+        if(Settings.System.getInt(getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0) {
+            Intent intentAirplaneMode = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+            //intentAirplaneMode.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intentAirplaneMode);
+        }
     }
 
 //    private void exit(boolean userExit) {
@@ -165,6 +138,7 @@ public class Signing extends AppCompatActivity {
 //        Log.d("STOP", "pokrenut novi activity");
 //        startActivity(intent);
 //        Log.d("STOP", "pozvan finish()");
+//        startAirplaneSettings();
 //        finish();
 //    }
 
@@ -242,7 +216,7 @@ public class Signing extends AppCompatActivity {
 
         if (id == R.id.action_exit) {
             Toast.makeText(this, "exit", Toast.LENGTH_LONG).show();
-            popUpPassword();
+            popUpPassword(getBaseContext(), this);
             return true;
         }
 

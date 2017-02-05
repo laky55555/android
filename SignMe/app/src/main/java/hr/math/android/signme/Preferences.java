@@ -7,11 +7,12 @@ import android.content.SharedPreferences;
 import static android.content.Context.MODE_PRIVATE;
 
 
-class Preferences {
+public class Preferences {
 
     private static final String TAG = "Preferences";
     private static final String EMAIL_KEYWORD = "mailic";
     private static final String PASS_KEYWORD = "pass";
+    private static final String INTRO_KEYWORD = "intro";
     private static final String PREFERENCES = "pref";
     private static final int prefMode = MODE_PRIVATE;
 
@@ -24,12 +25,12 @@ class Preferences {
         mySharedPreferences = activity.getSharedPreferences(PREFERENCES, prefMode);
     }
 
-    Preferences(Context context)
+    public Preferences(Context context)
     {
         mySharedPreferences = context.getSharedPreferences(PREFERENCES, prefMode);
     }
 
-    String getPassword() {
+    public String getPassword() {
         //TODO: tu dolazi dekriptiranje
         return mySharedPreferences.getString(PASS_KEYWORD, defaultMessage);
     }
@@ -63,4 +64,11 @@ class Preferences {
         return mySharedPreferences.contains(EMAIL_KEYWORD) && (getEmail().trim().length() > 0);
     }
 
+    boolean sawIntro() {
+        if(mySharedPreferences.getBoolean(INTRO_KEYWORD, false)) {
+            return true;
+        }
+        mySharedPreferences.edit().putBoolean(INTRO_KEYWORD, true).apply();
+        return false;
+    }
 }

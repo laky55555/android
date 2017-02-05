@@ -1,24 +1,25 @@
-package hr.math.android.signme;
+package hr.math.android.signme.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+
 /**
  * Created by ivan on 17.01.17..
  */
 
-class DBLectures extends DBAdapter {
+public class DBLectures extends DBAdapter {
 
     private static final String TAG_SQL = "SQLLectures";
 
-    DBLectures(Context ctx) {
+    public DBLectures(Context ctx) {
         super(ctx);
     }
 
 
-    long newLecture(String name)
+    public long newLecture(String name)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(NAME, name);
@@ -39,7 +40,7 @@ class DBLectures extends DBAdapter {
         return true;
     }
 
-    int getLectureID(String name)
+    public int getLectureID(String name)
     {
         int lectureId = -1;
         Cursor mCursor =
@@ -55,7 +56,7 @@ class DBLectures extends DBAdapter {
         return lectureId;
     }
 
-    boolean deleteLecture(String name)
+    public boolean deleteLecture(String name)
     {
         int ID = getLectureID(name);
         if(ID == -1) {
@@ -81,7 +82,7 @@ class DBLectures extends DBAdapter {
         return db.delete(TABLE_LECTURES, ID + "='" + lectureId + "'", null) > 0;
     }
 
-    Cursor getAllLectures()
+    public Cursor getAllLectures()
     {
         return db.query(TABLE_LECTURES, new String[] {ID, NAME},
                 null, null, null, null, null);
@@ -92,7 +93,7 @@ class DBLectures extends DBAdapter {
      * @param name Name of lecture we want to check if already exits.
      * @return true if lecture already exist, else false.
      */
-    boolean doesLectureExist(String name) {
+    public boolean doesLectureExist(String name) {
         Cursor c = getAllLectures();
         if (c.moveToFirst()) {
             do {

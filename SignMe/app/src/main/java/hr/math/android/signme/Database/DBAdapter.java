@@ -1,4 +1,4 @@
-package hr.math.android.signme;
+package hr.math.android.signme.Database;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 
-class DBAdapter {
+public class DBAdapter {
 
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "MyDB";
@@ -38,8 +38,8 @@ class DBAdapter {
     static final String REMARK = "remark";
 
     // Additional signature columns.
-    static final int MAX_NUM_OF_COORDS = 1000;
-    static final int MIN_NUM_OF_COORDS = 200;
+    public static final int MAX_NUM_OF_COORDS = 1000;
+    public static final int MIN_NUM_OF_COORDS = 200;
     // Describing axis of variables saved. x, y, or z (z is for pen up and down).
     static final String AXIS = "axis";
     static final String COORDINATE = "coordinate";

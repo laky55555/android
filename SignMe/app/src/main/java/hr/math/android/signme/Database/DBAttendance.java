@@ -1,28 +1,29 @@
-package hr.math.android.signme;
+package hr.math.android.signme.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
-import android.widget.Button;
 
 import java.text.DateFormat;
 import java.util.Date;
+
+import hr.math.android.signme.Database.DBAdapter;
 
 /**
  * Created by ivan on 17.01.17..
  */
 
-class DBAttendance extends DBAdapter {
+public class DBAttendance extends DBAdapter {
 
     private static final String TAG_SQL = "SQLAttendance";
 
-    DBAttendance(Context ctx) {
+    public DBAttendance(Context ctx) {
         super(ctx);
     }
 
-    boolean newAttendance(int studentId, int lectureId, float signatureDistance)
+    public boolean newAttendance(int studentId, int lectureId, float signatureDistance)
     {
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
         String now = df.format(new Date());
@@ -73,7 +74,7 @@ class DBAttendance extends DBAdapter {
     //select * from attendances left outer join students on(attendances.id_lecture=students.id_lecture and attendances.id_student=students._id);
     //select id_lecture, name from attendances, students where attendances.id_lecture=students.id_lecture and attendances.id_student=students._id;
 
-    Cursor getAllStudentsOfLecture(int lectureId) {
+    public Cursor getAllStudentsOfLecture(int lectureId) {
         Log.v(TAG_SQL, "Getting all students of lectureId " + lectureId);
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setDistinct(true);
@@ -85,7 +86,7 @@ class DBAttendance extends DBAdapter {
     }
 
 //    String[] getAllDatesOfLecture(int lectureId)
-    Cursor getAllDatesOfLecture(int lectureId) {
+public Cursor getAllDatesOfLecture(int lectureId) {
         Log.v(TAG_SQL, "Getting all dates of lectureId " + lectureId);
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setDistinct(true);
@@ -94,7 +95,7 @@ class DBAttendance extends DBAdapter {
         return builder.query(db, new String[]{DATE}, null, null, null, null, null, null);
     }
 
-    String hasAttended(int studentId, int lectureId, String date) {
+    public String hasAttended(int studentId, int lectureId, String date) {
         Log.v(TAG_SQL, "Checking if student " + studentId + " attended lecture " + lectureId + " on date " + date);
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setDistinct(true);

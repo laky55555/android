@@ -1,4 +1,4 @@
-package hr.math.android.signme;
+package hr.math.android.signme.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,19 +7,21 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import hr.math.android.signme.Database.DBAdapter;
+
 /**
  * Created by ivan on 17.01.17..
  */
 
-class DBSignatures extends DBAdapter{
+public class DBSignatures extends DBAdapter {
 
     private static final String TAG_SQL = "SQLSignature";
 
-    DBSignatures(Context ctx) {
+    public DBSignatures(Context ctx) {
         super(ctx);
     }
 
-    Cursor getStudentSignature(int studentId, int lectureId)
+    public Cursor getStudentSignature(int studentId, int lectureId)
     {
         String findQuery = STUDENT_ID + "='" + studentId + "' and "
                 + LECTURE_ID+ "='" + lectureId + "'";
@@ -34,8 +36,8 @@ class DBSignatures extends DBAdapter{
     }
 
 
-    boolean saveSignature(int number, int studentId, int lectureId, ArrayList<Float> xCoord,
-                                 ArrayList<Float> yCoord, ArrayList<Float> penUp)
+    public boolean saveSignature(int number, int studentId, int lectureId, ArrayList<Float> xCoord,
+            ArrayList<Float> yCoord, ArrayList<Float> penUp)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(STUDENT_ID, studentId);

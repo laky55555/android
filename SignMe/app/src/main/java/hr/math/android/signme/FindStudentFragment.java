@@ -1,13 +1,10 @@
 package hr.math.android.signme;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +12,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FilterQueryProvider;
-import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
+import hr.math.android.signme.Database.DBStudents;
+
+import static hr.math.android.signme.Dialogs.NewStudent.popUpNewStudents;
 
 public class FindStudentFragment extends Fragment {
 
@@ -75,7 +74,7 @@ public class FindStudentFragment extends Fragment {
         add_new_student.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            popUpNewStudents();
+            popUpNewStudents(getActivity(), lectureId, db);
             }
         });
 
@@ -113,13 +112,6 @@ public class FindStudentFragment extends Fragment {
                 Snackbar.LENGTH_LONG).show();
     }
 
-    private void badStudentInfo(String name, String surname, String jmbag)
-    {
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        Snackbar.make(getView(), "Given student info is not valid.\nName = " + name + "; Surname = "
-                + surname + "; JMBAG = " + jmbag, Snackbar.LENGTH_LONG).show();
-    }
-
     private void checkExistingStudent() {
         String wholeText = textView.getText().toString();
         Log.d(TAG, wholeText);
@@ -141,85 +133,6 @@ public class FindStudentFragment extends Fragment {
             else
                 startSigningScreen(false, studentId);
         }
-    }
-
-    private void popUpNewStudents() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.new_student);
-
-        final LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        final EditText inputName = new EditText(getActivity());
-        inputName.setHint(R.string.add_name);
-        inputName.setInputType(InputType.TYPE_CLASS_TEXT);
-        layout.addView(inputName);
-
-        final EditText inputSurname = new EditText(getActivity());
-        inputSurname.setHint(R.string.add_surname);
-        inputSurname.setInputType(InputType.TYPE_CLASS_TEXT);
-        layout.addView(inputSurname);
-
-        final EditText inputJmbag = new EditText(getActivity());
-        inputJmbag.setHint(R.string.add_jmbag);
-        inputJmbag.setInputType(InputType.TYPE_CLASS_NUMBER);
-        layout.addView(inputJmbag);
-
-        builder.setView(layout);
-
-        builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int new_studentId = addNewStudent(inputName.getText().toString(), inputSurname.getText().toString(),
-                        inputJmbag.getText().toString());
-                if(new_studentId != -1)
-                    startSigningScreen(true, new_studentId);
-                else
-                    badStudentInfo(inputName.getText().toString(), inputSurname.getText().toString(),
-                            inputJmbag.getText().toString());
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-    private int addNewStudent(String name, String surname, String JMBAG)
-    {
-        int jmbag;
-        if(name.trim().length() == 0) {
-            Log.d(TAG, "Given new student name = " + name + ", necessary student name");
-            Toast.makeText(getContext(), "Student name is mandatory", Toast.LENGTH_LONG).show();
-            return -1;
-        }
-        if(surname.trim().length() == 0) {
-            Log.d(TAG, "Given new student surname = " + surname + ", necessary student surname");
-            Toast.makeText(getContext(), "Student surname is mandatory", Toast.LENGTH_LONG).show();
-            return -1;
-        }
-        try{
-            jmbag = Integer.parseInt(JMBAG);
-        }
-        catch(NumberFormatException e){
-            Log.d(TAG, "Given new student JMBAG = " + JMBAG + ", necessary true number");
-            Toast.makeText(getContext(), "JMBAG number is mandatory", Toast.LENGTH_LONG).show();
-            return -1;
-        }
-
-        if (!db.doesStudentExist(lectureId, jmbag)) {
-            db.newStudent(name, surname, jmbag, lectureId);
-            Toast.makeText(getContext(), "Added new student " + name, Toast.LENGTH_SHORT).show();
-            return db.getStudentID(lectureId, jmbag);
-
-        }
-        else
-            Toast.makeText(getContext(), "Student with JMBAG " + JMBAG + " already exist.", Toast.LENGTH_SHORT).show();
-        return -1;
     }
 
     private void startSigningScreen(boolean learningNew, int studentId)

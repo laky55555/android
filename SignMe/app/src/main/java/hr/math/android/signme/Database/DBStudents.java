@@ -1,4 +1,4 @@
-package hr.math.android.signme;
+package hr.math.android.signme.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,15 +9,15 @@ import android.util.Log;
  * Created by ivan on 17.01.17..
  */
 
-class DBStudents extends DBAdapter {
+public class DBStudents extends DBAdapter {
 
     private static final String TAG_SQL = "SQLStudents";
 
-    DBStudents(Context ctx) {
+    public DBStudents(Context ctx) {
         super(ctx);
     }
 
-    int getStudentID(int lectureId, int jmbag)
+    public int getStudentID(int lectureId, int jmbag)
     {
         int id = -1;
         Cursor mCursor = db.query(true, TABLE_STUDENTS, new String[] {ID},
@@ -33,7 +33,7 @@ class DBStudents extends DBAdapter {
         return id;
     }
 
-    int getStudentID(int lectureId, int jmbag, String name, String surname)
+    public int getStudentID(int lectureId, int jmbag, String name, String surname)
     {
         int id = -1;
         Cursor mCursor = db.query(true, TABLE_STUDENTS, new String[] {ID, NAME, SURNAME},
@@ -57,7 +57,7 @@ class DBStudents extends DBAdapter {
                 LECTURE_ID + "='" + id + "'", null, null, null, null, null);
     }
 
-    Cursor getAllStudentsOfLecture(int id, CharSequence name)
+    public Cursor getAllStudentsOfLecture(int id, CharSequence name)
     {
         Log.v(TAG_SQL, "Getting all students of lectureId = " + id + " with start (sur)name " + name);
         return db.query(true, TABLE_STUDENTS, new String[] {ID, NAME, SURNAME, JMBAG},
@@ -66,7 +66,7 @@ class DBStudents extends DBAdapter {
                 null, null, null, null, null);
     }
 
-    int numberOfStudents(int lectureId)
+    public int numberOfStudents(int lectureId)
     {
         Log.v(TAG_SQL, "Number of students attending lecture " + lectureId);
         return getAllStudentsOfLecture(lectureId).getCount();
@@ -89,7 +89,7 @@ class DBStudents extends DBAdapter {
         return true;
     }
 
-    boolean doesStudentExist(int lectureId, int jmbag)
+    public boolean doesStudentExist(int lectureId, int jmbag)
     {
         Log.v(TAG_SQL, "Does student with jmbag " + jmbag + " exist on lecture " + lectureId);
         return getStudentID(lectureId, jmbag) != -1;
@@ -101,7 +101,7 @@ class DBStudents extends DBAdapter {
         return getStudentID(jmbag, lectureId, name, surname) != -1;
     }
 
-    boolean newStudent(String name, String surname, int jmbag, int lectureId)
+    public boolean newStudent(String name, String surname, int jmbag, int lectureId)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(NAME, name);

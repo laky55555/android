@@ -2,16 +2,14 @@ package hr.math.android.signme;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.InputType;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -20,14 +18,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckedTextView;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import hr.math.android.signme.Database.DBLectures;
+import hr.math.android.signme.Dialogs.InitializePassEmailDialog;
+
+import static hr.math.android.signme.Dialogs.AddLecture.popUpAdd;
+import static hr.math.android.signme.Dialogs.DeleteLecture.popUpDelete;
+import static hr.math.android.signme.Dialogs.EnterAirplaneSettings.enterAirplaneSettingsDialog;
+import static hr.math.android.signme.Dialogs.SendEmailAttendance.popUpSend;
 
 public class EditLecturesFragment extends Fragment {
 
@@ -98,11 +100,13 @@ public class EditLecturesFragment extends Fragment {
 
         if(editLectures)
             initializeFloatingActionButton();
-        else
+        else {
             setOnListClickListener(listView);
-
+            if(Settings.System.getInt(getContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 0)
+                enterAirplaneSettingsDialog(activity);
+        }
         if(addNewLecture)
-            popUpAdd();
+            popUpAdd(db, adapter, activity, cursor);
     }
 
     private void setOnListClickListener(final ListView listView)
@@ -111,15 +115,15 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor lecture = (Cursor)listView.getItemAtPosition(position);
-                if(!pref.isPasswordInitialized() || !pref.isEmailInitialized()) {
+
+                if (!pref.isPasswordInitialized() || !pref.isEmailInitialized()) {
                     Intent intent = new Intent(getActivity(), InitializePassEmailDialog.class);
                     intent.putExtra("LECTURE_NAME", lecture.getString(1));
                     intent.putExtra("LECTURE_ID", lecture.getInt(0));
-                    intent.putExtra("PASSWORD", pref.isPasswordInitialized());
-                    intent.putExtra("MAIL", pref.isEmailInitialized());
+                    //intent.putExtra("PASSWORD", pref.isPasswordInitialized());
+                    //intent.putExtra("MAIL", pref.isEmailInitialized());
                     startActivity(intent);
-                }
-                else {
+                } else {
                     Toast.makeText(getContext(), getResources().getString(R.string.current_password)
                             + " " + pref.getPassword(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getActivity(), Signing.class);
@@ -143,7 +147,7 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, R.string.adding_new_lectures, Snackbar.LENGTH_LONG).show();
-                popUpAdd();
+                popUpAdd(db, adapter, activity, cursor);
             }
         });
 
@@ -153,7 +157,8 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, R.string.deleting_marked_lectures, Snackbar.LENGTH_LONG).show();
-                popUpDelete(getCheckedLectures());
+                popUpDelete(getCheckedLectures(), db, adapter, activity, cursor);
+                //popUpDelete(getCheckedLectures());
             }
         });
 
@@ -163,134 +168,42 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, R.string.sending_stats, Snackbar.LENGTH_LONG).show();
-                int result = 1;
-                if (!pref.isEmailInitialized()) {
-                    Intent intent = new Intent(getActivity(), InitializePassEmailDialog.class);
-                    //startActivity(intent);
-                    startActivityForResult(intent, result);
-                }
-                else
-                    popUpSend(getCheckedLectures());
+                checkEmailInitializedSend();
             }
         });
         Log.d("EDIT", "Zavrsio inicijalizaciju");
     }
 
+    private void checkEmailInitializedSend() {
+        int result = 1;
+        if (!pref.isEmailInitialized()) {
+            Intent intent = new Intent(getActivity(), InitializePassEmailDialog.class);
+            //startActivity(intent);
+            startActivityForResult(intent, result);
+        }
+        else
+            popUpSend(getCheckedLectures(), getContext(), view);
+    }
+
     private ArrayList<String> getCheckedLectures()
     {
         ListView list = (ListView) view.findViewById(R.id.list_of_lectures_fragment);
-        final ArrayList<String> forDelete = new ArrayList<>(list.getAdapter().getCount());
+        final ArrayList<String> checkedElements = new ArrayList<>(list.getAdapter().getCount());
         SparseBooleanArray checked = list.getCheckedItemPositions();
         for (int i = 0; i < list.getAdapter().getCount(); i++) {
             if (checked.get(i))
-                forDelete.add(((Cursor) list.getItemAtPosition(i)).getString(1));
+                checkedElements.add(((Cursor) list.getItemAtPosition(i)).getString(1));
         }
 
-        return forDelete;
+        return checkedElements;
     }
 
-    private void popUpAdd()
-    {
-        Toast.makeText(getContext(), "POP up add", Toast.LENGTH_SHORT);
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.add_lecture);
-
-        final LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        final EditText inputName = new EditText(activity);
-        inputName.setHint(R.string.add_lecture);
-        inputName.setInputType(InputType.TYPE_CLASS_TEXT);
-        layout.addView(inputName);
-
-        builder.setView(layout);
-
-        builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                addNewLecture(inputName.getText().toString());
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-    private void addNewLecture(String name) {
-
-        if (!db.doesLectureExist(name)) {
-            db.newLecture(name);
-            Toast.makeText(activity, "Added new lecture", Toast.LENGTH_SHORT).show();
-            cursor.requery();
-            adapter.notifyDataSetChanged();
-        } else
-            Toast.makeText(activity, "Lecture with " + name + " already exist.", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void popUpDelete(final ArrayList<String> forDelete) {
-        if(forDelete.size() < 1)
-            return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.deleting_marked_lectures);
-
-        final TextView info = new TextView(activity);
-        info.setText(getResources().getString(R.string.delete_warning) + ":\n" + forDelete.toString());
-        builder.setView(info);
-
-        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                for (int i = 0; i < forDelete.size(); ++i)
-                    db.deleteLecture(forDelete.get(i));
-                cursor.requery();
-                adapter.notifyDataSetChanged();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-    private void popUpSend(final ArrayList<String> forSend)
-    {
-        if (forSend.size() < 1)
-            return;
-
-        int lectureIds[] = new int[forSend.size()];
-        String lectureNames[] = new String[forSend.size()];
-        DBLectures lectures = new DBLectures(getContext());
-        lectures.open();
-        for(int i=0; i<lectureIds.length; i++) {
-            lectureIds[i] = lectures.getLectureID(forSend.get(i));
-            lectureNames[i] = forSend.get(i);
-        }
-        lectures.close();
-
-        Log.v("NESTO", Arrays.toString(lectureIds));
-        Intent i = SendMail.sendMail(getContext(), lectureIds, lectureNames);
-
-        if(i != null)
-            startActivity(i);
-        else
-            Snackbar.make(view, R.string.unsuccessful_mail, Snackbar.LENGTH_LONG).show();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (pref.isEmailInitialized())
-            popUpSend(getCheckedLectures());
+            popUpSend(getCheckedLectures(), getContext(), view);
     }
 
 }

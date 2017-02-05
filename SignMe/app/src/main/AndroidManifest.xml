@@ -45,8 +45,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Limbo" />
-        <activity android:name=".InitializePassEmailDialog"
+        <activity android:name=".Dialogs.InitializePassEmailDialog"
             android:theme="@style/Theme.AppCompat.Dialog" />
+
+        <activity android:name=".MainIntroActivity"
+                  android:theme="@style/Theme.Intro"/>
 
         <provider
                 android:name="android.support.v4.content.FileProvider"

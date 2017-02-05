@@ -1,4 +1,4 @@
-package hr.math.android.signme;
+package hr.math.android.signme.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,19 +7,21 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import hr.math.android.signme.Database.DBAdapter;
+
 /**
  * Created by ivan on 17.01.17..
  */
 
-class DBDistances extends DBAdapter {
+public class DBDistances extends DBAdapter {
 
     private static final String TAG_SQL = "SQLDistances";
 
-    DBDistances(Context ctx) {
+    public DBDistances(Context ctx) {
         super(ctx);
     }
 
-    boolean updateMaxDistance(int studentId, int lectureId, ArrayList<Float> max)
+    public boolean updateMaxDistance(int studentId, int lectureId, ArrayList<Float> max)
     {
         String findQuery = STUDENT_ID + "='" + studentId + "' and "
                 + LECTURE_ID+ "='" + lectureId + "'";
@@ -59,7 +61,7 @@ class DBDistances extends DBAdapter {
         }
     }
 
-    ArrayList<Float> getMaxDistance(int studentId, int lectureId)
+    public ArrayList<Float> getMaxDistance(int studentId, int lectureId)
     {
         ArrayList<Float> array = new ArrayList<>();
         String findQuery = STUDENT_ID + "='" + studentId + "' and "

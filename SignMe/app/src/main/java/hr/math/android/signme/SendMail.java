@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,13 +16,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
+import hr.math.android.signme.Database.DBAttendance;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 
 /**
  * Created by mira on 14.01.17..
