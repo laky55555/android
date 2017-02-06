@@ -1,9 +1,11 @@
 package hr.math.android.signme;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -26,6 +28,25 @@ public class MainIntroActivity extends IntroActivity {
     public static final String EXTRA_SKIP_ENABLED = "com.heinrichreimersoftware.materialintro.demo.EXTRA_SKIP_ENABLED";
     public static final String EXTRA_FINISH_ENABLED = "com.heinrichreimersoftware.materialintro.demo.EXTRA_FINISH_ENABLED";
     public static final String EXTRA_GET_STARTED_ENABLED = "com.heinrichreimersoftware.materialintro.demo.EXTRA_GET_STARTED_ENABLED";
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v("INTRO", "onstop");
+        //Intent returnIntent = new Intent();
+        //returnIntent.putExtra("RESULT", 1);
+        //setResult(Activity.RESULT_OK, returnIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v("INTRO", "ondestroy");
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("RESULT", 1);
+        setResult(Activity.RESULT_OK, returnIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

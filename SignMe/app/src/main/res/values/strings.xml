@@ -20,8 +20,9 @@
     <string name="lectures_list">List of Lectures</string>
     <string name="share_one_statistic">Share statistic</string>
     <string name="statistic">Statistic</string>
-    <string name="send_all_statistic">Send all statistic</string>
-    <string name="send_one_statistic">Send one course</string>
+    <string name="stats_by_student">Show attendance by student</string>
+    <string name="stats_by_date">Show attendance by date</string>
+    <string name="student_signature">See student signature</string>
 
 
     <string name="adding_new_lectures">Adding new lecture</string>
@@ -109,6 +110,16 @@
     <string name="title_permissions">Permissions for saving data</string>
     <string name="description_permissions">For third party email applications to send excel record table Sign Me needs to save table in memory.</string>
     <string name="label_grant_permissions">Please grant the permissions before proceeding.</string>
+
+
+    <string name="select_lecture">Select lecture</string>
+    <string name="select_student">Select student</string>
+    <string name="select_date">Select date</string>
+
+
+
+    <string name="better_luck">Better luck in next version :)</string>
+    <string name="draw_overlay_permission">To prevent people to open notification bar during signing you need to allow this permission.</string>
 
 
 

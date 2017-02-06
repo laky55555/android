@@ -2,8 +2,13 @@ package hr.math.android.signme.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
+import android.util.Pair;
+
+import java.util.ArrayList;
 
 /**
  * Created by ivan on 17.01.17..
@@ -50,12 +55,36 @@ public class DBStudents extends DBAdapter {
         return id;
     }
 
-    Cursor getAllStudentsOfLecture(int id)
+    public Cursor getAllStudentsOfLecture(int id)
     {
         Log.v(TAG_SQL, "Getting all students of lectureId " + id);
         return db.query(true, TABLE_STUDENTS, new String[] {ID, NAME, JMBAG},
                 LECTURE_ID + "='" + id + "'", null, null, null, null, null);
     }
+
+    public Pair<ArrayList<String>, ArrayList<Integer>> getAllStudentsOfLecture(int lectureId, boolean diff) {
+        Log.v(TAG_SQL, "Getting all students of lectureId " + lectureId);
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setDistinct(true);
+        builder.appendWhere(LECTURE_ID + " LIKE '" + lectureId + "'");
+        builder.setTables(TABLE_STUDENTS);
+        Cursor cursor = builder.query(db, new String[]{JMBAG, NAME, SURNAME, ID}, null, null, null, null, null, null);
+
+        if(cursor != null && cursor.moveToFirst()) {
+            ArrayList<String> students = new ArrayList<>();
+            ArrayList<Integer> ids = new ArrayList<>();
+            do {
+                students.add(cursor.getString(0) + " " + cursor.getString(1) + " " + cursor.getString(2));
+                ids.add(cursor.getInt(3));
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            return Pair.create(students, ids);
+        }
+
+        return null;
+    }
+
 
     public Cursor getAllStudentsOfLecture(int id, CharSequence name)
     {
@@ -110,6 +139,20 @@ public class DBStudents extends DBAdapter {
         initialValues.put(LECTURE_ID, lectureId);
         Log.v(TAG_SQL, "Added student " + name + " to database + " + TABLE_STUDENTS);
         return db.insert(TABLE_STUDENTS, null, initialValues) > 0;
+    }
+
+    public String[] studentInfo(int studentId) {
+        Log.v(TAG_SQL, "Getting info of student " + studentId);
+        Cursor mCursor = db.query(true, TABLE_STUDENTS, new String[] {ID, NAME, SURNAME, JMBAG},
+                ID + "='" + studentId + "'", null, null, null, null, null);
+        if (mCursor != null && mCursor.moveToFirst()) {
+            String name = mCursor.getString(1);
+            String surname = mCursor.getString(2);
+            String jmbag = mCursor.getString(3);
+            mCursor.close();
+            return new String[]{name, surname, jmbag};
+        }
+        return null;
     }
 
 }

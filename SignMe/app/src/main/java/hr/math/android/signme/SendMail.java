@@ -69,30 +69,23 @@ public class SendMail {
         return studentIds;
     }
 
-    private static String[] fillDates(WritableSheet sheet, Cursor dates) {
-        String dateList[] = new String[dates.getCount()];
+    private static void fillDates(WritableSheet sheet, ArrayList<String> dates) {
         try {
-            int column = startColumn;
-            if (dates.moveToFirst()) {
-                do {
-                    Log.v(TAG, dates.getString(0) + " column " + column);
-                    sheet.addCell(new Label(column, startRow-1, dates.getString(0))); // column and row
-                    dateList[column - startColumn] = dates.getString(0);
-                    column++;
-                } while (dates.moveToNext());
+            for(int i=0; i<dates.size(); i++) {
+                Log.v(TAG, dates.get(i) + " column " + startColumn+i);
+                sheet.addCell(new Label(startColumn+i, startRow-1, dates.get(i))); // column and row
             }
         } catch (Exception e) {
             Log.d(TAG, "Error in filling dates: " + e);
         }
-
-        return dateList;
     }
-    private static void fillAttendance(WritableSheet sheet, DBAttendance attendance, int[] studentsIds, String[] dateList, int lectureId) {
+    //TODO: for every students make statistic in % how many classes she attended.
+    private static void fillAttendance(WritableSheet sheet, DBAttendance attendance, int[] studentsIds, ArrayList<String> dateList, int lectureId) {
         try {
             for (int i=0; i<studentsIds.length; i++) {
-                for (int j=0; j<dateList.length; j++) {
-                    String answer = attendance.hasAttended(studentsIds[i], lectureId, dateList[j]);
-                    Log.v(TAG, "student " + studentsIds[i] + " on date" + dateList[j] + " answered " + answer);
+                for (int j=0; j<dateList.size(); j++) {
+                    String answer = attendance.hasAttended(studentsIds[i], lectureId, dateList.get(j));
+                    Log.v(TAG, "student " + studentsIds[i] + " on date" + dateList.get(j) + " answered " + answer);
                     sheet.addCell(new Label(startColumn + j, startRow + i, answer));
                 }
             }
@@ -105,16 +98,16 @@ public class SendMail {
         DBAttendance attendance = new DBAttendance(context);
         attendance.open();
         Cursor students = attendance.getAllStudentsOfLecture(lectureId);
-        Cursor dates = attendance.getAllDatesOfLecture(lectureId);
+        ArrayList<String> dates = attendance.getAllDatesOfLecture(lectureId);
         if(students == null || dates == null)
             return false;
         Log.v(TAG, "Number of students = " + students.getCount());
-        Log.v(TAG, "Number of dates = " + dates.getCount());
+        Log.v(TAG, "Number of dates = " + dates.size());
 
         fillHeader(sheet, lectureName, context);
         int studentIds[] = fillStudents(sheet, students);
-        String dateList[] = fillDates(sheet, dates);
-        fillAttendance(sheet, attendance, studentIds, dateList, lectureId);
+        fillDates(sheet, dates);
+        fillAttendance(sheet, attendance, studentIds, dates, lectureId);
 
         attendance.close();
         return true;

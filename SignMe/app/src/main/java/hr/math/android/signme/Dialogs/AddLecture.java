@@ -65,7 +65,7 @@ public class AddLecture {
         layout.addView(inputName);
 
         builder.setView(layout);
-        builder.setCancelable(false);
+        builder.setCancelable(true);
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

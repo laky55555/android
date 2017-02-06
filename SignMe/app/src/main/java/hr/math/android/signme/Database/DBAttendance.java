@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import hr.math.android.signme.Database.DBAdapter;
@@ -64,6 +65,69 @@ public class DBAttendance extends DBAdapter {
     }
 
 
+    public ArrayList<String> getAllDatesOfLectureOfStudent(int studentId, int lectureId) {
+        Log.v(TAG_SQL, "Getting all dates of lecture " + lectureId + " student " + studentId);
+        Cursor cursor = db.query(true, TABLE_ATTENDANCES, new String[] {ID, DATE},
+                LECTURE_ID + "='" + lectureId + "' AND " + STUDENT_ID + "='" + studentId + "'", null, null, null, null, null);
+        Log.v(TAG_SQL, "cursor = " + cursor);
+        if(cursor != null && cursor.moveToFirst()) {
+            Log.v(TAG_SQL, "Cursor size " + cursor.getCount());
+            ArrayList<String> dates = new ArrayList<>();
+            do {
+                dates.add(cursor.getString(1));
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            return dates;
+        }
+
+        return null;
+    }
+
+
+    public ArrayList<String> getAllStudentsOfLectureOfDate(String date, int lectureId) {
+        Log.v(TAG_SQL, "Getting all students of lectureId " + lectureId + " date" + date);
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setDistinct(true);
+        builder.appendWhere(TABLE_ATTENDANCES + "." + LECTURE_ID + "='" + lectureId + "' AND ");
+        builder.appendWhere(DATE + " LIKE '" + date + "'");
+
+        builder.setTables(TABLE_ATTENDANCES + " INNER JOIN " + TABLE_STUDENTS + " ON("
+                + TABLE_ATTENDANCES + "." + LECTURE_ID + "=" + TABLE_STUDENTS + "." + LECTURE_ID + " AND "
+                + TABLE_ATTENDANCES + "." + STUDENT_ID + "=" + TABLE_STUDENTS + "." + ID + ")");
+        Cursor cursor = builder.query(db, new String[]{JMBAG, NAME, SURNAME, STUDENT_ID, DATE}, null, null, null, null, null, null);
+
+        if(cursor != null && cursor.moveToFirst()) {
+            ArrayList<String> students = new ArrayList<>();
+            do {
+                students.add(cursor.getString(0) + " " + cursor.getString(1) + " " + cursor.getString(2));
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            return students;
+        }
+
+        return null;
+    }
+
+
+    public ArrayList<String> getAllDatesOfLecture(int lectureId) {
+
+        Log.v(TAG_SQL, "Getting all dates of lecture " + lectureId);
+        Cursor cursor = db.query(true, TABLE_ATTENDANCES, new String[] {DATE},
+                LECTURE_ID + "='" + lectureId + "'", null, null, null, null, null);
+        if(cursor != null && cursor.moveToFirst()) {
+            ArrayList<String> dates = new ArrayList<>();
+            do {
+                dates.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            return dates;
+        }
+
+        return null;
+    }
 
     Cursor getLecture(int lectureId) {
         Log.v(TAG_SQL, "Getting all info of lectureId " + lectureId);
@@ -85,15 +149,7 @@ public class DBAttendance extends DBAdapter {
                 null, null, null, null, null);
     }
 
-//    String[] getAllDatesOfLecture(int lectureId)
-public Cursor getAllDatesOfLecture(int lectureId) {
-        Log.v(TAG_SQL, "Getting all dates of lectureId " + lectureId);
-        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        builder.setDistinct(true);
-        builder.setTables(TABLE_ATTENDANCES);
-        builder.appendWhere(LECTURE_ID + "='" + lectureId + "'");
-        return builder.query(db, new String[]{DATE}, null, null, null, null, null, null);
-    }
+
 
     public String hasAttended(int studentId, int lectureId, String date) {
         Log.v(TAG_SQL, "Checking if student " + studentId + " attended lecture " + lectureId + " on date " + date);

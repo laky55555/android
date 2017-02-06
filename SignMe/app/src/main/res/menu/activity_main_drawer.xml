@@ -23,17 +23,17 @@
     <item android:title="@string/statistic">
         <menu>
             <item
-                android:id="@+id/nav_share_one"
+                android:id="@+id/nav_stats_by_student"
                 android:icon="@drawable/ic_menu_share"
-                android:title="@string/share_one_statistic" />
+                android:title="@string/stats_by_student" />
             <item
-                android:id="@+id/nav_send_all"
+                android:id="@+id/nav_stats_by_date"
                 android:icon="@drawable/ic_menu_share"
-                android:title="@string/send_all_statistic" />
+                android:title="@string/stats_by_date" />
             <item
-                android:id="@+id/nav_send_one"
+                android:id="@+id/nav_student_signature"
                 android:icon="@drawable/ic_menu_send"
-                android:title="@string/send_one_statistic" />
+                android:title="@string/student_signature" />
         </menu>
     </item>
 

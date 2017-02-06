@@ -21,8 +21,8 @@ public class DBAdapter {
     static final String TABLE_SIGNATURES = "signatures";
     static final String TABLE_MAX_DISTANCES = "max_distances";
 
-    static final String ID = "_id";
-    static final String NAME = "name";
+    public static final String ID = "_id";
+    public static final String NAME = "name";
 
     // Foreign keys.
     static final String LECTURE_ID = "id_lecture";
@@ -34,7 +34,7 @@ public class DBAdapter {
     static final String DISTANCE = "signature_distance";
 
     // Additional attendance columns.
-    static final String DATE = "date";
+    public static final String DATE = "date";
     static final String REMARK = "remark";
 
     // Additional signature columns.

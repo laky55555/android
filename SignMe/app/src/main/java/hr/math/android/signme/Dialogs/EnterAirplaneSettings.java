@@ -35,6 +35,7 @@ public class EnterAirplaneSettings {
 
         final TextView info = new TextView(activity);
         info.setText(activity.getString(R.string.security_airplane_info));
+        info.setPadding(30,10,10,10);
         builder.setView(info);
 
 

@@ -69,10 +69,11 @@ public class DBDistances extends DBAdapter {
         //TODO: tu je isto hardcodiran broj algoritama s kojim usporedujemo. Vidi todo na DBAdapter.
         Cursor c = db.query(true, TABLE_MAX_DISTANCES, new String[] {ID, DISTANCE+"0", DISTANCE+"1"},
                 findQuery, null, null, null, null, null);
-        c.moveToFirst();
-        array.add(c.getFloat(1));
-        array.add(c.getFloat(2));
-        c.close();
+        if(c != null && c.moveToFirst()) {
+            array.add(c.getFloat(1));
+            array.add(c.getFloat(2));
+            c.close();
+        }
         return array;
     }
 

@@ -1,9 +1,11 @@
-napisati korisniu poruku kad se aplikacija pokrene da upali airplane mode
+za pocetni permission pitati korisnika mozda malo drugacije tako da mora potvrditi, ako je moguce
 
+sto ako postoji student, a nema primjer potpisa u bazi (dogodilo se)??
+
+
+v2
 napraviti server tako da se prilikom promjene passworda, novi password posalje na mail korisnika
 
-za pocetni permission pitati korisnika mozda malo drugacije tako da mora potvrditi
+omoguciti da se prilikom unosa novog studenta i provjere rukopisa ide back (npr student usao u krivog)
 
-izbaciti pop up unose iz koda u posebne klase
-
-napraviti pocetni intro https://android-arsenal.com/details/1/3206
+provjeriti sve rubne slucajeve prilikom unosa novog studenta/provjere rukopisa
