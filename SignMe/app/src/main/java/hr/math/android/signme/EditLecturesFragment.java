@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -83,15 +84,15 @@ public class EditLecturesFragment extends Fragment {
             @Override
             public View newView(Context context, Cursor cursor, ViewGroup parent) {
                 int listType;
-                if(editLectures)
-                    listType = android.R.layout.simple_list_item_checked;
-                else
-                    listType = android.R.layout.simple_selectable_list_item;
-                return LayoutInflater.from(context).inflate(listType, parent, false);
+//                if(editLectures)
+//                    listType = R.layout.lectures_list_item;
+//                else
+//                    listType = R.layout.lectures_list_item;
+                return LayoutInflater.from(context).inflate(R.layout.lectures_list_item, parent, false);
             }
             @Override
             public void bindView(View view, Context context, Cursor cursor) {
-                ((CheckedTextView) view.findViewById(android.R.id.text1)).setText(cursor.getString(1));
+                ((AppCompatTextView) view.findViewById(android.R.id.text1)).setText(cursor.getString(1));
             }
         };
 

@@ -4,7 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-
+    <color name="default_color">#FAFAFA</color>
+    <color name="list_item_background">#DBEDFF</color>
+    <color name="list_item_text">#0F1475</color>
     <!-- BOJE S NETA-->
 
     <color name="color_primary">#E91E63</color>
