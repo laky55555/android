@@ -5,7 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="default_color">#FAFAFA</color>
-    <color name="list_item_background">#DBEDFF</color>
+    <color name="list_item_background_start">#DBEDFF</color>
+    <color name="list_item_background_end">#5D88D9</color>
     <color name="list_item_text">#0F1475</color>
     <!-- BOJE S NETA-->
 
